@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "731849993930",
+    "project_id": "realtinedb",
+    "storage_bucket": "realtinedb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:731849993930:android:d15bdca1322aba988b8e33",
+        "android_client_info": {
+          "package_name": "com.example.pre_alpha"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDaLC8N7OdcDpbmkygY9T_LEHCmSA9zMI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
