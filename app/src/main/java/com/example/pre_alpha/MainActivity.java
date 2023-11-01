@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView=findViewById(R.id.bottomNavigationBar);
         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, homeFragment).commit();
         bottomNavigationView.setSelectedItemId(R.id.home);
+        bottomNavigationView.setItemIconTintList(null);
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {

@@ -3,26 +3,22 @@
 
     <item
         android:id="@+id/profile"
-        android:icon="@drawable/user"
+        android:icon="@drawable/user_selector"
         android:title=""/>
     <item
         android:id="@+id/favourite"
-        android:icon="@drawable/heart"
+        android:icon="@drawable/heart_selector"
         android:title=""/>
     <item
         android:id="@+id/post"
-        android:icon="@drawable/post"
+        android:icon="@drawable/post_selector"
         android:title=""/>
     <item
         android:id="@+id/search"
-        android:icon="@drawable/search"
+        android:icon="@drawable/search_selector"
         android:title=""/>
     <item
         android:id="@+id/home"
-        android:icon="@drawable/home"
+        android:icon="@drawable/home_selector"
         android:title=""/>
-
-
-
-
 </menu>
