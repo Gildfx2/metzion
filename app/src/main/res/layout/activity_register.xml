@@ -6,8 +6,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Register"
-    >
+    android:background="@color/white"
+    tools:context=".Register">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -18,28 +18,6 @@
         android:layout_marginTop="70dp"
         android:textColor="@color/black"
         />
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="20dp"
-        android:hint="@string/אימייל"
-        app:helperTextEnabled="true"
-        app:helperText=""
-        android:id="@+id/layoutEmail2"
-        app:helperTextTextColor="@color/black"
-        app:boxStrokeErrorColor="#6f1d1b"
-        app:boxStrokeColor="#8a5d3d"
-        app:hintTextColor="@color/black"
-        app:startIconDrawable="@drawable/baseline_email_24"
-        >
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/rubik_regular"/>
-    </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
@@ -59,6 +37,28 @@
         app:startIconDrawable="@drawable/baseline_person_24">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/rubik_regular"/>
+    </com.google.android.material.textfield.TextInputLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="10dp"
+        android:hint="@string/אימייל"
+        app:helperTextEnabled="true"
+        app:helperText=""
+        android:id="@+id/layoutEmail2"
+        app:helperTextTextColor="@color/black"
+        app:boxStrokeErrorColor="#6f1d1b"
+        app:boxStrokeColor="#8a5d3d"
+        app:hintTextColor="@color/black"
+        app:startIconDrawable="@drawable/baseline_email_24"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/rubik_regular"/>
