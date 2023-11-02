@@ -4,11 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -17,7 +19,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
-    TextView tv;
     FirebaseAuth auth;
     BottomNavigationView bottomNavigationView;
     HomeFragment homeFragment=new HomeFragment();
@@ -25,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     PostFragment postFragment=new PostFragment();
     FavouriteFragment favouriteFragment=new FavouriteFragment();
     UserFragment userFragment=new UserFragment();
+    Dialog dialog;
+    Button lost, found;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,7 +48,33 @@ public class MainActivity extends AppCompatActivity {
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, searchFragment).commit();
                         return true;
                     case R.id.post:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, postFragment).commit();
+                        dialog=new Dialog(MainActivity.this);
+                        dialog.setContentView(R.layout.post_dialog_layout);
+                        lost=dialog.findViewById(R.id.lost);
+                        found=dialog.findViewById(R.id.found);
+                        lost.setOnClickListener(new View.OnClickListener(){
+                            public void onClick(View view){
+                                SharedPreferences state = getSharedPreferences("state", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = state.edit();
+                                editor.putString("state", "lost");
+                                editor.apply();
+                                editor.commit();
+                                dialog.cancel();
+                                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, postFragment).commit();
+                            }
+                        });
+                        found.setOnClickListener(new View.OnClickListener(){
+                            public void onClick(View view){
+                                SharedPreferences state = getSharedPreferences("state", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = state.edit();
+                                editor.putString("state", "found");
+                                editor.apply();
+                                editor.commit();
+                                dialog.cancel();
+                                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, postFragment).commit();
+                            }
+                        });
+                        dialog.show();
                         return true;
                     case R.id.favourite:
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, favouriteFragment).commit();
@@ -61,14 +90,5 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void Logout(View view){
-        SharedPreferences remember = getSharedPreferences("check", MODE_PRIVATE);
-        SharedPreferences.Editor editor = remember.edit();
-        editor.putString("remember", "false");
-        editor.commit();
-        auth.signOut();
-        Intent intent = new Intent(this, Login.class);
-        startActivity(intent);
-        finish();
-    }
+
 }

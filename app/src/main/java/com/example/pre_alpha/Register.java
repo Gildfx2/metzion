@@ -19,7 +19,6 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.Firebase;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -103,7 +102,7 @@ public class Register extends AppCompatActivity {
         else if((userExist(email)) && (!username.isEmpty() || username!=null) &&
                 (!password.isEmpty() || password!=null) && (!confirmPassword.isEmpty() || confirmPassword!=null)){
             dialog=new Dialog(this);
-            dialog.setContentView(R.layout.custom_dialog_layout);
+            dialog.setContentView(R.layout.exist_dialog_layout);
             btnOkay=dialog.findViewById(R.id.emailTaken);
             btnOkay.setOnClickListener(new View.OnClickListener(){
                 public void onClick(View view){

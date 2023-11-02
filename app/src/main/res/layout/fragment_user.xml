@@ -6,11 +6,12 @@
     tools:context=".UserFragment">
 
 
-    <TextView
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/logout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="PROFILE"
-        android:layout_gravity="center"
-        android:textSize="30dp"/>
+        android:onClick="Logout"
+        android:text="logout"
+        android:textSize="30sp"/>
 
 </FrameLayout>
