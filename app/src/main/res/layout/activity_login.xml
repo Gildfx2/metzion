@@ -98,7 +98,6 @@
         android:layout_marginHorizontal="10dp"
         android:onClick="login"
         android:fontFamily="@font/rubik_medium"
-        android:hapticFeedbackEnabled="true"
         android:background="@drawable/custom_button"
         app:backgroundTint="@null"
         />

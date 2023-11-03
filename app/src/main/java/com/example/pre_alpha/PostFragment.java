@@ -21,11 +21,13 @@ import android.widget.TextView;
 
 public class PostFragment extends Fragment {
 
-    String[] item={"ארנק", "מפתחות", "תיק"};
-    String[] cities={};
+    String[] items={"ארנק", "מפתחות", "תיק"};
+    String[] areas={"באר שבע", "קריית שמונה", "הרצליה"};
     TextView tvState;
-    AutoCompleteTextView pickItem;
-    ArrayAdapter<String> adapterItems;
+    Button next;
+    AutoCompleteTextView pickItem, pickArea;
+    ArrayAdapter<String> adapterItems, adapterAreas;
+    SelectImageFragment selectImageFragment=new SelectImageFragment();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -33,8 +35,11 @@ public class PostFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_post, container, false);
         tvState=view.findViewById(R.id.message_state);
-        adapterItems = new ArrayAdapter<String>(getActivity(),R.layout.list_item,item);
+        next=view.findViewById(R.id.next);
+        adapterItems = new ArrayAdapter<String>(getActivity(),R.layout.list_item,items);
+        adapterAreas = new ArrayAdapter<String>(getActivity(),R.layout.list_item,areas);
         pickItem = view.findViewById(R.id.list_of_items);
+        pickArea = view.findViewById(R.id.list_of_areas);
         SharedPreferences state = getActivity().getSharedPreferences("state", MODE_PRIVATE);
         String checkState = state.getString("state", "");
         if(checkState.equals("lost")){
@@ -44,10 +49,11 @@ public class PostFragment extends Fragment {
             tvState.setText("מה מצאת?");
         }
         pickItem.setAdapter(adapterItems);
-        pickItem.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        pickArea.setAdapter(adapterAreas);
+        next.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String item = parent.getItemAtPosition(position).toString();
+            public void onClick(View v) {
+                getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, selectImageFragment).commit();
             }
         });
         return view;

@@ -8,6 +8,8 @@
     <string name="התחברות">להתחברות</string>
     <string name="כתובת_אימייל">כתובת אימייל</string>
     <string name="שכחתי_סיסמה">מה המייל איתו נרשמת לאתר? אנחנו מיד נשלח לך אימייל לחידוש הסיסמה</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>
