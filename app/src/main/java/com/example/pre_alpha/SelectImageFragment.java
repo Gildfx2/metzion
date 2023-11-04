@@ -1,15 +1,19 @@
 package com.example.pre_alpha;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
+
+import static com.example.pre_alpha.FBref.refUsers;
+
+import static java.lang.String.valueOf;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -17,7 +21,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
@@ -25,13 +28,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.github.dhaval2404.imagepicker.ImagePicker;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class SelectImageFragment extends Fragment {
@@ -40,10 +50,13 @@ public class SelectImageFragment extends Fragment {
     private static final int STORAGE_REQUEST_CODE = 200;
     private static final int IMAGE_PICK_GALLERY_CODE = 300;
     private static final int IMAGE_PICK_CAMERA_CODE = 400;
+    int postID = 1;
     String cameraPermissions[];
     String storagePermissions[];
+    Button upload;
     ImageView image;
     Uri image_uri;
+    FirebaseAuth auth;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,10 +64,15 @@ public class SelectImageFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_select_image, container, false);
 
+        auth=FirebaseAuth.getInstance();
+
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
+        upload=view.findViewById(R.id.upload);
         image=view.findViewById(R.id.selectImage);
+        FirebaseUser fbUser= auth.getCurrentUser();
+        DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference("Users/" + fbUser.getUid() + "/Posts");
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,6 +80,39 @@ public class SelectImageFragment extends Fragment {
             }
         });
 
+        upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences postName = getActivity().getSharedPreferences("name", MODE_PRIVATE);
+                String name = postName.getString("name", "");
+                SharedPreferences postItem = getActivity().getSharedPreferences("item", MODE_PRIVATE);
+                String item = postItem.getString("item", "");
+                SharedPreferences postArea = getActivity().getSharedPreferences("area", MODE_PRIVATE);
+                String area = postArea.getString("area", "");
+                SharedPreferences postAbout = getActivity().getSharedPreferences("about", MODE_PRIVATE);
+                String about = postAbout.getString("about", "");
+                SharedPreferences state = getActivity().getSharedPreferences("state", MODE_PRIVATE);
+                String checkState = state.getString("state", "");
+                Post post=new Post(name, item, area, about, image_uri.toString(), checkState);
+                DatabaseReference userRef = refUsers.child(fbUser.getUid()).child("Posts");
+                Map<String, Object> update = new HashMap<>();
+                update.put(valueOf(postID), post);
+                userRef.updateChildren(update);
+            }
+        });
+        postsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dS) {
+                for (DataSnapshot data : dS.getChildren()) {
+                    postID++;
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e("FirebaseError", error.getMessage());
+            }
+        });
         return view;
     }
 
@@ -69,7 +120,7 @@ public class SelectImageFragment extends Fragment {
         String options[] = {"מצלמה", "גלריה"};
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("בחר פעולה");
-        builder.setItems((options, new DialogInterface.OnClickListener() {
+        builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(which==0){
@@ -82,10 +133,11 @@ public class SelectImageFragment extends Fragment {
                     if(!checkStoragePermission()){
                         requestStoragePermission();
                     }
-                    pickFromGallery();
+                    else pickFromGallery();
                 }
             }
-        }))
+        });
+        builder.show();
     }
 
     private boolean checkStoragePermission() {
@@ -155,7 +207,7 @@ public class SelectImageFragment extends Fragment {
     }
     private void pickFromGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK);
-        galleryIntent.setType("images/*");
+        galleryIntent.setType("image/*");
         startActivityForResult(galleryIntent, IMAGE_PICK_GALLERY_CODE);
     }
 
@@ -164,18 +216,13 @@ public class SelectImageFragment extends Fragment {
         if(resultCode == RESULT_OK){
             if(requestCode == IMAGE_PICK_GALLERY_CODE){
                 image_uri = data.getData();
-                uploadPostImage(image_uri);
+                image.setImageURI(image_uri);
             }
             if(requestCode == IMAGE_PICK_CAMERA_CODE){
-                uploadPostImage(image_uri);
+                image.setImageURI(image_uri);
             }
         }
-
-
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void uploadPostImage(Uri imageUri) {
-
-    }
 }

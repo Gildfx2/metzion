@@ -18,13 +18,19 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
 
 public class PostFragment extends Fragment {
 
     String[] items={"ארנק", "מפתחות", "תיק"};
     String[] areas={"באר שבע", "קריית שמונה", "הרצליה"};
+    String name, item, area, about;
     TextView tvState;
+    TextInputEditText etName, etAbout;
     Button next;
+    TextInputLayout layoutItem, layoutArea;
     AutoCompleteTextView pickItem, pickArea;
     ArrayAdapter<String> adapterItems, adapterAreas;
     SelectImageFragment selectImageFragment=new SelectImageFragment();
@@ -40,6 +46,10 @@ public class PostFragment extends Fragment {
         adapterAreas = new ArrayAdapter<String>(getActivity(),R.layout.list_item,areas);
         pickItem = view.findViewById(R.id.list_of_items);
         pickArea = view.findViewById(R.id.list_of_areas);
+        layoutItem = view.findViewById(R.id.item);
+        layoutArea = view.findViewById(R.id.area);
+        etName = view.findViewById(R.id.name);
+        etAbout = view.findViewById(R.id.about);
         SharedPreferences state = getActivity().getSharedPreferences("state", MODE_PRIVATE);
         String checkState = state.getString("state", "");
         if(checkState.equals("lost")){
@@ -53,7 +63,41 @@ public class PostFragment extends Fragment {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, selectImageFragment).commit();
+                layoutItem.setHelperText("");
+                layoutArea.setHelperText("");
+                name=etName.getText().toString();
+                item=pickItem.getText().toString();
+                area=pickArea.getText().toString();
+                about=etAbout.getText().toString();
+                if(item.isEmpty()){
+                    layoutItem.setHelperText("אל תשכח לבחור סוג חפץ");
+                }
+                if(area.isEmpty()){
+                    layoutArea.setHelperText("אל תשכח לבחור ישוב");
+                }
+                if(!name.isEmpty() && !item.isEmpty() && !area.isEmpty()) {
+                    SharedPreferences postName = getActivity().getSharedPreferences("name", MODE_PRIVATE);
+                    SharedPreferences postItem = getActivity().getSharedPreferences("item", MODE_PRIVATE);
+                    SharedPreferences postArea = getActivity().getSharedPreferences("area", MODE_PRIVATE);
+                    SharedPreferences postAbout = getActivity().getSharedPreferences("about", MODE_PRIVATE);
+                    SharedPreferences.Editor editorName = postName.edit();
+                    SharedPreferences.Editor editorItem = postItem.edit();
+                    SharedPreferences.Editor editorArea = postArea.edit();
+                    SharedPreferences.Editor editorAbout = postAbout.edit();
+                    editorName.putString("name", name);
+                    editorName.apply();
+                    editorName.commit();
+                    editorItem.putString("item", item);
+                    editorItem.apply();
+                    editorItem.commit();
+                    editorArea.putString("area", area);
+                    editorArea.apply();
+                    editorArea.commit();
+                    editorAbout.putString("about", about);
+                    editorAbout.apply();
+                    editorAbout.commit();
+                    getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, selectImageFragment).commit();
+                }
             }
         });
         return view;
