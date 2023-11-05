@@ -21,9 +21,9 @@ import com.google.firebase.auth.FirebaseUser;
 public class MainActivity extends AppCompatActivity {
     FirebaseAuth auth;
     BottomNavigationView bottomNavigationView;
-    HomeFragment homeFragment=new HomeFragment();
+    public HomeFragment homeFragment=new HomeFragment();
     SearchFragment searchFragment=new SearchFragment();
-    PostFragment postFragment=new PostFragment();
+    PostFragment postFragment;
     FavouriteFragment favouriteFragment=new FavouriteFragment();
     UserFragment userFragment=new UserFragment();
     Dialog dialog;
@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
                                 editor.apply();
                                 editor.commit();
                                 dialog.cancel();
+                                if(postFragment!=null) postFragment.tvState.setText("מה איבדת?");
+                                else postFragment=new PostFragment();
                                 getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, postFragment).commit();
                             }
                         });
@@ -71,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
                                 editor.apply();
                                 editor.commit();
                                 dialog.cancel();
+                                if(postFragment!=null) postFragment.tvState.setText("מה מצאת?");
+                                else postFragment=new PostFragment();
                                 getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, postFragment).commit();
                             }
                         });
@@ -87,8 +91,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
     }
+
+
+
 
 
 }

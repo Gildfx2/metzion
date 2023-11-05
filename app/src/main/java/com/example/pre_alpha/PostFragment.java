@@ -24,8 +24,9 @@ import com.google.android.material.textfield.TextInputLayout;
 
 public class PostFragment extends Fragment {
 
-    String[] items={"ארנק", "מפתחות", "תיק"};
-    String[] areas={"באר שבע", "קריית שמונה", "הרצליה"};
+    String[] items={"ארנק", "תיק", "סמארטפון", "משקפי ראייה / שמש","שעון חכם", "מצלמה" ,"תעודת זהות / דרכון", "רישיון נהיגה", "חוגר / חוגרון", "כרטיס רב קו", "כרטיסים כללי", "מפתחות בית / רכב", "שקית / שקית קניות", "אוזניות / קייס אוזניות", "שרשרת / תיליון", "צמיד", "טבעת", "תפילין", "כובע חרדי / שטריימל", "מחשב נייד", "מטען", "כרטיס זיכרון / דיסק און קיי", "מעיל / סווטשירט", "קיטבג / מזוודה", "מכשיר שמיעה", "אחר"};
+    String[] areas={"ירושלים", "תל אביב-יפו","חיפה","ראשון לציון", "פתח תקווה", "אשדוד", "נתניה", "באר שבע", "בני ברק", "חולון", "רמת גן", "אשקלון", "רחובות", "בית שמש", "בת ים", "כפר סבא","הרצליה", "חדרה", "מודיעין", "לוד", "נצרת", "רמלה", "רעננה", "רהט", "ראש העין", "הוד השרון", "ביתר עילית", "גבעתיים", "קריית אתא", "נהריה", "קריית גת", "אום אל-פחם", "עפולה", "אילת", "נס ציונה", "עכו", "יבנה", "אלעד", "רמת השרון", "כרמיאל", "טבריה", "קריית מוצקין",
+            "טייבה", "שפרעם", "נוף הגליל", "קריית ביאליק", "קריית אונו", "קריית ים", "נתיבות", "מעלה אדומים", "אור יהודה", "צפת", "דימונה", "טמרה", "אופקים", "סח'נין", "באקה אל-גרבייה", "יהוד-מונוסון", "שדרות", "באר יעקב", "גבעת שמואל", "ערד", "טירה", "עראבה", "כפר יונה", "מגדל העמק", "קריית מלאכי", "כפר קאסם", "טירת כרמל", "יקנעם עילית", "נשר", "קלנסווה", "קריית שמונה", "מעלות-תרשיחא", "אריאל", "אור עקיבא", "בית שאן"};
     String name, item, area, about;
     TextView tvState;
     TextInputEditText etName, etAbout;
@@ -48,16 +49,12 @@ public class PostFragment extends Fragment {
         pickArea = view.findViewById(R.id.list_of_areas);
         layoutItem = view.findViewById(R.id.item);
         layoutArea = view.findViewById(R.id.area);
-        etName = view.findViewById(R.id.name);
-        etAbout = view.findViewById(R.id.about);
         SharedPreferences state = getActivity().getSharedPreferences("state", MODE_PRIVATE);
         String checkState = state.getString("state", "");
-        if(checkState.equals("lost")){
-            tvState.setText("מה איבדת?");
-        }
-        else if (checkState.equals("found")) {
-            tvState.setText("מה מצאת?");
-        }
+        if(checkState.equals("lost")) tvState.setText("מה איבדת?");
+        else tvState.setText("מה מצאת?");
+        etName = view.findViewById(R.id.name);
+        etAbout = view.findViewById(R.id.about);
         pickItem.setAdapter(adapterItems);
         pickArea.setAdapter(adapterAreas);
         next.setOnClickListener(new View.OnClickListener() {
@@ -102,4 +99,7 @@ public class PostFragment extends Fragment {
         });
         return view;
     }
+
+
+
 }

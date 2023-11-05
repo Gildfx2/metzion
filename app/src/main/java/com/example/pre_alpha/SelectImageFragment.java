@@ -9,6 +9,7 @@ import static java.lang.String.valueOf;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,6 +33,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -50,13 +52,16 @@ public class SelectImageFragment extends Fragment {
     private static final int STORAGE_REQUEST_CODE = 200;
     private static final int IMAGE_PICK_GALLERY_CODE = 300;
     private static final int IMAGE_PICK_CAMERA_CODE = 400;
-    int postID = 1;
     String cameraPermissions[];
     String storagePermissions[];
-    Button upload;
+    Button upload, btnUpload;
     ImageView image;
     Uri image_uri;
     FirebaseAuth auth;
+    Dialog dialog;
+    Post post;
+    BottomNavigationView bottomNavigationView;
+    HomeFragment homeFragment = new HomeFragment();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,6 +71,7 @@ public class SelectImageFragment extends Fragment {
 
         auth=FirebaseAuth.getInstance();
 
+        bottomNavigationView=getActivity().findViewById(R.id.bottomNavigationBar);
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
@@ -93,24 +99,37 @@ public class SelectImageFragment extends Fragment {
                 String about = postAbout.getString("about", "");
                 SharedPreferences state = getActivity().getSharedPreferences("state", MODE_PRIVATE);
                 String checkState = state.getString("state", "");
-                Post post=new Post(name, item, area, about, image_uri.toString(), checkState);
+                if(image_uri!=null){
+                    post=new Post(name, item, area, about, image_uri.toString(), checkState);
+                }
+                else{
+                    post=new Post(name, item, area, about, "", checkState);
+                }
                 DatabaseReference userRef = refUsers.child(fbUser.getUid()).child("Posts");
                 Map<String, Object> update = new HashMap<>();
-                update.put(valueOf(postID), post);
-                userRef.updateChildren(update);
-            }
-        });
-        postsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dS) {
-                for (DataSnapshot data : dS.getChildren()) {
-                    postID++;
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.e("FirebaseError", error.getMessage());
+                String postUid = postsRef.push().getKey();
+                update.put(postUid, post);
+                userRef.updateChildren(update, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                        if (error == null) {
+                            dialog=new Dialog(getActivity());
+                            dialog.setContentView(R.layout.upload_post_dialog_layout);
+                            btnUpload=dialog.findViewById(R.id.uploadSuccessfully);
+                            btnUpload.setOnClickListener(new View.OnClickListener(){
+                                public void onClick(View view){
+                                    dialog.cancel();
+                                    getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, homeFragment).commit();
+                                    bottomNavigationView.setSelectedItemId(R.id.home);
+                                    bottomNavigationView.setItemIconTintList(null);
+                                }
+                            });
+                            dialog.show();
+                        } else {
+                            Toast.makeText(getActivity(), "העלאת המודעה נכשלה", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
         });
         return view;

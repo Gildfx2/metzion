@@ -40,6 +40,7 @@
             android:layout_marginEnd="30dp"/>
 
         <com.google.android.material.textfield.TextInputLayout
+            android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
@@ -48,10 +49,11 @@
             app:helperTextEnabled="true"
             app:counterEnabled="true"
             app:counterMaxLength="30"
-            app:boxStrokeErrorColor="#6f1d1b"
             app:endIconMode="clear_text"
+            app:boxStrokeErrorColor="#6f1d1b"
+            app:boxStrokeColor="@color/brown"
+            app:hintTextColor="@color/black"
             app:helperTextTextColor="@color/black"
-            app:boxStrokeColor="#8a5d3d"
             app:hintEnabled="false">
             <com.google.android.material.textfield.TextInputEditText
                 android:hint="עד שלושים תווים"
@@ -73,6 +75,8 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="30dp"/>
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
             android:id="@+id/item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -81,10 +85,9 @@
             android:hint="בחירת חפץ"
             app:helperTextEnabled="true"
             app:helperText=""
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            app:boxStrokeColor="#8a5d3d"
-            app:helperTextTextColor="@color/black"
-            >
+            app:boxStrokeColor="@color/brown"
+            app:hintTextColor="@color/black"
+            app:helperTextTextColor="@color/black">
             <AutoCompleteTextView
                 android:id="@+id/list_of_items"
                 android:layout_width="match_parent"
@@ -104,23 +107,25 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="30dp"/>
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
             android:id="@+id/area"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginHorizontal="20dp"
             android:hint="בחירת ישוב"
+            app:boxStrokeColor="@color/brown"
+            app:hintTextColor="@color/black"
             app:helperTextTextColor="@color/black"
             app:helperTextEnabled="true"
-            app:helperText=""
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            app:boxStrokeColor="#8a5d3d">
+            app:helperText="">
             <AutoCompleteTextView
                 android:id="@+id/list_of_areas"
                 android:fontFamily="@font/rubik_regular"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none"
+                android:inputType="text"
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -134,6 +139,7 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="30dp"/>
         <com.google.android.material.textfield.TextInputLayout
+            android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
             android:layout_width="match_parent"
             android:layout_height="160dp"
             android:layout_marginHorizontal="20dp"
@@ -141,7 +147,8 @@
             app:counterEnabled="true"
             app:counterMaxLength="400"
             app:boxStrokeErrorColor="#6f1d1b"
-            app:boxStrokeColor="#8a5d3d"
+            app:boxStrokeColor="@color/brown"
+            app:hintTextColor="@color/black"
             app:hintEnabled="false">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/about"

@@ -94,7 +94,7 @@ public class Register extends AppCompatActivity {
         password=etPassword.getText().toString();
         confirmPassword=etConPassword.getText().toString();
         if(!validateEmail(email)) layoutEmail.setHelperText("אימייל לא תקין");
-        if(!validateUsername(username)) layoutUsername.setHelperText("השם משתמש צריך לכלול לפחות 3 תווים, להתחיל באות קטנה או אות גדולה, ללא רווחים");
+        if(!validateUsername(username)) layoutUsername.setHelperText("השם משתמש צריך לכלול לפחות 3 תווים, להתחיל באות מסוימת, ללא רווחים");
         if(!validatePassword(password)) layoutPassword.setHelperText("הסיסמה צריכה לכלול לפחות 6 תווים, אות קטנה אחת, מספר אחד");
         else if(!password.equals(confirmPassword)) {
             layoutConfirmPassword.setHelperText("הסיסמאות לא תואמות אחת לשנייה");
@@ -177,7 +177,7 @@ public class Register extends AppCompatActivity {
     }
     public static boolean validateUsername(String username) {
         if (username == null && username.isEmpty()) return false;
-        String usernameRegex = "^[A-Za-z]\\w{2,24}$";
+        String usernameRegex = "^[A-Za-zא-ת]\\w{2,24}$";
         //השם משתמש חייב להכיל בין 3-25 תווים שחייבים להתחיל באות קטנה או אות גדולה
         //נ.ב אסור שיהיו רווחים
         Pattern pattern = Pattern.compile(usernameRegex);

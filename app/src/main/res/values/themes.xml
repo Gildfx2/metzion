@@ -6,4 +6,8 @@
     </style>
 
     <style name="Theme.Prealpha" parent="Base.Theme.Prealpha" />
+
+    <style name="ThemeOverlay.AppTheme.TextInputEditText.Outlined" parent="">
+        <item name="colorControlActivated">@color/brown</item>
+    </style>
 </resources>

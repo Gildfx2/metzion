@@ -29,6 +29,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
@@ -39,7 +40,7 @@
         android:id="@+id/layoutEmail1"
         app:helperTextTextColor="@color/black"
         app:boxStrokeErrorColor="#6f1d1b"
-        app:boxStrokeColor="#8a5d3d"
+        app:boxStrokeColor="@color/brown"
         app:hintTextColor="@color/black"
         app:startIconDrawable="@drawable/baseline_email_24">
         <com.google.android.material.textfield.TextInputEditText
@@ -51,6 +52,7 @@
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
@@ -64,10 +66,9 @@
         android:id="@+id/layoutPassword1"
         app:helperTextTextColor="@color/black"
         app:boxStrokeErrorColor="#6f1d1b"
-        app:boxStrokeColor="#8a5d3d"
+        app:boxStrokeColor="@color/brown"
         app:hintTextColor="@color/black"
-        app:startIconDrawable="@drawable/baseline_lock_24"
-        >
+        app:startIconDrawable="@drawable/baseline_lock_24">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/pass"
             android:textColor="@color/black"
@@ -85,7 +86,7 @@
         android:gravity="center"
         android:textSize="22sp"
         android:onClick="forgotPassword"
-        android:textColor="#8a5d3d"
+        android:textColor="@color/brown"
         android:fontFamily="@font/aharoniclm_boldoblique"
         />
     <Button
@@ -114,7 +115,7 @@
             android:onClick="createAccount"
             android:gravity="center"
             android:textSize="30sp"
-            android:textColor="#8a5d3d"
+            android:textColor="@color/brown"
             android:fontFamily="@font/rubik_medium_italic"
             />
         <TextView
