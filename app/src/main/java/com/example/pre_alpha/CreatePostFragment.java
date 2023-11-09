@@ -2,8 +2,6 @@ package com.example.pre_alpha;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import android.app.Dialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -12,7 +10,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -22,7 +19,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 
-public class PostFragment extends Fragment {
+public class CreatePostFragment extends Fragment {
 
     String[] items={"ארנק", "תיק", "סמארטפון", "משקפי ראייה / שמש","שעון חכם", "מצלמה" ,"תעודת זהות / דרכון", "רישיון נהיגה", "חוגר / חוגרון", "כרטיס רב קו", "כרטיסים כללי", "מפתחות בית / רכב", "שקית / שקית קניות", "אוזניות / קייס אוזניות", "שרשרת / תיליון", "צמיד", "טבעת", "תפילין", "כובע חרדי / שטריימל", "מחשב נייד", "מטען", "כרטיס זיכרון / דיסק און קיי", "מעיל / סווטשירט", "קיטבג / מזוודה", "מכשיר שמיעה", "אחר"};
     String[] areas={"ירושלים", "תל אביב-יפו","חיפה","ראשון לציון", "פתח תקווה", "אשדוד", "נתניה", "באר שבע", "בני ברק", "חולון", "רמת גן", "אשקלון", "רחובות", "בית שמש", "בת ים", "כפר סבא","הרצליה", "חדרה", "מודיעין", "לוד", "נצרת", "רמלה", "רעננה", "רהט", "ראש העין", "הוד השרון", "ביתר עילית", "גבעתיים", "קריית אתא", "נהריה", "קריית גת", "אום אל-פחם", "עפולה", "אילת", "נס ציונה", "עכו", "יבנה", "אלעד", "רמת השרון", "כרמיאל", "טבריה", "קריית מוצקין",

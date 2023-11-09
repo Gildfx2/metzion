@@ -3,9 +3,9 @@ package com.example.pre_alpha;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.example.pre_alpha.FBref.FBDB;
 import static com.example.pre_alpha.FBref.refUsers;
 
-import static java.lang.String.valueOf;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -33,6 +33,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -41,7 +46,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -52,16 +61,22 @@ public class SelectImageFragment extends Fragment {
     private static final int STORAGE_REQUEST_CODE = 200;
     private static final int IMAGE_PICK_GALLERY_CODE = 300;
     private static final int IMAGE_PICK_CAMERA_CODE = 400;
-    String cameraPermissions[];
-    String storagePermissions[];
+    String[] cameraPermissions;
+    String[] storagePermissions;
     Button upload, btnUpload;
     ImageView image;
     Uri image_uri;
     FirebaseAuth auth;
     Dialog dialog;
     Post post;
+    FirebaseUser fbUser;
     BottomNavigationView bottomNavigationView;
     HomeFragment homeFragment = new HomeFragment();
+    String storagePath = "Users_Posts_Images/";
+    Uri downloadUri;
+    String postUid;
+    StorageReference storageReference;
+    User user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -69,6 +84,7 @@ public class SelectImageFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_select_image, container, false);
 
+        storageReference= FirebaseStorage.getInstance().getReference();
         auth=FirebaseAuth.getInstance();
 
         bottomNavigationView=getActivity().findViewById(R.id.bottomNavigationBar);
@@ -77,7 +93,7 @@ public class SelectImageFragment extends Fragment {
 
         upload=view.findViewById(R.id.upload);
         image=view.findViewById(R.id.selectImage);
-        FirebaseUser fbUser= auth.getCurrentUser();
+        fbUser= auth.getCurrentUser();
         DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference("Users/" + fbUser.getUid() + "/Posts");
         image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,52 +105,82 @@ public class SelectImageFragment extends Fragment {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences postName = getActivity().getSharedPreferences("name", MODE_PRIVATE);
-                String name = postName.getString("name", "");
-                SharedPreferences postItem = getActivity().getSharedPreferences("item", MODE_PRIVATE);
-                String item = postItem.getString("item", "");
-                SharedPreferences postArea = getActivity().getSharedPreferences("area", MODE_PRIVATE);
-                String area = postArea.getString("area", "");
-                SharedPreferences postAbout = getActivity().getSharedPreferences("about", MODE_PRIVATE);
-                String about = postAbout.getString("about", "");
-                SharedPreferences state = getActivity().getSharedPreferences("state", MODE_PRIVATE);
-                String checkState = state.getString("state", "");
-                if(image_uri!=null){
-                    post=new Post(name, item, area, about, image_uri.toString(), checkState);
-                }
-                else{
-                    post=new Post(name, item, area, about, "", checkState);
-                }
-                DatabaseReference userRef = refUsers.child(fbUser.getUid()).child("Posts");
-                Map<String, Object> update = new HashMap<>();
-                String postUid = postsRef.push().getKey();
-                update.put(postUid, post);
-                userRef.updateChildren(update, new DatabaseReference.CompletionListener() {
+                DatabaseReference userReference = FirebaseDatabase.getInstance().getReference("Users/" + fbUser.getUid());
+                userReference.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                        if (error == null) {
-                            dialog=new Dialog(getActivity());
-                            dialog.setContentView(R.layout.upload_post_dialog_layout);
-                            btnUpload=dialog.findViewById(R.id.uploadSuccessfully);
-                            btnUpload.setOnClickListener(new View.OnClickListener(){
-                                public void onClick(View view){
-                                    dialog.cancel();
-                                    getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, homeFragment).commit();
-                                    bottomNavigationView.setSelectedItemId(R.id.home);
-                                    bottomNavigationView.setItemIconTintList(null);
-                                }
-                            });
-                            dialog.show();
-                        } else {
-                            Toast.makeText(getActivity(), "העלאת המודעה נכשלה", Toast.LENGTH_SHORT).show();
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            user = dataSnapshot.getValue(User.class);
                         }
                     }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e("FirebaseData", "Database Error: " + databaseError.getMessage());
+                    }
                 });
+                postUid = postsRef.push().getKey();
+                String filePathAndName = storagePath + "image" + "_" + postUid;
+                StorageReference storageReference2 = storageReference.child(filePathAndName);
+                if(image_uri!=null) {
+                    storageReference2.putFile(image_uri)
+                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                                    while (!uriTask.isSuccessful()) ;
+                                    downloadUri = uriTask.getResult();
+                                    updateDatabase();
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+                else
+                    updateDatabase();
             }
         });
         return view;
     }
 
+    private void updateDatabase(){
+        SharedPreferences postName = getActivity().getSharedPreferences("name", MODE_PRIVATE);
+        String name = postName.getString("name", "");
+        SharedPreferences postItem = getActivity().getSharedPreferences("item", MODE_PRIVATE);
+        String item = postItem.getString("item", "");
+        SharedPreferences postArea = getActivity().getSharedPreferences("area", MODE_PRIVATE);
+        String area = postArea.getString("area", "");
+        SharedPreferences postAbout = getActivity().getSharedPreferences("about", MODE_PRIVATE);
+        String about = postAbout.getString("about", "");
+        SharedPreferences state = getActivity().getSharedPreferences("state", MODE_PRIVATE);
+        String checkState = state.getString("state", "");
+        if(image_uri!=null){
+            post=new Post(name, item, area, about, downloadUri.toString(), checkState);
+        }
+        else{
+            post=new Post(name, item, area, about, "https://firebasestorage.googleapis.com/v0/b/realtinedb.appspot.com/o/Users_Posts_Images%2Fdefault_image?alt=media&token=5e89c625-ea45-40c0-ad9b-5dd2e37a3e17", checkState);
+        }
+        refUsers.child(fbUser.getUid()).child("Posts").child(postUid).setValue(post)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        dialog=new Dialog(getActivity());
+                        dialog.setContentView(R.layout.upload_post_dialog_layout);
+                        btnUpload=dialog.findViewById(R.id.uploadSuccessfully);
+                        btnUpload.setOnClickListener(new View.OnClickListener(){
+                            public void onClick(View view){
+                                dialog.cancel();
+                                getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, homeFragment).commit();
+                                bottomNavigationView.setSelectedItemId(R.id.home);
+                                bottomNavigationView.setItemIconTintList(null);
+                            }
+                        });
+                        dialog.show();
+                    }
+                });
+    }
     private void showImageDialog(){
         String options[] = {"מצלמה", "גלריה"};
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -160,7 +206,7 @@ public class SelectImageFragment extends Fragment {
     }
 
     private boolean checkStoragePermission() {
-        boolean result= ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        boolean result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == (PackageManager.PERMISSION_GRANTED);
         return result;
 
@@ -170,7 +216,7 @@ public class SelectImageFragment extends Fragment {
     }
 
     private boolean checkCameraPermission() {
-        boolean result1= ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.CAMERA)
+        boolean result1 = ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED;
         boolean result2= ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED;
@@ -191,7 +237,7 @@ public class SelectImageFragment extends Fragment {
                         pickFromCamera();
                     }
                     else{
-                        Toast.makeText(getActivity(),"Please enable camera and storage permissions", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),"בבקשה תאשר את בקשות המצלמה והאחסון", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -203,13 +249,12 @@ public class SelectImageFragment extends Fragment {
                         pickFromGallery();
                     }
                     else{
-                        Toast.makeText(getActivity(),"Please enable storage permission", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),"בבקשה תאשר את בקשת האחסון", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
             break;
         }
-
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
@@ -243,5 +288,6 @@ public class SelectImageFragment extends Fragment {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
 
 }

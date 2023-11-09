@@ -3,27 +3,27 @@ package com.example.pre_alpha;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
+import com.example.pre_alpha.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+
+
 
 public class MainActivity extends AppCompatActivity {
     FirebaseAuth auth;
     BottomNavigationView bottomNavigationView;
     public HomeFragment homeFragment=new HomeFragment();
     SearchFragment searchFragment=new SearchFragment();
-    PostFragment postFragment;
+    CreatePostFragment createPostFragment;
     FavouriteFragment favouriteFragment=new FavouriteFragment();
     UserFragment userFragment=new UserFragment();
     Dialog dialog;
@@ -60,9 +60,9 @@ public class MainActivity extends AppCompatActivity {
                                 editor.apply();
                                 editor.commit();
                                 dialog.cancel();
-                                if(postFragment!=null) postFragment.tvState.setText("מה איבדת?");
-                                else postFragment=new PostFragment();
-                                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, postFragment).commit();
+                                if(createPostFragment !=null) createPostFragment.tvState.setText("מה איבדת?");
+                                else createPostFragment =new CreatePostFragment();
+                                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, createPostFragment).commit();
                             }
                         });
                         found.setOnClickListener(new View.OnClickListener(){
@@ -73,9 +73,9 @@ public class MainActivity extends AppCompatActivity {
                                 editor.apply();
                                 editor.commit();
                                 dialog.cancel();
-                                if(postFragment!=null) postFragment.tvState.setText("מה מצאת?");
-                                else postFragment=new PostFragment();
-                                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, postFragment).commit();
+                                if(createPostFragment !=null) createPostFragment.tvState.setText("מה מצאת?");
+                                else createPostFragment =new CreatePostFragment();
+                                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, createPostFragment).commit();
                             }
                         });
                         dialog.show();
