@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".DetailedPostFragment"
-    android:orientation="vertical">
+    tools:context=".DetailedPostFragment">
     <ImageView
         android:id="@+id/return_back"
         android:layout_width="40dp"
@@ -14,7 +13,6 @@
         android:layout_gravity="right"
         android:layout_marginTop="25dp"
         android:layout_marginEnd="10dp"/>
-
     <LinearLayout
         android:layout_marginTop="50dp"
         android:layout_width="match_parent"
@@ -34,6 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:cardCornerRadius="20dp"
+            android:layout_marginTop="20dp"
             android:layout_gravity="center">
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/post_image"
@@ -49,7 +48,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/rubik_medium"
             android:layout_gravity="right"
-            android:textSize="30sp"
+            android:textSize="20sp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="24dp"
             android:text="" />
@@ -59,7 +58,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/rubik_medium"
             android:layout_gravity="right"
-            android:textSize="30sp"
+            android:textSize="20sp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="24dp"
             android:text="" />
@@ -69,7 +68,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/rubik_regular"
             android:layout_gravity="right"
-            android:textSize="20sp"
+            android:textSize="15sp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="24dp"
             android:text="" />

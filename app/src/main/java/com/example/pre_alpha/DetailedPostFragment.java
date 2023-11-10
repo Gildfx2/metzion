@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,13 +19,11 @@ import com.bumptech.glide.Glide;
 public class DetailedPostFragment extends Fragment {
     TextView tvName, tvItem, tvArea, tvAbout;
     ImageView ivImage;
-    Button returnBack;
-    ListPostFragment listPostFragment = new ListPostFragment();
+    ImageView returnBack;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_detailed_post, container, false);
         tvName=view.findViewById(R.id.post_name);
         tvItem=view.findViewById(R.id.post_item);
@@ -40,9 +39,9 @@ public class DetailedPostFragment extends Fragment {
         String about = bundle.getString("about");
         String image = bundle.getString("image");
         tvName.setText(name);
-        tvItem.setText(item);
-        tvArea.setText(area);
-        tvAbout.setText(about);
+        tvItem.setText("שם החפץ: "+item);
+        tvArea.setText("שם הישוב: "+area);
+        tvAbout.setText("פרטים:\n"+about);
         if(!image.isEmpty())
             Glide.with(this)
                     .load(Uri.parse(image))
@@ -51,7 +50,11 @@ public class DetailedPostFragment extends Fragment {
         returnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, listPostFragment).commit();
+                ListPostFragment listPostFragment = new ListPostFragment();
+                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                transaction.replace(R.id.frameLayout, listPostFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
         });
         return view;
