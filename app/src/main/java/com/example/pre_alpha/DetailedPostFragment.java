@@ -1,0 +1,59 @@
+package com.example.pre_alpha;
+
+import android.net.Uri;
+import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+
+
+public class DetailedPostFragment extends Fragment {
+    TextView tvName, tvItem, tvArea, tvAbout;
+    ImageView ivImage;
+    Button returnBack;
+    ListPostFragment listPostFragment = new ListPostFragment();
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_detailed_post, container, false);
+        tvName=view.findViewById(R.id.post_name);
+        tvItem=view.findViewById(R.id.post_item);
+        tvArea=view.findViewById(R.id.post_area);
+        tvAbout=view.findViewById(R.id.post_about);
+        ivImage=view.findViewById(R.id.post_image);
+        returnBack=view.findViewById(R.id.return_back);
+
+        Bundle bundle = this.getArguments();
+        String name = bundle.getString("name");
+        String item = bundle.getString("item");
+        String area = bundle.getString("area");
+        String about = bundle.getString("about");
+        String image = bundle.getString("image");
+        tvName.setText(name);
+        tvItem.setText(item);
+        tvArea.setText(area);
+        tvAbout.setText(about);
+        if(!image.isEmpty())
+            Glide.with(this)
+                    .load(Uri.parse(image))
+                    .into(ivImage);
+
+        returnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, listPostFragment).commit();
+            }
+        });
+        return view;
+    }
+}

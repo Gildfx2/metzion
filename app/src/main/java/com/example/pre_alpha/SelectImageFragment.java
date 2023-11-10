@@ -4,6 +4,7 @@ import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
 import static com.example.pre_alpha.FBref.FBDB;
+import static com.example.pre_alpha.FBref.refPosts;
 import static com.example.pre_alpha.FBref.refUsers;
 
 
@@ -76,7 +77,6 @@ public class SelectImageFragment extends Fragment {
     Uri downloadUri;
     String postUid;
     StorageReference storageReference;
-    User user;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -105,19 +105,6 @@ public class SelectImageFragment extends Fragment {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference userReference = FirebaseDatabase.getInstance().getReference("Users/" + fbUser.getUid());
-                userReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            user = dataSnapshot.getValue(User.class);
-                        }
-                    }
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.e("FirebaseData", "Database Error: " + databaseError.getMessage());
-                    }
-                });
                 postUid = postsRef.push().getKey();
                 String filePathAndName = storagePath + "image" + "_" + postUid;
                 StorageReference storageReference2 = storageReference.child(filePathAndName);
@@ -157,29 +144,34 @@ public class SelectImageFragment extends Fragment {
         SharedPreferences state = getActivity().getSharedPreferences("state", MODE_PRIVATE);
         String checkState = state.getString("state", "");
         if(image_uri!=null){
-            post=new Post(name, item, area, about, downloadUri.toString(), checkState);
+            post=new Post(name, item, area, about, downloadUri.toString(), checkState, fbUser.getUid());
         }
         else{
-            post=new Post(name, item, area, about, "https://firebasestorage.googleapis.com/v0/b/realtinedb.appspot.com/o/Users_Posts_Images%2Fdefault_image?alt=media&token=5e89c625-ea45-40c0-ad9b-5dd2e37a3e17", checkState);
+            post=new Post(name, item, area, about, "", checkState, fbUser.getUid());
         }
-        refUsers.child(fbUser.getUid()).child("Posts").child(postUid).setValue(post)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        dialog=new Dialog(getActivity());
-                        dialog.setContentView(R.layout.upload_post_dialog_layout);
-                        btnUpload=dialog.findViewById(R.id.uploadSuccessfully);
-                        btnUpload.setOnClickListener(new View.OnClickListener(){
-                            public void onClick(View view){
-                                dialog.cancel();
-                                getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, homeFragment).commit();
-                                bottomNavigationView.setSelectedItemId(R.id.home);
-                                bottomNavigationView.setItemIconTintList(null);
+        refPosts.child(postUid).setValue(post).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                refUsers.child(fbUser.getUid()).child("Posts").child(postUid).setValue(post)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                dialog=new Dialog(getActivity());
+                                dialog.setContentView(R.layout.upload_post_dialog_layout);
+                                btnUpload=dialog.findViewById(R.id.uploadSuccessfully);
+                                btnUpload.setOnClickListener(new View.OnClickListener(){
+                                    public void onClick(View view){
+                                        dialog.cancel();
+                                        getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, homeFragment).commit();
+                                        bottomNavigationView.setSelectedItemId(R.id.home);
+                                        bottomNavigationView.setItemIconTintList(null);
+                                    }
+                                });
+                                dialog.show();
                             }
                         });
-                        dialog.show();
-                    }
-                });
+            }
+        });
     }
     private void showImageDialog(){
         String options[] = {"מצלמה", "גלריה"};

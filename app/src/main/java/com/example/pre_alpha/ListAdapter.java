@@ -32,9 +32,11 @@ public class ListAdapter extends ArrayAdapter<ListData>{
         TextView name = view.findViewById(R.id.name);
         TextView area = view.findViewById(R.id.area);
 
-        Glide.with(this.getContext()).
-                load(listData.image)
-                .into(image);
+        if(listData!=null && listData.image!=null) {
+            Glide.with(this.getContext())
+                    .load(listData.image)
+                    .into(image);
+        }
         item.setText(listData.item);
         name.setText(listData.name);
         area.setText(listData.area);

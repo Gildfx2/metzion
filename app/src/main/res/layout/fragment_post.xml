@@ -145,7 +145,7 @@
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="10dp"
             app:counterEnabled="true"
-            app:counterMaxLength="400"
+            app:counterMaxLength="150"
             app:boxStrokeErrorColor="#6f1d1b"
             app:boxStrokeColor="@color/brown"
             app:hintTextColor="@color/black"

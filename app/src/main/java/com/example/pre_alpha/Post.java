@@ -7,14 +7,16 @@ public class Post {
     private String about;
     private String image;
     private String lostOrFound;
+    private String creatorUid;
     public Post(){}
-    public Post(String name, String item, String area, String about, String image, String lostOrFound){
+    public Post(String name, String item, String area, String about, String image, String lostOrFound, String creatorUid){
         this.name=name;
         this.item=item;
         this.area=area;
         this.about=about;
         this.image=image;
         this.lostOrFound=lostOrFound;
+        this.creatorUid=creatorUid;
     }
 
     public String getName() {
@@ -44,17 +46,26 @@ public class Post {
     public void setAbout(String about) {
         this.about=about;
     }
+
     public String getImage() {
         return image;
     }
     public void setImage(String image) {
         this.image=image;
     }
+
     public String getLostOrFound() {
         return lostOrFound;
     }
     public void setLostOrFound(String lostOrFound) {
         this.lostOrFound=lostOrFound;
+    }
+
+    public String getCreatorUid() {
+        return creatorUid;
+    }
+    public void setCreatorUid(String creatorUid) {
+        this.creatorUid=creatorUid;
     }
 
 }

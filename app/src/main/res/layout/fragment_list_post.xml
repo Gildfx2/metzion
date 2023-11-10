@@ -14,6 +14,6 @@
         tools:listitem="@layout/list_of_items"
         android:layout_gravity="center"
         android:divider="@color/white"
-        android:dividerHeight="5.0sp"/>
+        android:dividerHeight="10.0sp"/>
 
 </FrameLayout>

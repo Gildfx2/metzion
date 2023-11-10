@@ -66,10 +66,11 @@ public class CreatePostFragment extends Fragment {
                 if(item.isEmpty()){
                     layoutItem.setHelperText("אל תשכח לבחור סוג חפץ");
                 }
+
                 if(area.isEmpty()){
                     layoutArea.setHelperText("אל תשכח לבחור ישוב");
                 }
-                if(!name.isEmpty() && !item.isEmpty() && !area.isEmpty()) {
+                if(!name.isEmpty() && !item.isEmpty() && !area.isEmpty() && name.length()<=30 && about.length()<=150) {
                     SharedPreferences postName = getActivity().getSharedPreferences("name", MODE_PRIVATE);
                     SharedPreferences postItem = getActivity().getSharedPreferences("item", MODE_PRIVATE);
                     SharedPreferences postArea = getActivity().getSharedPreferences("area", MODE_PRIVATE);
@@ -97,6 +98,12 @@ public class CreatePostFragment extends Fragment {
         return view;
     }
 
-
-
+    @Override
+    public void onPause() {
+        etName.setText("");
+        pickItem.setText("");
+        pickArea.setText("");
+        etAbout.setText("");
+        super.onPause();
+    }
 }

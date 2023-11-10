@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 import static com.example.pre_alpha.FBref.FBDB;
 import static com.example.pre_alpha.FBref.refUsers;
+import static com.example.pre_alpha.FBref.refPosts;
 
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -18,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputBinding;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -41,19 +43,14 @@ public class ListPostFragment extends Fragment {
     ListData listData;
     Uri image_uri;
     FragmentListPostBinding binding;
+    DetailedPostFragment detailedPostFragment = new DetailedPostFragment();
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentListPostBinding.inflate(inflater, container, false);
-        FirebaseUser fbUser= FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference refPosts=FBDB.getReference("Users/" +fbUser.getUid()+ "/Posts");
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dS) {
@@ -78,32 +75,46 @@ public class ListPostFragment extends Fragment {
         return binding.getRoot();
     }
 
-    private void showPosts(){
+    private void showPosts() {
         SharedPreferences listState = getActivity().getSharedPreferences("list_state", MODE_PRIVATE);
         String checkListState = listState.getString("list_state", "");
-        if(checkListState.equals("found")){
-            for(Post foundValue : foundValues) {
-                if(!foundValue.getImage().isEmpty()){
+        if (checkListState.equals("found")) {
+            for (Post foundValue : foundValues) {
+                if (!foundValue.getImage().isEmpty()) {
                     image_uri = Uri.parse(foundValue.getImage());
                     listData = new ListData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), image_uri, foundValue.getAbout());
-                }
-                //else listData = new ListData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), defaultImage, foundValue.getAbout());
+                } else
+                    listData = new ListData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), null, foundValue.getAbout());
                 arrayList.add(listData);
             }
-        }
-        else{
-            for(Post lostValue : lostValues) {
-                if(lostValue.getImage()!=null){
-                    image_uri= Uri.parse(lostValue.getImage());
+        } else {
+            for (Post lostValue : lostValues) {
+                if (lostValue.getImage() != null) {
+                    image_uri = Uri.parse(lostValue.getImage());
                     listData = new ListData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), image_uri, lostValue.getAbout());
-                }
-                //else listData = new ListData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), defaultImage, lostValue.getAbout());
+                } else
+                    listData = new ListData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), null, lostValue.getAbout());
                 arrayList.add(listData);
             }
         }
-        listAdapter= new ListAdapter(getActivity(),arrayList);
+        listAdapter = new ListAdapter(getActivity(), arrayList);
         binding.listOfPosts.setAdapter(listAdapter);
         binding.listOfPosts.setClickable(true);
+        binding.listOfPosts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Bundle bundle = new Bundle();
+                bundle.putString("name", arrayList.get(position).name.toString());
+                bundle.putString("item", arrayList.get(position).item.toString());
+                bundle.putString("area", arrayList.get(position).area.toString());
+                bundle.putString("about", arrayList.get(position).about.toString());
+                if(arrayList.get(position)!=null && arrayList.get(position).image!=null)
+                    bundle.putString("image", arrayList.get(position).image.toString());
+                else bundle.putString("image", "");
+                detailedPostFragment.setArguments(bundle);
+                getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, detailedPostFragment).commit();
+            }
+        });
     }
 
     @Override
