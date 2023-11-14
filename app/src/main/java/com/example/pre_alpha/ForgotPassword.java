@@ -57,6 +57,11 @@ public class ForgotPassword extends AppCompatActivity {
         refUsers.addValueEventListener(userListener);
     }
     @Override
+    protected void onDestroy() {
+        etEmail.setText("");
+        super.onDestroy();
+    }
+    @Override
     protected void onPause() {
         super.onPause();
         if (userListener!=null) {

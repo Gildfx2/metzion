@@ -73,6 +73,14 @@ public class Register extends AppCompatActivity {
         refUsers.addValueEventListener(userListener);
 
     }
+    @Override
+    protected void onDestroy() {
+        etUsername.setText("");
+        etEmail.setText("");
+        etPassword.setText("");
+        etConPassword.setText("");
+        super.onDestroy();
+    }
 
     @Override
     protected void onPause() {
@@ -143,6 +151,7 @@ public class Register extends AppCompatActivity {
                         editor.commit();
                         Intent intent = new Intent(Register.this, MainActivity.class);
                         startActivity(intent);
+                        finish();
                     }
                     else{
                         Toast.makeText(Register.this, "Signup Failed" + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -190,6 +199,7 @@ public class Register extends AppCompatActivity {
         }
         return false;
     }
+
 
 
 

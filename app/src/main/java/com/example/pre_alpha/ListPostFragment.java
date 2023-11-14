@@ -44,6 +44,7 @@ public class ListPostFragment extends Fragment {
     Uri image_uri;
     FragmentListPostBinding binding;
     DetailedPostFragment detailedPostFragment = new DetailedPostFragment();
+    ValueEventListener postListener;
 
 
     @Override
@@ -73,6 +74,14 @@ public class ListPostFragment extends Fragment {
         refPosts.addValueEventListener(postListener);
 
         return binding.getRoot();
+    }
+
+    @Override
+    public void onStop() {
+        if (postListener != null) {
+            refPosts.removeEventListener(postListener);
+        }
+        super.onStop();
     }
 
     private void showPosts() {

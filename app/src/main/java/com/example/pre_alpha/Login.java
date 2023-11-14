@@ -72,7 +72,12 @@ public class Login extends AppCompatActivity {
         };
         refUsers.addValueEventListener(userListener);
     }
-
+    @Override
+    protected void onDestroy() {
+        etEmail.setText("");
+        etPassword.setText("");
+        super.onDestroy();
+    }
     @Override
     protected void onPause() {
         super.onPause();
@@ -149,4 +154,6 @@ public class Login extends AppCompatActivity {
             }
         }
     }
+
+
 }
