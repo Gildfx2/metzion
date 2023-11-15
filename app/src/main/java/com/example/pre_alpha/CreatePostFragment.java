@@ -64,13 +64,12 @@ public class CreatePostFragment extends Fragment {
                 area=pickArea.getText().toString();
                 about=etAbout.getText().toString();
                 if(item.isEmpty()){
-                    layoutItem.setHelperText("אל תשכח לבחור סוג חפץ");
+                    layoutItem.setHelperText("שדה חובה");
                 }
-
-                if(area.isEmpty()){
-                    layoutArea.setHelperText("אל תשכח לבחור ישוב");
+                if(area.isEmpty() || !areaExist(areas, area)) {
+                    layoutArea.setHelperText("יש לבחור ישוב מתוך הרשימה");
                 }
-                if(!name.isEmpty() && !item.isEmpty() && !area.isEmpty() && name.length()<=30 && about.length()<=150) {
+                if(!name.isEmpty() && !item.isEmpty() && !area.isEmpty() && !areaExist(areas,area) && name.length()<=30 && about.length()<=150) {
                     SharedPreferences postName = getActivity().getSharedPreferences("name", MODE_PRIVATE);
                     SharedPreferences postItem = getActivity().getSharedPreferences("item", MODE_PRIVATE);
                     SharedPreferences postArea = getActivity().getSharedPreferences("area", MODE_PRIVATE);
@@ -96,6 +95,13 @@ public class CreatePostFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    private boolean areaExist(String[] areas, String area) {
+        for(String str : areas){
+            if(str.equals(area)) return true;
+        }
+        return false;
     }
 
     @Override

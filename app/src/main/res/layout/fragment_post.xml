@@ -141,7 +141,7 @@
         <com.google.android.material.textfield.TextInputLayout
             android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
             android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_height="130dp"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="10dp"
             app:counterEnabled="true"
@@ -156,11 +156,15 @@
                 android:textColor="@color/black"
                 android:gravity="top"
                 android:layout_width="match_parent"
-                android:layout_height="140dp"
+                android:layout_height="110dp"
                 android:fontFamily="@font/rubik_regular"
                 android:inputType="text"/>
         </com.google.android.material.textfield.TextInputLayout>
-
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
         <Button
             android:id="@+id/next"
             android:layout_width="150dp"
@@ -169,11 +173,11 @@
             android:text="הבא"
             android:textSize="20sp"
             android:layout_marginStart="130dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:fontFamily="@font/rubik_regular"
             android:background="@drawable/custom_button"
             app:backgroundTint="@null"
             />
-    </LinearLayout>
+    </RelativeLayout>
 
 </FrameLayout>
