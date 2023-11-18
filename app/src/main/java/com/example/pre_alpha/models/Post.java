@@ -1,4 +1,4 @@
-package com.example.pre_alpha;
+package com.example.pre_alpha.models;
 
 public class Post {
     private String name;

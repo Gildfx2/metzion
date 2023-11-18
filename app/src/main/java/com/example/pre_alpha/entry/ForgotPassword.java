@@ -1,6 +1,6 @@
-package com.example.pre_alpha;
+package com.example.pre_alpha.entry;
 
-import static com.example.pre_alpha.FBref.refUsers;
+import static com.example.pre_alpha.models.FBref.refUsers;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.pre_alpha.R;
+import com.example.pre_alpha.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;

@@ -1,4 +1,4 @@
-package com.example.pre_alpha;
+package com.example.pre_alpha.adapters;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,19 +11,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
+import com.example.pre_alpha.R;
 
 import java.util.ArrayList;
 
-public class ListAdapter extends ArrayAdapter<ListData>{
+public class PostAdapter extends ArrayAdapter<PostData>{
 
-    public ListAdapter(@NonNull Context context, ArrayList<ListData> dataArrayList) {
+    public PostAdapter(@NonNull Context context, ArrayList<PostData> dataArrayList) {
         super(context, R.layout.list_of_items, dataArrayList);
     }
 
     @NonNull
     @Override
     public View getView(int position, @Nullable View view, @NonNull ViewGroup parent) {
-        ListData listData = getItem(position);
+        PostData postData = getItem(position);
         if(view==null){
             view = LayoutInflater.from(getContext()).inflate(R.layout.list_of_items, parent, false);
         }
@@ -32,14 +33,14 @@ public class ListAdapter extends ArrayAdapter<ListData>{
         TextView name = view.findViewById(R.id.name);
         TextView area = view.findViewById(R.id.area);
 
-        if(listData!=null && listData.image!=null) {
+        if(postData!=null && postData.image!=null) {
             Glide.with(this.getContext())
-                    .load(listData.image)
+                    .load(postData.image)
                     .into(image);
         }
-        item.setText(listData.item);
-        name.setText(listData.name);
-        area.setText(listData.area);
+        item.setText(postData.item);
+        name.setText(postData.name);
+        area.setText(postData.area);
         return view;
     }
 }

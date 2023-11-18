@@ -1,4 +1,4 @@
-package com.example.pre_alpha;
+package com.example.pre_alpha.models;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;

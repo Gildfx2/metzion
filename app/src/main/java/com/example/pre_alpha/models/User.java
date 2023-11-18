@@ -1,4 +1,4 @@
-package com.example.pre_alpha;
+package com.example.pre_alpha.models;
 
 import java.util.ArrayList;
 

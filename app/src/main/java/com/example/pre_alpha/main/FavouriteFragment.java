@@ -1,4 +1,4 @@
-package com.example.pre_alpha;
+package com.example.pre_alpha.main;
 
 import android.os.Bundle;
 
@@ -7,13 +7,21 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import com.example.pre_alpha.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
-public class SearchFragment extends Fragment {
+public class FavouriteFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search, container, false);
+        View view = inflater.inflate(R.layout.fragment_favourite, container, false);
+
+
+
+        return view;
     }
 }

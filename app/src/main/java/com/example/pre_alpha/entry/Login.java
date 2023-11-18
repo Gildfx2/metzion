@@ -1,25 +1,25 @@
-package com.example.pre_alpha;
+package com.example.pre_alpha.entry;
 
-import static com.example.pre_alpha.FBref.refUsers;
+import static com.example.pre_alpha.models.FBref.refUsers;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.EditText;
 import android.view.View;
-import android.widget.Toast;
 
+import com.example.pre_alpha.main.MainActivity;
+import com.example.pre_alpha.R;
+import com.example.pre_alpha.models.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;

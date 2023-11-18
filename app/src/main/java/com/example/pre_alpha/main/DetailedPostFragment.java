@@ -1,4 +1,4 @@
-package com.example.pre_alpha;
+package com.example.pre_alpha.main;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,11 +9,11 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.pre_alpha.R;
 
 
 public class DetailedPostFragment extends Fragment {

@@ -1,4 +1,4 @@
-package com.example.pre_alpha;
+package com.example.pre_alpha.main;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -15,6 +15,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.pre_alpha.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -69,7 +70,7 @@ public class CreatePostFragment extends Fragment {
                 if(area.isEmpty() || !areaExist(areas, area)) {
                     layoutArea.setHelperText("יש לבחור ישוב מתוך הרשימה");
                 }
-                if(!name.isEmpty() && !item.isEmpty() && !area.isEmpty() && !areaExist(areas,area) && name.length()<=30 && about.length()<=150) {
+                if(!name.isEmpty() && !item.isEmpty() && !area.isEmpty() && areaExist(areas,area) && name.length()<=30 && about.length()<=150) {
                     SharedPreferences postName = getActivity().getSharedPreferences("name", MODE_PRIVATE);
                     SharedPreferences postItem = getActivity().getSharedPreferences("item", MODE_PRIVATE);
                     SharedPreferences postArea = getActivity().getSharedPreferences("area", MODE_PRIVATE);

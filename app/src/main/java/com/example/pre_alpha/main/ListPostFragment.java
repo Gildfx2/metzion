@@ -1,36 +1,28 @@
-package com.example.pre_alpha;
+package com.example.pre_alpha.main;
 
 import static android.content.Context.MODE_PRIVATE;
 
-import static com.example.pre_alpha.FBref.FBDB;
-import static com.example.pre_alpha.FBref.refUsers;
-import static com.example.pre_alpha.FBref.refPosts;
+import static com.example.pre_alpha.models.FBref.refPosts;
 
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.renderscript.ScriptGroup;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputBinding;
 import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.ListView;
 
-import com.bumptech.glide.Glide;
-import com.example.pre_alpha.databinding.ActivityMainBinding;
+import com.example.pre_alpha.R;
+import com.example.pre_alpha.adapters.PostAdapter;
 import com.example.pre_alpha.databinding.FragmentListPostBinding;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.example.pre_alpha.models.Post;
+import com.example.pre_alpha.adapters.PostData;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -38,9 +30,9 @@ import java.util.ArrayList;
 public class ListPostFragment extends Fragment {
     ArrayList<Post> foundValues = new ArrayList<Post>();
     ArrayList<Post> lostValues = new ArrayList<Post>();
-    ListAdapter listAdapter;
-    ArrayList<ListData> arrayList = new ArrayList<>();
-    ListData listData;
+    PostAdapter postAdapter;
+    ArrayList<PostData> arrayList = new ArrayList<>();
+    PostData postData;
     Uri image_uri;
     FragmentListPostBinding binding;
     DetailedPostFragment detailedPostFragment = new DetailedPostFragment();
@@ -91,34 +83,34 @@ public class ListPostFragment extends Fragment {
             for (Post foundValue : foundValues) {
                 if (!foundValue.getImage().isEmpty()) {
                     image_uri = Uri.parse(foundValue.getImage());
-                    listData = new ListData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), image_uri, foundValue.getAbout());
+                    postData = new PostData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), image_uri, foundValue.getAbout());
                 } else
-                    listData = new ListData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), null, foundValue.getAbout());
-                arrayList.add(listData);
+                    postData = new PostData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), null, foundValue.getAbout());
+                arrayList.add(postData);
             }
         } else {
             for (Post lostValue : lostValues) {
                 if (lostValue.getImage() != null) {
                     image_uri = Uri.parse(lostValue.getImage());
-                    listData = new ListData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), image_uri, lostValue.getAbout());
+                    postData = new PostData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), image_uri, lostValue.getAbout());
                 } else
-                    listData = new ListData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), null, lostValue.getAbout());
-                arrayList.add(listData);
+                    postData = new PostData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), null, lostValue.getAbout());
+                arrayList.add(postData);
             }
         }
-        listAdapter = new ListAdapter(getActivity(), arrayList);
-        binding.listOfPosts.setAdapter(listAdapter);
+        postAdapter = new PostAdapter(getActivity(), arrayList);
+        binding.listOfPosts.setAdapter(postAdapter);
         binding.listOfPosts.setClickable(true);
         binding.listOfPosts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Bundle bundle = new Bundle();
-                bundle.putString("name", arrayList.get(position).name.toString());
-                bundle.putString("item", arrayList.get(position).item.toString());
-                bundle.putString("area", arrayList.get(position).area.toString());
-                bundle.putString("about", arrayList.get(position).about.toString());
-                if(arrayList.get(position)!=null && arrayList.get(position).image!=null)
-                    bundle.putString("image", arrayList.get(position).image.toString());
+                bundle.putString("name", arrayList.get(position).getName().toString());
+                bundle.putString("item", arrayList.get(position).getItem().toString());
+                bundle.putString("area", arrayList.get(position).getArea().toString());
+                bundle.putString("about", arrayList.get(position).getAbout().toString());
+                if(arrayList.get(position)!=null && arrayList.get(position).getImage()!=null)
+                    bundle.putString("image", arrayList.get(position).getImage().toString());
                 else bundle.putString("image", "");
                 detailedPostFragment.setArguments(bundle);
                 getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, detailedPostFragment).commit();

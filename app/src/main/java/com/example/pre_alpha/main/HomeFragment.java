@@ -1,4 +1,4 @@
-package com.example.pre_alpha;
+package com.example.pre_alpha.main;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
+import com.example.pre_alpha.R;
 
 
 public class HomeFragment extends Fragment {
