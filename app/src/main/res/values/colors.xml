@@ -4,4 +4,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="brown">#8A5D3D</color>
     <color name="gray">#C8C8C8</color>
+    <color name="message_brown">#548A5D3D</color>
 </resources>

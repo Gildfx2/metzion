@@ -71,26 +71,12 @@ public class CreatePostFragment extends Fragment {
                     layoutArea.setHelperText("יש לבחור ישוב מתוך הרשימה");
                 }
                 if(!name.isEmpty() && !item.isEmpty() && !area.isEmpty() && areaExist(areas,area) && name.length()<=30 && about.length()<=150) {
-                    SharedPreferences postName = getActivity().getSharedPreferences("name", MODE_PRIVATE);
-                    SharedPreferences postItem = getActivity().getSharedPreferences("item", MODE_PRIVATE);
-                    SharedPreferences postArea = getActivity().getSharedPreferences("area", MODE_PRIVATE);
-                    SharedPreferences postAbout = getActivity().getSharedPreferences("about", MODE_PRIVATE);
-                    SharedPreferences.Editor editorName = postName.edit();
-                    SharedPreferences.Editor editorItem = postItem.edit();
-                    SharedPreferences.Editor editorArea = postArea.edit();
-                    SharedPreferences.Editor editorAbout = postAbout.edit();
-                    editorName.putString("name", name);
-                    editorName.apply();
-                    editorName.commit();
-                    editorItem.putString("item", item);
-                    editorItem.apply();
-                    editorItem.commit();
-                    editorArea.putString("area", area);
-                    editorArea.apply();
-                    editorArea.commit();
-                    editorAbout.putString("about", about);
-                    editorAbout.apply();
-                    editorAbout.commit();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("name", name);
+                    bundle.putString("item", item);
+                    bundle.putString("area", area);
+                    bundle.putString("about", about);
+                    selectImageFragment.setArguments(bundle);
                     getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, selectImageFragment).commit();
                 }
             }

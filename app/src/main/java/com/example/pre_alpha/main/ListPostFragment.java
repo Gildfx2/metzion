@@ -33,7 +33,7 @@ public class ListPostFragment extends Fragment {
     PostAdapter postAdapter;
     ArrayList<PostData> arrayList = new ArrayList<>();
     PostData postData;
-    Uri image_uri;
+    Uri image_uri= Uri.parse("");
     FragmentListPostBinding binding;
     DetailedPostFragment detailedPostFragment = new DetailedPostFragment();
     ValueEventListener postListener;
@@ -83,18 +83,18 @@ public class ListPostFragment extends Fragment {
             for (Post foundValue : foundValues) {
                 if (!foundValue.getImage().isEmpty()) {
                     image_uri = Uri.parse(foundValue.getImage());
-                    postData = new PostData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), image_uri, foundValue.getAbout());
+                    postData = new PostData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), image_uri, foundValue.getAbout(), foundValue.getCreatorUid(), foundValue.getPostUid());
                 } else
-                    postData = new PostData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), null, foundValue.getAbout());
+                    postData = new PostData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), image_uri, foundValue.getAbout(), foundValue.getCreatorUid(), foundValue.getPostUid());
                 arrayList.add(postData);
             }
         } else {
             for (Post lostValue : lostValues) {
                 if (lostValue.getImage() != null) {
                     image_uri = Uri.parse(lostValue.getImage());
-                    postData = new PostData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), image_uri, lostValue.getAbout());
+                    postData = new PostData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), image_uri, lostValue.getAbout(), lostValue.getCreatorUid(), lostValue.getPostUid());
                 } else
-                    postData = new PostData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), null, lostValue.getAbout());
+                    postData = new PostData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), image_uri, lostValue.getAbout(), lostValue.getCreatorUid(), lostValue.getPostUid());
                 arrayList.add(postData);
             }
         }
@@ -104,14 +104,13 @@ public class ListPostFragment extends Fragment {
         binding.listOfPosts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                SharedPreferences chatOrList = getActivity().getSharedPreferences("chat_or_list", MODE_PRIVATE);
+                SharedPreferences.Editor editor = chatOrList.edit();
+                editor.putString("chat_or_list", "list");
+                editor.apply();
+                editor.commit();
                 Bundle bundle = new Bundle();
-                bundle.putString("name", arrayList.get(position).getName().toString());
-                bundle.putString("item", arrayList.get(position).getItem().toString());
-                bundle.putString("area", arrayList.get(position).getArea().toString());
-                bundle.putString("about", arrayList.get(position).getAbout().toString());
-                if(arrayList.get(position)!=null && arrayList.get(position).getImage()!=null)
-                    bundle.putString("image", arrayList.get(position).getImage().toString());
-                else bundle.putString("image", "");
+                bundle.putString("post_uid", arrayList.get(position).getPostUid());
                 detailedPostFragment.setArguments(bundle);
                 getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, detailedPostFragment).commit();
             }

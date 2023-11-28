@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".chat.HomeChatFragment">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/title">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/chat_tool_bar"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/white"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="צ'אט"
+                android:layout_gravity="center"
+                android:fontFamily="@font/rubik_regular"/>
+        </androidx.appcompat.widget.Toolbar>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#C8C8C8"
+            android:layout_below="@id/chat_tool_bar"
+            />
+    </RelativeLayout>
+    <ListView
+        android:id="@+id/list_of_chats"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:layout_marginTop="40dp"
+        tools:listitem="@layout/list_of_chats"
+        android:layout_gravity="center"
+        android:divider="#C8C8C8"
+        android:dividerHeight="1.0sp"/>
+
+
+
+</FrameLayout>

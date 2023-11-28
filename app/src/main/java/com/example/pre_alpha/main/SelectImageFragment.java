@@ -78,14 +78,14 @@ public class SelectImageFragment extends Fragment {
 
         storageReference= FirebaseStorage.getInstance().getReference();
         auth=FirebaseAuth.getInstance();
-
+        fbUser= auth.getCurrentUser();
         bottomNavigationView=getActivity().findViewById(R.id.bottomNavigationBar);
         cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
         upload=view.findViewById(R.id.upload);
         image=view.findViewById(R.id.selectImage);
-        fbUser= auth.getCurrentUser();
+
         DatabaseReference postsRef = FirebaseDatabase.getInstance().getReference("Users/" + fbUser.getUid() + "/Posts");
         image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,21 +125,17 @@ public class SelectImageFragment extends Fragment {
     }
 
     private void updateDatabase(){
-        SharedPreferences postName = getActivity().getSharedPreferences("name", MODE_PRIVATE);
-        String name = postName.getString("name", "");
-        SharedPreferences postItem = getActivity().getSharedPreferences("item", MODE_PRIVATE);
-        String item = postItem.getString("item", "");
-        SharedPreferences postArea = getActivity().getSharedPreferences("area", MODE_PRIVATE);
-        String area = postArea.getString("area", "");
-        SharedPreferences postAbout = getActivity().getSharedPreferences("about", MODE_PRIVATE);
-        String about = postAbout.getString("about", "");
+        String name = getArguments().getString("name", "");
+        String item = getArguments().getString("item", "");
+        String area = getArguments().getString("area", "");
+        String about = getArguments().getString("about", "");
         SharedPreferences state = getActivity().getSharedPreferences("state", MODE_PRIVATE);
         String checkState = state.getString("state", "");
         if(image_uri!=null){
-            post=new Post(name, item, area, about, downloadUri.toString(), checkState, fbUser.getUid());
+            post=new Post(name, item, area, about, downloadUri.toString(), checkState, fbUser.getUid(), postUid);
         }
         else{
-            post=new Post(name, item, area, about, "", checkState, fbUser.getUid());
+            post=new Post(name, item, area, about, "", checkState, fbUser.getUid(), postUid);
         }
         refPosts.child(postUid).setValue(post).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

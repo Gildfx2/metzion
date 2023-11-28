@@ -33,7 +33,7 @@ public class PostAdapter extends ArrayAdapter<PostData>{
         TextView name = view.findViewById(R.id.name);
         TextView area = view.findViewById(R.id.area);
 
-        if(postData!=null && postData.image!=null) {
+        if(postData!=null && !postData.image.toString().isEmpty()) {
             Glide.with(this.getContext())
                     .load(postData.image)
                     .into(image);

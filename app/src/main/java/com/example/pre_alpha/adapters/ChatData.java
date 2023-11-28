@@ -2,18 +2,19 @@ package com.example.pre_alpha.adapters;
 
 import android.net.Uri;
 
-public class PostData {
-    String name, area, item, about, creatorUid, postUid;
+public class ChatData {
+
+    String name, area, username, creatorUid, postUid, otherUserUid;
     Uri image;
 
-    public PostData(String name, String area, String item, Uri image, String about, String creatorUid, String postUid){
+    public ChatData(String name, String area, String username, Uri image, String creatorUid, String postUid, String otherUserUid) {
         this.name = name;
         this.area = area;
-        this.item = item;
+        this.username = username;
         this.image = image;
-        this.about = about;
         this.creatorUid = creatorUid;
         this.postUid = postUid;
+        this.otherUserUid = otherUserUid;
     }
 
     public String getName() {
@@ -30,18 +31,11 @@ public class PostData {
         this.area = area;
     }
 
-    public String getItem() {
-        return item;
+    public String getUsername() {
+        return username;
     }
-    public void setItem(String item) {
-        this.item = item;
-    }
-
-    public String getAbout() {
-        return about;
-    }
-    public void setAbout(String about) {
-        this.about = about;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public Uri getImage() {
@@ -63,5 +57,12 @@ public class PostData {
     }
     public void setPostUid(String postUid) {
         this.postUid = postUid;
+    }
+
+    public String getOtherUserUid() {
+        return otherUserUid;
+    }
+    public void setOtherUserUid(String otherUserUid) {
+        this.otherUserUid = otherUserUid;
     }
 }

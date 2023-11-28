@@ -2,6 +2,7 @@ package com.example.pre_alpha.main;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -13,11 +14,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.pre_alpha.R;
+import com.example.pre_alpha.chat.ChatActivity;
 
 
 public class HomeFragment extends Fragment {
 
-    Button lost, found;
+    Button lost, found, showChats;
     ListPostFragment listPostFragment = new ListPostFragment();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -27,6 +29,7 @@ public class HomeFragment extends Fragment {
 
         lost=view.findViewById(R.id.lost);
         found=view.findViewById(R.id.found);
+        showChats=view.findViewById(R.id.show_chats);
         found.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -47,6 +50,18 @@ public class HomeFragment extends Fragment {
                 editor.apply();
                 editor.commit();
                 getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, listPostFragment).commit();
+            }
+        });
+        showChats.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ChatActivity.class);
+                SharedPreferences chat = getActivity().getSharedPreferences("chat_pick", MODE_PRIVATE);
+                SharedPreferences.Editor editor = chat.edit();
+                editor.putString("chat_pick", "see chats");
+                editor.apply();
+                editor.commit();
+                startActivity(intent);
             }
         });
 

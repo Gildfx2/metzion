@@ -8,8 +8,9 @@ public class Post {
     private String image;
     private String lostOrFound;
     private String creatorUid;
+    private String postUid;
     public Post(){}
-    public Post(String name, String item, String area, String about, String image, String lostOrFound, String creatorUid){
+    public Post(String name, String item, String area, String about, String image, String lostOrFound, String creatorUid, String postUid){
         this.name=name;
         this.item=item;
         this.area=area;
@@ -17,6 +18,7 @@ public class Post {
         this.image=image;
         this.lostOrFound=lostOrFound;
         this.creatorUid=creatorUid;
+        this.postUid=postUid;
     }
 
     public String getName() {
@@ -68,4 +70,10 @@ public class Post {
         this.creatorUid=creatorUid;
     }
 
+    public String getPostUid() {
+        return postUid;
+    }
+    public void setPostUid(String postUid) {
+        this.postUid = postUid;
+    }
 }

@@ -35,7 +35,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Register extends AppCompatActivity {
-    int userID;
     EditText etEmail, etPassword, etUsername, etConPassword;
     String email,username,password,confirmPassword;
     TextInputLayout layoutEmail, layoutUsername, layoutPassword, layoutConfirmPassword;
