@@ -21,6 +21,17 @@
                 android:src="@drawable/default_image"
                 app:shapeAppearanceOverlay="@style/roundedUserImageViewRounded"/>
         </LinearLayout>
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginStart="10dp"
+            android:layout_gravity="left"
+            android:text="dd/mm/yyyy"
+            android:textSize="15sp"
+            android:fontFamily="@font/rubik_regular" />
         <LinearLayout
             android:layout_width="310dp"
             android:layout_height="75dp"
@@ -30,18 +41,17 @@
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
                 android:layout_marginEnd="20dp"
                 android:layout_marginTop="7dp"
+                android:layout_gravity="right"
                 android:text="שם"
-                android:textSize="20sp"
+                android:textSize="19sp"
                 android:fontFamily="@font/rubik_bold"/>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_gravity="right"
-                android:layout_marginTop="5dp">
+                android:layout_gravity="right">
                 <TextView
                     android:id="@+id/username"
                     android:layout_width="wrap_content"
@@ -49,7 +59,7 @@
                     android:layout_gravity="right"
                     android:layout_marginEnd="20dp"
                     android:text="שם משתמש"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:fontFamily="@font/rubik_medium"/>
                 <TextView
                     android:id="@+id/area"
@@ -58,9 +68,18 @@
                     android:layout_gravity="right"
                     android:layout_marginEnd="20dp"
                     android:text="ישוב"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:fontFamily="@font/rubik_medium"/>
             </LinearLayout>
+            <TextView
+                android:id="@+id/last_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginEnd="20dp"
+                android:text="הודעה אחרונה"
+                android:textSize="15sp"
+                android:fontFamily="@font/rubik_regular" />
         </LinearLayout>
     </RelativeLayout>
 

@@ -113,8 +113,8 @@ public class ChatFragment extends Fragment {
                 messageUid = refChat.push().getKey();
                 Message message = new Message(textMessage.getText().toString(), fbUser.getUid(), otherUserUid, postUid, System.currentTimeMillis());
                 refChat.child(messageUid).setValue(message);
-                ChatList chatList1 = new ChatList(otherUserUid, postUid, System.currentTimeMillis());
-                ChatList chatList2 = new ChatList(fbUser.getUid(), postUid, System.currentTimeMillis());
+                ChatList chatList1 = new ChatList(otherUserUid, postUid, System.currentTimeMillis(), message.getMessage());
+                ChatList chatList2 = new ChatList(fbUser.getUid(), postUid, System.currentTimeMillis(), message.getMessage());
                 refChatList.child(fbUser.getUid()).child(postUid).setValue(chatList1);
                 refChatList.child(otherUserUid).child(postUid).setValue(chatList2);
                 textMessage.setText("");

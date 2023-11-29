@@ -6,6 +6,7 @@ public class Message {
     private String senderUid;
     private String receiverUid;
     private String postUid;
+    private boolean isSeen;
     private long timeStamp;
 
     public Message(){}
@@ -15,6 +16,7 @@ public class Message {
         this.senderUid=senderUid;
         this.receiverUid=receiverUid;
         this.postUid=postUid;
+        this.isSeen=false;
         this.timeStamp=timeStamp;
     }
 
@@ -51,5 +53,12 @@ public class Message {
     }
     public void setTimeStamp(long timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public boolean isSeen() {
+        return isSeen;
+    }
+    public void setSeen(boolean seen) {
+        isSeen = seen;
     }
 }

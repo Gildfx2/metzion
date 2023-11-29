@@ -36,10 +36,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class HomeChatFragment extends Fragment {
 
@@ -89,7 +92,8 @@ public class HomeChatFragment extends Fragment {
                     if(post.getImage() != null) {
                         image_uri = Uri.parse(post.getImage());
                     }
-                    chatData = new ChatData(post.getName(), post.getArea(), getUsernameFromUid(chatList.getUserUid()), image_uri, post.getCreatorUid(), post.getPostUid(), chatList.getUserUid());
+                    chatData = new ChatData(post.getName(), post.getArea(), getUsernameFromUid(chatList.getUserUid()), image_uri, post.getCreatorUid(),
+                            post.getPostUid(), chatList.getUserUid(), chatList.getLastMessage(), formatDate(chatList.getTimeStamp()));
                     arrayList.add(chatData);
                     break;
                 }
@@ -160,6 +164,12 @@ public class HomeChatFragment extends Fragment {
             if(user.getUid().equals(uid)) return user.getUsername();
         }
         return "אין שם";
+    }
+
+    public static String formatDate(long timestamp) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        Date date = new Date(timestamp);
+        return dateFormat.format(date);
     }
 
     @Override

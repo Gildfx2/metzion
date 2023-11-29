@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.example.pre_alpha.R;
-import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 
@@ -37,6 +36,8 @@ public class ChatAdapter extends ArrayAdapter<ChatData> {
         TextView name = view.findViewById(R.id.name);
         TextView area = view.findViewById(R.id.area);
         TextView username = view.findViewById(R.id.username);
+        TextView lastMessage = view.findViewById(R.id.last_message);
+        TextView date = view.findViewById(R.id.date);
 
         if(chatData!=null && !chatData.image.toString().isEmpty()) {
             Glide.with(getContext())
@@ -47,6 +48,8 @@ public class ChatAdapter extends ArrayAdapter<ChatData> {
         username.setText(chatData.username);
         name.setText(chatData.name);
         area.setText(chatData.area);
+        lastMessage.setText(chatData.lastMessage);
+        date.setText(chatData.date);
         return view;
     }
 }
