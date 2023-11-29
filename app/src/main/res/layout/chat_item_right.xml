@@ -20,6 +20,18 @@
             android:background="@drawable/message_background_right"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/messages"
+            android:text=""
+            android:id="@+id/message_time_stamp"
+            android:padding="2dp"
+            android:layout_marginEnd="5dp"
+            android:textSize="12sp"
+            android:textColor="#828282"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"/>
     </RelativeLayout>
 
 

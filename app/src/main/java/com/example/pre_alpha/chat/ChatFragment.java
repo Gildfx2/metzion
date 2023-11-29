@@ -43,8 +43,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class ChatFragment extends Fragment {
@@ -58,7 +61,6 @@ public class ChatFragment extends Fragment {
     FirebaseUser fbUser;
     FirebaseAuth auth;
     ArrayList<User> userValues = new ArrayList<User>();
-    ArrayList<ChatList> chatLists = new ArrayList<ChatList>();
     List<Message> messages = new ArrayList<>();
     RecyclerView recyclerView;
     Button getData;
@@ -109,12 +111,12 @@ public class ChatFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 messageUid = refChat.push().getKey();
-                Message message = new Message(textMessage.getText().toString(), fbUser.getUid(), otherUserUid, postUid);
+                Message message = new Message(textMessage.getText().toString(), fbUser.getUid(), otherUserUid, postUid, System.currentTimeMillis());
                 refChat.child(messageUid).setValue(message);
-                ChatList chatList1 = new ChatList(otherUserUid, postUid);
-                ChatList chatList2 = new ChatList(fbUser.getUid(), postUid);
-                refChatList.child(fbUser.getUid()).child(otherUserUid).setValue(chatList1);
-                refChatList.child(otherUserUid).child(fbUser.getUid()).setValue(chatList2);
+                ChatList chatList1 = new ChatList(otherUserUid, postUid, System.currentTimeMillis());
+                ChatList chatList2 = new ChatList(fbUser.getUid(), postUid, System.currentTimeMillis());
+                refChatList.child(fbUser.getUid()).child(postUid).setValue(chatList1);
+                refChatList.child(otherUserUid).child(postUid).setValue(chatList2);
                 textMessage.setText("");
             }
         });
@@ -187,4 +189,5 @@ public class ChatFragment extends Fragment {
         textMessage.setText("");
         super.onPause();
     }
+
 }

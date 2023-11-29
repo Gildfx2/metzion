@@ -38,7 +38,7 @@ public class ChatAdapter extends ArrayAdapter<ChatData> {
         TextView area = view.findViewById(R.id.area);
         TextView username = view.findViewById(R.id.username);
 
-        if(chatData!=null && chatData!=null) {
+        if(chatData!=null && !chatData.image.toString().isEmpty()) {
             Glide.with(getContext())
                     .load(chatData.image)
                     .into(image);

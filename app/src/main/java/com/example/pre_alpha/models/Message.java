@@ -6,14 +6,16 @@ public class Message {
     private String senderUid;
     private String receiverUid;
     private String postUid;
+    private long timeStamp;
 
     public Message(){}
 
-    public Message(String message, String senderUid, String receiverUid, String postUid){
+    public Message(String message, String senderUid, String receiverUid, String postUid, long timeStamp){
         this.message=message;
         this.senderUid=senderUid;
         this.receiverUid=receiverUid;
         this.postUid=postUid;
+        this.timeStamp=timeStamp;
     }
 
     public String getMessage() {
@@ -42,5 +44,12 @@ public class Message {
     }
     public void setPostUid(String postUid) {
         this.postUid = postUid;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
     }
 }

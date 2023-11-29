@@ -14,7 +14,10 @@ import com.example.pre_alpha.models.Message;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -61,16 +64,24 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public class MessageViewHolder extends RecyclerView.ViewHolder {
-        TextView messageTextView;
+        TextView messageTextView, messageTimeStamp;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
             messageTextView = itemView.findViewById(R.id.messages);
+            messageTimeStamp = itemView.findViewById(R.id.message_time_stamp);
         }
 
         public void bind(Message message) {
             messageTextView.setText(message.getMessage());
+            messageTimeStamp.setText(formatTimestamp(message.getTimeStamp()));
         }
+
+    }
+    public static String formatTimestamp(long timestamp) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
+        Date date = new Date(timestamp);
+        return dateFormat.format(date);
     }
 }
 

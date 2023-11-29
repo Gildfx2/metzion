@@ -33,9 +33,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class HomeChatFragment extends Fragment {
@@ -79,6 +82,7 @@ public class HomeChatFragment extends Fragment {
     }
 
     private void showChats(){
+        arrayList.clear();
         for(ChatList chatList : chats){
             for(Post post : postValues) {
                 if(chatList.getPostUid().equals(post.getPostUid())){
@@ -116,7 +120,7 @@ public class HomeChatFragment extends Fragment {
         }
     }
     private void readChats(){
-        DatabaseReference chatListRef = FBDB.getReference("ChatList/"+fbUser.getUid());
+        Query query = FBDB.getReference().child("ChatList").child(fbUser.getUid()).orderByChild("timeStamp");
         ValueEventListener chatsListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -125,6 +129,7 @@ public class HomeChatFragment extends Fragment {
                     ChatList chatList = data.getValue(ChatList.class);
                     chats.add(chatList);
                 }
+                Collections.reverse(chats);
                 readPosts();
             }
             @Override
@@ -132,7 +137,7 @@ public class HomeChatFragment extends Fragment {
                 Log.e("FirebaseError", error.getMessage());
             }
         };
-        chatListRef.addValueEventListener(chatsListener);
+        query.addValueEventListener(chatsListener);
     }
     private void readPosts(){
         refPosts.addListenerForSingleValueEvent(new ValueEventListener() {
