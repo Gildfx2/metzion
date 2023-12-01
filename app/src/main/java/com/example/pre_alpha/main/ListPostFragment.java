@@ -83,18 +83,18 @@ public class ListPostFragment extends Fragment {
             for (Post foundValue : foundValues) {
                 if (!foundValue.getImage().isEmpty()) {
                     image_uri = Uri.parse(foundValue.getImage());
-                    postData = new PostData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), image_uri, foundValue.getAbout(), foundValue.getCreatorUid(), foundValue.getPostUid());
+                    postData = new PostData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), image_uri, foundValue.getAbout(), foundValue.getCreatorUid(), foundValue.getPostId());
                 } else
-                    postData = new PostData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), image_uri, foundValue.getAbout(), foundValue.getCreatorUid(), foundValue.getPostUid());
+                    postData = new PostData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), image_uri, foundValue.getAbout(), foundValue.getCreatorUid(), foundValue.getPostId());
                 arrayList.add(postData);
             }
         } else {
             for (Post lostValue : lostValues) {
                 if (lostValue.getImage() != null) {
                     image_uri = Uri.parse(lostValue.getImage());
-                    postData = new PostData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), image_uri, lostValue.getAbout(), lostValue.getCreatorUid(), lostValue.getPostUid());
+                    postData = new PostData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), image_uri, lostValue.getAbout(), lostValue.getCreatorUid(), lostValue.getPostId());
                 } else
-                    postData = new PostData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), image_uri, lostValue.getAbout(), lostValue.getCreatorUid(), lostValue.getPostUid());
+                    postData = new PostData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), image_uri, lostValue.getAbout(), lostValue.getCreatorUid(), lostValue.getPostId());
                 arrayList.add(postData);
             }
         }
@@ -110,7 +110,7 @@ public class ListPostFragment extends Fragment {
                 editor.apply();
                 editor.commit();
                 Bundle bundle = new Bundle();
-                bundle.putString("post_uid", arrayList.get(position).getPostUid());
+                bundle.putString("post_id", arrayList.get(position).getPostId());
                 detailedPostFragment.setArguments(bundle);
                 getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, detailedPostFragment).commit();
             }

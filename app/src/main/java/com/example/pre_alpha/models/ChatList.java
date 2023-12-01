@@ -2,15 +2,15 @@ package com.example.pre_alpha.models;
 
 public class ChatList {
     private String userUid;
-    private String postUid;
+    private String postId;
     private String lastMessage;
     private long timeStamp;
 
     public ChatList(){}
 
-    public ChatList(String userUid, String postUid, long timeStamp, String lastMessage) {
+    public ChatList(String userUid, String postId, long timeStamp, String lastMessage) {
         this.userUid = userUid;
-        this.postUid = postUid;
+        this.postId = postId;
         this.lastMessage = lastMessage;
         this.timeStamp = timeStamp;
     }
@@ -22,11 +22,11 @@ public class ChatList {
         this.userUid = userUid;
     }
 
-    public String getPostUid() {
-        return postUid;
+    public String getPostId() {
+        return postId;
     }
-    public void setPostUid(String postUid) {
-        this.postUid = postUid;
+    public void setPostId(String postId) {
+        this.postId = postId;
     }
 
     public long getTimeStamp() {

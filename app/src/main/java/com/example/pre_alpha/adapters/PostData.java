@@ -3,17 +3,17 @@ package com.example.pre_alpha.adapters;
 import android.net.Uri;
 
 public class PostData {
-    String name, area, item, about, creatorUid, postUid;
+    String name, area, item, about, creatorUid, postId;
     Uri image;
 
-    public PostData(String name, String area, String item, Uri image, String about, String creatorUid, String postUid){
+    public PostData(String name, String area, String item, Uri image, String about, String creatorUid, String postId){
         this.name = name;
         this.area = area;
         this.item = item;
         this.image = image;
         this.about = about;
         this.creatorUid = creatorUid;
-        this.postUid = postUid;
+        this.postId = postId;
     }
 
     public String getName() {
@@ -58,10 +58,10 @@ public class PostData {
         this.creatorUid = creatorUid;
     }
 
-    public String getPostUid() {
-        return postUid;
+    public String getPostId() {
+        return postId;
     }
-    public void setPostUid(String postUid) {
-        this.postUid = postUid;
+    public void setPostId(String postId) {
+        this.postId = postId;
     }
 }

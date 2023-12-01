@@ -1,13 +1,10 @@
 package com.example.pre_alpha.chat;
 
-import static android.content.Context.MODE_PRIVATE;
 import static com.example.pre_alpha.models.FBref.refChat;
 import static com.example.pre_alpha.models.FBref.refChatList;
-import static com.example.pre_alpha.models.FBref.refPosts;
 import static com.example.pre_alpha.models.FBref.refUsers;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -30,9 +27,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.pre_alpha.R;
 import com.example.pre_alpha.adapters.MessageAdapter;
-import com.example.pre_alpha.entry.Register;
-import com.example.pre_alpha.main.DetailedPostFragment;
-import com.example.pre_alpha.main.ListPostFragment;
 import com.example.pre_alpha.main.MainActivity;
 import com.example.pre_alpha.models.ChatList;
 import com.example.pre_alpha.models.Message;
@@ -43,16 +37,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 
 public class ChatFragment extends Fragment {
 
-    String postName, postArea, image, creatorUid, username, postUid, otherUserUid;
+    String postName, postArea, image, creatorUid, username, postId, otherUserUid;
     String messageUid;
     ImageView postImage, returnBack;
     TextView nameTV, areaTV, usernameTV;
@@ -88,7 +79,7 @@ public class ChatFragment extends Fragment {
         postArea = bundle.getString("post_area");
         image = bundle.getString("post_image");
         creatorUid = bundle.getString("creator_uid");
-        postUid = bundle.getString("post_uid");
+        postId = bundle.getString("post_id");
         username = bundle.getString("username");
         otherUserUid = bundle.getString("other_user_uid");
         refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -111,12 +102,12 @@ public class ChatFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 messageUid = refChat.push().getKey();
-                Message message = new Message(textMessage.getText().toString(), fbUser.getUid(), otherUserUid, postUid, System.currentTimeMillis());
+                Message message = new Message(textMessage.getText().toString(), fbUser.getUid(), otherUserUid, postId, System.currentTimeMillis());
                 refChat.child(messageUid).setValue(message);
-                ChatList chatList1 = new ChatList(otherUserUid, postUid, System.currentTimeMillis(), message.getMessage());
-                ChatList chatList2 = new ChatList(fbUser.getUid(), postUid, System.currentTimeMillis(), message.getMessage());
-                refChatList.child(fbUser.getUid()).child(postUid).setValue(chatList1);
-                refChatList.child(otherUserUid).child(postUid).setValue(chatList2);
+                ChatList chatList1 = new ChatList(otherUserUid, postId, System.currentTimeMillis(), message.getMessage());
+                ChatList chatList2 = new ChatList(fbUser.getUid(), postId, System.currentTimeMillis(), message.getMessage());
+                refChatList.child(fbUser.getUid()).child(postId).setValue(chatList1);
+                refChatList.child(otherUserUid).child(postId).setValue(chatList2);
                 textMessage.setText("");
             }
         });
@@ -125,7 +116,7 @@ public class ChatFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), MainActivity.class);
-                intent.putExtra("post_uid", postUid);
+                intent.putExtra("post_id", postId);
                 intent.putExtra("get_data", "true");
                 startActivity(intent);
             }
@@ -150,8 +141,8 @@ public class ChatFragment extends Fragment {
                 messages.clear();
                 for (DataSnapshot data : snapshot.getChildren()) {
                     Message message = data.getValue(Message.class);
-                    if((message.getReceiverUid().equals(fbUser.getUid()) && message.getSenderUid().equals(otherUserUid) && message.getPostUid().equals(postUid))
-                            || (message.getSenderUid().equals(fbUser.getUid()) && message.getReceiverUid().equals(otherUserUid) && message.getPostUid().equals(postUid)))
+                    if((message.getReceiverUid().equals(fbUser.getUid()) && message.getSenderUid().equals(otherUserUid) && message.getPostId().equals(postId))
+                            || (message.getSenderUid().equals(fbUser.getUid()) && message.getReceiverUid().equals(otherUserUid) && message.getPostId().equals(postId)))
                         messages.add(message);
                 }
                 updateChatUI();

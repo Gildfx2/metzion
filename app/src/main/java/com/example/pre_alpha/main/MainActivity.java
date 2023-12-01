@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
         String check=getIntent().getStringExtra("get_data");
         if(check!=null && check.equals("true")){
             Bundle bundle1=new Bundle();
-            String postUid=getIntent().getStringExtra("post_uid");
-            bundle1.putString("post_uid",postUid);
+            String postId=getIntent().getStringExtra("post_id");
+            bundle1.putString("post_id",postId);
             detailedPostFragment.setArguments(bundle1);
             getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, detailedPostFragment).commit();
         }

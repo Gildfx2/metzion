@@ -88,12 +88,12 @@ public class HomeChatFragment extends Fragment {
         arrayList.clear();
         for(ChatList chatList : chats){
             for(Post post : postValues) {
-                if(chatList.getPostUid().equals(post.getPostUid())){
+                if(chatList.getPostId().equals(post.getPostId())){
                     if(post.getImage() != null) {
                         image_uri = Uri.parse(post.getImage());
                     }
                     chatData = new ChatData(post.getName(), post.getArea(), getUsernameFromUid(chatList.getUserUid()), image_uri, post.getCreatorUid(),
-                            post.getPostUid(), chatList.getUserUid(), chatList.getLastMessage(), formatDate(chatList.getTimeStamp()));
+                            post.getPostId(), chatList.getUserUid(), chatList.getLastMessage(), formatDate(chatList.getTimeStamp()));
                     arrayList.add(chatData);
                     break;
                 }
@@ -111,7 +111,7 @@ public class HomeChatFragment extends Fragment {
                     bundle.putString("post_name", arrayList.get(position).getName());
                     bundle.putString("post_area", arrayList.get(position).getArea());
                     bundle.putString("creator_uid", arrayList.get(position).getCreatorUid());
-                    bundle.putString("post_uid", arrayList.get(position).getPostUid());
+                    bundle.putString("post_id", arrayList.get(position).getPostId());
                     bundle.putString("username", arrayList.get(position).getUsername());
                     bundle.putString("other_user_uid", arrayList.get(position).getOtherUserUid());
                     if (arrayList.get(position) != null && arrayList.get(position).getImage() != null)

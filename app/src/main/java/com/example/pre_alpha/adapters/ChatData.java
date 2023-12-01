@@ -4,16 +4,16 @@ import android.net.Uri;
 
 public class ChatData {
 
-    String name, area, username, creatorUid, postUid, otherUserUid, lastMessage, date;
+    String name, area, username, creatorUid, postId, otherUserUid, lastMessage, date;
     Uri image;
 
-    public ChatData(String name, String area, String username, Uri image, String creatorUid, String postUid, String otherUserUid, String lastMessage, String date) {
+    public ChatData(String name, String area, String username, Uri image, String creatorUid, String postId, String otherUserUid, String lastMessage, String date) {
         this.name = name;
         this.area = area;
         this.username = username;
         this.image = image;
         this.creatorUid = creatorUid;
-        this.postUid = postUid;
+        this.postId = postId;
         this.otherUserUid = otherUserUid;
         this.lastMessage = lastMessage;
         this.date = date;
@@ -54,11 +54,11 @@ public class ChatData {
         this.creatorUid = creatorUid;
     }
 
-    public String getPostUid() {
-        return postUid;
+    public String getPostId() {
+        return postId;
     }
-    public void setPostUid(String postUid) {
-        this.postUid = postUid;
+    public void setPostId(String postId) {
+        this.postId = postId;
     }
 
     public String getOtherUserUid() {

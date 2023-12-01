@@ -5,17 +5,17 @@ public class Message {
     private String message;
     private String senderUid;
     private String receiverUid;
-    private String postUid;
+    private String postId;
     private boolean isSeen;
     private long timeStamp;
 
     public Message(){}
 
-    public Message(String message, String senderUid, String receiverUid, String postUid, long timeStamp){
+    public Message(String message, String senderUid, String receiverUid, String postId, long timeStamp){
         this.message=message;
         this.senderUid=senderUid;
         this.receiverUid=receiverUid;
-        this.postUid=postUid;
+        this.postId=postId;
         this.isSeen=false;
         this.timeStamp=timeStamp;
     }
@@ -41,11 +41,11 @@ public class Message {
         this.receiverUid = receiverUid;
     }
 
-    public String getPostUid() {
-        return postUid;
+    public String getPostId() {
+        return postId;
     }
-    public void setPostUid(String postUid) {
-        this.postUid = postUid;
+    public void setPostId(String postId) {
+        this.postId = postId;
     }
 
     public long getTimeStamp() {

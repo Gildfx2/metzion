@@ -21,7 +21,7 @@ public class ChatActivity extends AppCompatActivity {
             String postArea = getIntent().getStringExtra("post_area");
             String postImage = getIntent().getStringExtra("post_image");
             String creatorUid = getIntent().getStringExtra("creator_uid");
-            String postUid = getIntent().getStringExtra("post_uid");
+            String postId = getIntent().getStringExtra("post_id");
             String username = getIntent().getStringExtra("username");
             String otherUserUid = getIntent().getStringExtra("other_user_uid");
 
@@ -31,7 +31,7 @@ public class ChatActivity extends AppCompatActivity {
             bundle.putString("post_area", postArea);
             bundle.putString("post_image", postImage);
             bundle.putString("creator_uid", creatorUid);
-            bundle.putString("post_uid", postUid);
+            bundle.putString("post_id", postId);
             bundle.putString("username", username);
             bundle.putString("other_user_uid", otherUserUid);
             chatFragment.setArguments(bundle);

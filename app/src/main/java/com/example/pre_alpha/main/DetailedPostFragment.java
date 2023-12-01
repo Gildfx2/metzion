@@ -49,7 +49,7 @@ public class DetailedPostFragment extends Fragment {
     FirebaseUser fbUser;
     Dialog dialog;
     Button btnOkay;
-    String name, item, area, about, image="", creatorUid, postUid;
+    String name, item, area, about, image="", creatorUid, postId;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -63,7 +63,7 @@ public class DetailedPostFragment extends Fragment {
         sendMessage=view.findViewById(R.id.send_message);
         fbUser= FirebaseAuth.getInstance().getCurrentUser();
         Bundle bundle = this.getArguments();
-        postUid = bundle.getString("post_uid");
+        postId = bundle.getString("post_id");
         refPosts.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -132,7 +132,7 @@ public class DetailedPostFragment extends Fragment {
         intent.putExtra("post_area", area);
         intent.putExtra("post_image", image);
         intent.putExtra("creator_uid", creatorUid);
-        intent.putExtra("post_uid", postUid);
+        intent.putExtra("post_id", postId);
         intent.putExtra("username", getUsernameFromUid(creatorUid));
         intent.putExtra("other_user_uid", creatorUid);
         SharedPreferences chat = getActivity().getSharedPreferences("chat_pick", MODE_PRIVATE);
@@ -144,7 +144,7 @@ public class DetailedPostFragment extends Fragment {
     }
     private void initialization() {
         for(Post post : postValues){
-            if(post.getPostUid().equals(postUid)){
+            if(post.getPostId().equals(postId)){
                 name=post.getName();
                 item=post.getItem();
                 area=post.getArea();

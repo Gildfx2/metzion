@@ -15,7 +15,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -67,8 +69,9 @@ public class SelectImageFragment extends Fragment {
     HomeFragment homeFragment = new HomeFragment();
     String storagePath = "Users_Posts_Images/";
     Uri downloadUri;
-    String postUid;
+    String postId;
     StorageReference storageReference;
+    boolean result, result1, result2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,12 +79,19 @@ public class SelectImageFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_select_image, container, false);
 
-        storageReference= FirebaseStorage.getInstance().getReference();
-        auth=FirebaseAuth.getInstance();
-        fbUser= auth.getCurrentUser();
-        bottomNavigationView=getActivity().findViewById(R.id.bottomNavigationBar);
-        cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        storageReference = FirebaseStorage.getInstance().getReference();
+        auth = FirebaseAuth.getInstance();
+        fbUser = auth.getCurrentUser();
+        bottomNavigationView = getActivity().findViewById(R.id.bottomNavigationBar);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            cameraPermissions = new String[]{Manifest.permission.CAMERA};
+            storagePermissions = new String[]{Manifest.permission.READ_MEDIA_IMAGES};
+        }
+
 
         upload=view.findViewById(R.id.upload);
         image=view.findViewById(R.id.selectImage);
@@ -97,8 +107,8 @@ public class SelectImageFragment extends Fragment {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                postUid = postsRef.push().getKey();
-                String filePathAndName = storagePath + "image" + "_" + postUid;
+                postId = postsRef.push().getKey();
+                String filePathAndName = storagePath + "image" + "_" + postId;
                 StorageReference storageReference2 = storageReference.child(filePathAndName);
                 if(image_uri!=null) {
                     storageReference2.putFile(image_uri)
@@ -132,15 +142,15 @@ public class SelectImageFragment extends Fragment {
         SharedPreferences state = getActivity().getSharedPreferences("state", MODE_PRIVATE);
         String checkState = state.getString("state", "");
         if(image_uri!=null){
-            post=new Post(name, item, area, about, downloadUri.toString(), checkState, fbUser.getUid(), postUid);
+            post=new Post(name, item, area, about, downloadUri.toString(), checkState, fbUser.getUid(), postId);
         }
         else{
-            post=new Post(name, item, area, about, "", checkState, fbUser.getUid(), postUid);
+            post=new Post(name, item, area, about, "", checkState, fbUser.getUid(), postId);
         }
-        refPosts.child(postUid).setValue(post).addOnCompleteListener(new OnCompleteListener<Void>() {
+        refPosts.child(postId).setValue(post).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                refUsers.child(fbUser.getUid()).child("Posts").child(postUid).setValue(post)
+                refUsers.child(fbUser.getUid()).child("Posts").child(postId).setValue(post)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -186,9 +196,11 @@ public class SelectImageFragment extends Fragment {
     }
 
     private boolean checkStoragePermission() {
-        boolean result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        boolean result1 = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_MEDIA_IMAGES)
                 == (PackageManager.PERMISSION_GRANTED);
-        return result;
+        boolean result2 = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == (PackageManager.PERMISSION_GRANTED);
+        return result1||result2;
 
     }
     private void requestStoragePermission(){
@@ -196,61 +208,36 @@ public class SelectImageFragment extends Fragment {
     }
 
     private boolean checkCameraPermission() {
-        boolean result1 = ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.CAMERA)
-                == PackageManager.PERMISSION_GRANTED;
-        boolean result2= ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED;
-        return result1 && result2;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            result1 = ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_GRANTED;
+            result2 = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED;
+            return result1&&result2;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            result = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_GRANTED;
+            return result;
+        }
+        return false;
+
     }
     private void requestCameraPermission(){
         ActivityCompat.requestPermissions(getActivity(),cameraPermissions, CAMERA_REQUEST_CODE);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
-            case CAMERA_REQUEST_CODE:{
-                if(grantResults.length>0){
-                    boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    boolean writeStorageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                    if(cameraAccepted && writeStorageAccepted){
-                        pickFromCamera();
-                    }
-                    else{
-                        Toast.makeText(getActivity(),"בבקשה תאשר את בקשות המצלמה והאחסון", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-            break;
-            case STORAGE_REQUEST_CODE:{
-                if(grantResults.length>0){
-                    boolean writeStorageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                    if(writeStorageAccepted){
-                        pickFromGallery();
-                    }
-                    else{
-                        Toast.makeText(getActivity(),"בבקשה תאשר את בקשת האחסון", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-            break;
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
     private void pickFromCamera() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "Temp Pic");
         values.put(MediaStore.Images.Media.DESCRIPTION, "Temp Description");
-
         image_uri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
         startActivityForResult(cameraIntent, IMAGE_PICK_CAMERA_CODE);
     }
     private void pickFromGallery() {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK);
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         galleryIntent.setType("image/*");
         startActivityForResult(galleryIntent, IMAGE_PICK_GALLERY_CODE);
     }
