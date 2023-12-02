@@ -6,18 +6,29 @@ public class Message {
     private String senderUid;
     private String receiverUid;
     private String postId;
+    private String messageId;
     private boolean isSeen;
     private long timeStamp;
 
     public Message(){}
 
-    public Message(String message, String senderUid, String receiverUid, String postId, long timeStamp){
+    public Message(String message, String senderUid, String receiverUid, String postId, String messageId, long timeStamp){
         this.message=message;
         this.senderUid=senderUid;
         this.receiverUid=receiverUid;
         this.postId=postId;
+        this.messageId=messageId;
         this.isSeen=false;
         this.timeStamp=timeStamp;
+    }
+    public Message(Message message){
+        this.message=message.message;
+        this.senderUid=message.senderUid;
+        this.receiverUid=message.receiverUid;
+        this.postId=message.postId;
+        this.messageId=message.messageId;
+        this.isSeen=message.isSeen;
+        this.timeStamp=message.timeStamp;
     }
 
     public String getMessage() {
@@ -60,5 +71,12 @@ public class Message {
     }
     public void setSeen(boolean seen) {
         isSeen = seen;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 }

@@ -44,7 +44,7 @@ public class ListPostFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentListPostBinding.inflate(inflater, container, false);
-        ValueEventListener postListener = new ValueEventListener() {
+        postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dS) {
                 foundValues.clear();
@@ -69,11 +69,12 @@ public class ListPostFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
+    public void onPause() {
+        super.onPause();
+        arrayList.clear();
         if (postListener != null) {
             refPosts.removeEventListener(postListener);
         }
-        super.onStop();
     }
 
     private void showPosts() {
@@ -117,9 +118,4 @@ public class ListPostFragment extends Fragment {
         });
     }
 
-    @Override
-    public void onPause() {
-        arrayList.clear();
-        super.onPause();
-    }
 }

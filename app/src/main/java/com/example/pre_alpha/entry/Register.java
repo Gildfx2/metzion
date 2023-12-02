@@ -57,7 +57,7 @@ public class Register extends AppCompatActivity {
         layoutPassword=findViewById(R.id.layoutPassword2);
         layoutConfirmPassword=findViewById(R.id.layoutConfirmPassword);
         auth=FirebaseAuth.getInstance();
-        ValueEventListener userListener = new ValueEventListener() {
+        userListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dS) {
                 userValues.clear();
@@ -127,13 +127,13 @@ public class Register extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if(task.isSuccessful()) {
                         FirebaseUser fbUser= auth.getCurrentUser();
-                        user=new User(email,username,fbUser.getUid());
+                        user=new User(email,username,fbUser.getUid(), "online");
                         DatabaseReference userRef = refUsers.child(fbUser.getUid());
                         ValueEventListener userValueEventListener = new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (!dataSnapshot.exists()) {
-                                    user=new User(email,username,fbUser.getUid());
+                                    user=new User(email,username,fbUser.getUid(), "online");
                                     refUsers.child(fbUser.getUid()).setValue(user);
                                 }
                                 refUsers.removeEventListener(this);

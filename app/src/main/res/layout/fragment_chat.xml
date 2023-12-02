@@ -18,16 +18,33 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="right">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:text="שם משתמש"
-                    android:id="@+id/chat_username"
-                    android:fontFamily="@font/rubik_medium"
-                    android:layout_marginEnd="20dp"
-                    android:layout_gravity="center" />
+                android:gravity="right"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="right"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:text="שם משתמש"
+                        android:id="@+id/chat_username"
+                        android:fontFamily="@font/rubik_medium"
+                        android:layout_marginEnd="20dp"
+                        android:layout_marginTop="7dp"
+                        android:layout_gravity="right" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:text="סטטוס"
+                        android:id="@+id/chat_user_status"
+                        android:fontFamily="@font/rubik_regular"
+                        android:layout_marginEnd="20dp"
+                        android:layout_gravity="right" />
+                </LinearLayout>
                 <ImageView
                     android:id="@+id/return_back_chat"
                     android:layout_width="40dp"

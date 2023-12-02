@@ -1,24 +1,34 @@
 package com.example.pre_alpha.main;
 
+import static com.example.pre_alpha.models.FBref.refUsers;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
 import com.example.pre_alpha.R;
+import com.example.pre_alpha.models.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
     FirebaseAuth auth;
+    FirebaseUser fbUser;
     BottomNavigationView bottomNavigationView;
     public HomeFragment homeFragment=new HomeFragment();
     SearchFragment searchFragment=new SearchFragment();
@@ -27,12 +37,15 @@ public class MainActivity extends AppCompatActivity {
     UserFragment userFragment=new UserFragment();
     Dialog dialog;
     DetailedPostFragment detailedPostFragment = new DetailedPostFragment();
+    User user;
+
     Button lost, found;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         auth=FirebaseAuth.getInstance();
+        fbUser=auth.getCurrentUser();
         bottomNavigationView=findViewById(R.id.bottomNavigationBar);
         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, homeFragment).commit();
         bottomNavigationView.setSelectedItemId(R.id.home);
@@ -101,8 +114,34 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dS) {
+                for (DataSnapshot data : dS.getChildren()) {
+                    User userTmp = data.getValue(User.class);
+                    if(userTmp.getUid().equals(fbUser.getUid())) {
+                        user = new User(userTmp);
+                        user.setStatus("online");
+                        refUsers.child(fbUser.getUid()).setValue(user);
+                        break;
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                Log.e("FirebaseError", error.getMessage());
+            }
+        });
 
+    }
 
-
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        user.setStatus(String.valueOf(System.currentTimeMillis()));
+        refUsers.child(fbUser.getUid()).setValue(user);
+    }
 }

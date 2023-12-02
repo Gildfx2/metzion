@@ -49,7 +49,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemViewType(int position) {
-        // Adjust this logic based on your requirements
         if (messages.get(position).getSenderUid().equals(fbUser.getUid())) {
             return VIEW_TYPE_RIGHT;
         } else {
@@ -63,17 +62,26 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public class MessageViewHolder extends RecyclerView.ViewHolder {
-        TextView messageTextView, messageTimeStamp;
+        TextView messageTextView, messageTimeStamp, messageStatus;
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
             messageTextView = itemView.findViewById(R.id.messages);
             messageTimeStamp = itemView.findViewById(R.id.message_time_stamp);
+            messageStatus = itemView.findViewById(R.id.message_status);
         }
 
         public void bind(Message message) {
             messageTextView.setText(message.getMessage());
             messageTimeStamp.setText(formatTimestamp(message.getTimeStamp()));
+            if (message.getSenderUid().equals(fbUser.getUid())) {
+                if (message.isSeen()) {
+                    messageStatus.setText("נראתה");
+                } else {
+                    messageStatus.setText("נשלחה");
+                }
+            }
+
         }
 
     }

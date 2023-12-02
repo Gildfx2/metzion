@@ -37,16 +37,18 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class ChatFragment extends Fragment {
 
-    String postName, postArea, image, creatorUid, username, postId, otherUserUid;
-    String messageUid;
+    String postName, postArea, image, creatorUid, username, postId, otherUserUid, messageId;
     ImageView postImage, returnBack;
-    TextView nameTV, areaTV, usernameTV;
+    TextView nameTV, areaTV, usernameTV, userStatusTV;
     EditText textMessage;
     ImageButton sendMessage;
     FirebaseUser fbUser;
@@ -55,6 +57,9 @@ public class ChatFragment extends Fragment {
     List<Message> messages = new ArrayList<>();
     RecyclerView recyclerView;
     Button getData;
+    User user, otherUser;
+    Message message;
+    ValueEventListener chatListener, userListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,6 +71,7 @@ public class ChatFragment extends Fragment {
         nameTV = view.findViewById(R.id.chat_post_name);
         areaTV = view.findViewById(R.id.chat_post_area);
         usernameTV = view.findViewById(R.id.chat_username);
+        userStatusTV = view.findViewById(R.id.chat_user_status);
         postImage = view.findViewById(R.id.chat_post_image);
         textMessage = view.findViewById(R.id.text_message);
         sendMessage = view.findViewById(R.id.btn_send);
@@ -82,28 +88,13 @@ public class ChatFragment extends Fragment {
         postId = bundle.getString("post_id");
         username = bundle.getString("username");
         otherUserUid = bundle.getString("other_user_uid");
-        refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                userValues.clear();
-                for (DataSnapshot data : snapshot.getChildren()) {
-                    User userTmp = data.getValue(User.class);
-                    userValues.add(userTmp);
-                }
-                loadChatMessages();
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("FirebaseError", error.getMessage());
-            }
-        });
 
         sendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                messageUid = refChat.push().getKey();
-                Message message = new Message(textMessage.getText().toString(), fbUser.getUid(), otherUserUid, postId, System.currentTimeMillis());
-                refChat.child(messageUid).setValue(message);
+                messageId = refChat.push().getKey();
+                Message message = new Message(textMessage.getText().toString(), fbUser.getUid(), otherUserUid, postId, messageId, System.currentTimeMillis());
+                refChat.child(messageId).setValue(message);
                 ChatList chatList1 = new ChatList(otherUserUid, postId, System.currentTimeMillis(), message.getMessage());
                 ChatList chatList2 = new ChatList(fbUser.getUid(), postId, System.currentTimeMillis(), message.getMessage());
                 refChatList.child(fbUser.getUid()).child(postId).setValue(chatList1);
@@ -134,16 +125,45 @@ public class ChatFragment extends Fragment {
         });
         return view;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        userListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                userValues.clear();
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    User userTmp = data.getValue(User.class);
+                    userValues.add(userTmp);
+                }
+                loadChatMessages();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("FirebaseError", error.getMessage());
+            }
+        };
+        refUsers.addValueEventListener(userListener);
+    }
+
     private void loadChatMessages(){
-        ValueEventListener chatListener = new ValueEventListener() {
+        chatListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 messages.clear();
+                otherUser = new User(findUserByUid(otherUserUid));
                 for (DataSnapshot data : snapshot.getChildren()) {
-                    Message message = data.getValue(Message.class);
-                    if((message.getReceiverUid().equals(fbUser.getUid()) && message.getSenderUid().equals(otherUserUid) && message.getPostId().equals(postId))
-                            || (message.getSenderUid().equals(fbUser.getUid()) && message.getReceiverUid().equals(otherUserUid) && message.getPostId().equals(postId)))
+                    Message messageTmp = data.getValue(Message.class);
+                    if((messageTmp.getReceiverUid().equals(fbUser.getUid()) && messageTmp.getSenderUid().equals(otherUserUid) && messageTmp.getPostId().equals(postId))
+                            || (messageTmp.getSenderUid().equals(fbUser.getUid()) && messageTmp.getReceiverUid().equals(otherUserUid) && messageTmp.getPostId().equals(postId))) {
+                        message = new Message(messageTmp);
+                        if(otherUser.getStatus().equals("online_" + postId)) {
+                            message.setSeen(true);
+                            refChat.child(messageTmp.getMessageId()).setValue(message);
+                        }
                         messages.add(message);
+                    }
                 }
                 updateChatUI();
             }
@@ -173,12 +193,43 @@ public class ChatFragment extends Fragment {
             Glide.with(this)
                     .load(Uri.parse(image))
                     .into(postImage);
+        if(otherUser.getStatus().equals("online_" + postId))
+            userStatusTV.setText("בצ'אט");
+        else if(otherUser.getStatus().substring(0,6).equals("online"))
+            userStatusTV.setText("מחובר");
+        else
+            userStatusTV.setText(formatDate(Long.parseLong(otherUser.getStatus())));
+        user = new User(findUserByUid(fbUser.getUid()));
+        user.setStatus("online_" + postId);
+        refUsers.child(fbUser.getUid()).setValue(user);
     }
 
+    private String formatDate(long timestamp) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        Date date = new Date(timestamp);
+        return dateFormat.format(date);
+    }
+
+    private User findUserByUid(String uid){
+        for(User user : userValues){
+            if(user.getUid().equals(uid)){
+                return user;
+            }
+        }
+        return null;
+    }
     @Override
     public void onPause() {
-        textMessage.setText("");
         super.onPause();
+        textMessage.setText("");
+        user.setStatus("online");
+        refUsers.child(fbUser.getUid()).setValue(user);
+        if (chatListener != null) {
+            refChat.removeEventListener(chatListener);
+        }
+        if (userListener != null) {
+            refUsers.removeEventListener(userListener);
+        }
     }
 
 }

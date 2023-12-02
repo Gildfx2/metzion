@@ -166,7 +166,7 @@ public class HomeChatFragment extends Fragment {
         return "אין שם";
     }
 
-    public static String formatDate(long timestamp) {
+    private String formatDate(long timestamp) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         Date date = new Date(timestamp);
         return dateFormat.format(date);

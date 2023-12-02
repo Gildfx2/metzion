@@ -41,7 +41,7 @@ public class ForgotPassword extends AppCompatActivity {
         etEmail=findViewById(R.id.emailField);
         layoutEmail=findViewById(R.id.layoutEmail3);
         auth= FirebaseAuth.getInstance();
-        ValueEventListener userListener = new ValueEventListener() {
+        userListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dS) {
                 userValues.clear();

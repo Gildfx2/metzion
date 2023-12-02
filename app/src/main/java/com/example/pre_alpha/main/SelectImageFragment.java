@@ -150,24 +150,18 @@ public class SelectImageFragment extends Fragment {
         refPosts.child(postId).setValue(post).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                refUsers.child(fbUser.getUid()).child("Posts").child(postId).setValue(post)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                dialog=new Dialog(getActivity());
-                                dialog.setContentView(R.layout.upload_post_dialog_layout);
-                                btnUpload=dialog.findViewById(R.id.uploadSuccessfully);
-                                btnUpload.setOnClickListener(new View.OnClickListener(){
-                                    public void onClick(View view){
-                                        dialog.cancel();
-                                        getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, homeFragment).commit();
-                                        bottomNavigationView.setSelectedItemId(R.id.home);
-                                        bottomNavigationView.setItemIconTintList(null);
-                                    }
-                                });
-                                dialog.show();
-                            }
-                        });
+                dialog=new Dialog(getActivity());
+                dialog.setContentView(R.layout.upload_post_dialog_layout);
+                btnUpload=dialog.findViewById(R.id.uploadSuccessfully);
+                btnUpload.setOnClickListener(new View.OnClickListener(){
+                    public void onClick(View view){
+                        dialog.cancel();
+                        getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, homeFragment).commit();
+                        bottomNavigationView.setSelectedItemId(R.id.home);
+                        bottomNavigationView.setItemIconTintList(null);
+                    }
+                });
+                dialog.show();
             }
         });
     }

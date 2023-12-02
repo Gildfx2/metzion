@@ -55,7 +55,7 @@ public class Login extends AppCompatActivity {
             startActivity(intent);
         }
 
-        ValueEventListener userListener = new ValueEventListener() {
+        userListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dS) {
                 userValues.clear();
