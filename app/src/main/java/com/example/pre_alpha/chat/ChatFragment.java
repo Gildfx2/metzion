@@ -47,6 +47,7 @@ import java.util.Locale;
 public class ChatFragment extends Fragment {
 
     String postName, postArea, image, creatorUid, username, postId, otherUserUid, messageId;
+    int unseenMessages=1;
     ImageView postImage, returnBack;
     TextView nameTV, areaTV, usernameTV, userStatusTV;
     EditText textMessage;
@@ -59,7 +60,7 @@ public class ChatFragment extends Fragment {
     Button getData;
     User user, otherUser;
     Message message;
-    ValueEventListener chatListener, userListener;
+    ValueEventListener userListener, chatListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -96,9 +97,9 @@ public class ChatFragment extends Fragment {
                 Message message = new Message(textMessage.getText().toString(), fbUser.getUid(), otherUserUid, postId, messageId, System.currentTimeMillis());
                 refChat.child(messageId).setValue(message);
                 ChatList chatList1 = new ChatList(otherUserUid, postId, System.currentTimeMillis(), message.getMessage());
-                ChatList chatList2 = new ChatList(fbUser.getUid(), postId, System.currentTimeMillis(), message.getMessage());
-                refChatList.child(fbUser.getUid()).child(postId).setValue(chatList1);
-                refChatList.child(otherUserUid).child(postId).setValue(chatList2);
+                ChatList chatList2 = new ChatList(fbUser.getUid(), postId, System.currentTimeMillis(), message.getMessage(), unseenMessages);
+                refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).setValue(chatList1);
+                refChatList.child(otherUserUid).child(postId).child(fbUser.getUid()).setValue(chatList2);
                 textMessage.setText("");
             }
         });
@@ -119,7 +120,6 @@ public class ChatFragment extends Fragment {
                 HomeChatFragment homeChatFragment = new HomeChatFragment();
                 FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                 transaction.replace(R.id.chatFrameLayout, homeChatFragment);
-                transaction.addToBackStack(null);
                 transaction.commit();
             }
         });
@@ -129,7 +129,7 @@ public class ChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        userListener = new ValueEventListener() {
+        refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 userValues.clear();
@@ -137,6 +137,21 @@ public class ChatFragment extends Fragment {
                     User userTmp = data.getValue(User.class);
                     userValues.add(userTmp);
                 }
+                user = new User(findUserByUid(fbUser.getUid()));
+                user.setStatus("online_" + postId);
+                refUsers.child(fbUser.getUid()).setValue(user);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("FirebaseError", error.getMessage());
+            }
+        });
+        userListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                unseenMessages=1;
+                User userTmp = snapshot.getValue(User.class);
+                updateUserValues(userTmp);
                 loadChatMessages();
             }
             @Override
@@ -144,7 +159,7 @@ public class ChatFragment extends Fragment {
                 Log.e("FirebaseError", error.getMessage());
             }
         };
-        refUsers.addValueEventListener(userListener);
+        refUsers.child(otherUserUid).addValueEventListener(userListener);
     }
 
     private void loadChatMessages(){
@@ -152,16 +167,19 @@ public class ChatFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 messages.clear();
+                unseenMessages=1;
                 otherUser = new User(findUserByUid(otherUserUid));
                 for (DataSnapshot data : snapshot.getChildren()) {
                     Message messageTmp = data.getValue(Message.class);
                     if((messageTmp.getReceiverUid().equals(fbUser.getUid()) && messageTmp.getSenderUid().equals(otherUserUid) && messageTmp.getPostId().equals(postId))
                             || (messageTmp.getSenderUid().equals(fbUser.getUid()) && messageTmp.getReceiverUid().equals(otherUserUid) && messageTmp.getPostId().equals(postId))) {
                         message = new Message(messageTmp);
-                        if(otherUser.getStatus().equals("online_" + postId)) {
+                        if(otherUser.getStatus().equals("online_" + postId) && user.getStatus().length()>6 && user.getStatus().substring(0,7).equals("online_")) {
                             message.setSeen(true);
                             refChat.child(messageTmp.getMessageId()).setValue(message);
+                            refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).child("unseenMessages").setValue(0);
                         }
+                        if(!message.isSeen()) unseenMessages++;
                         messages.add(message);
                     }
                 }
@@ -199,9 +217,6 @@ public class ChatFragment extends Fragment {
             userStatusTV.setText("מחובר");
         else
             userStatusTV.setText(formatDate(Long.parseLong(otherUser.getStatus())));
-        user = new User(findUserByUid(fbUser.getUid()));
-        user.setStatus("online_" + postId);
-        refUsers.child(fbUser.getUid()).setValue(user);
     }
 
     private String formatDate(long timestamp) {
@@ -218,17 +233,26 @@ public class ChatFragment extends Fragment {
         }
         return null;
     }
+
+    private void updateUserValues(User user){
+        int count=0;
+        for(User userTmp : userValues){
+            if(user.getUid().equals(userTmp.getUid())) userValues.set(count, user);
+            count++;
+        }
+    }
+
     @Override
     public void onPause() {
         super.onPause();
         textMessage.setText("");
         user.setStatus("online");
         refUsers.child(fbUser.getUid()).setValue(user);
-        if (chatListener != null) {
-            refChat.removeEventListener(chatListener);
-        }
         if (userListener != null) {
             refUsers.removeEventListener(userListener);
+        }
+        if (chatListener != null) {
+            refChat.removeEventListener(chatListener);
         }
     }
 

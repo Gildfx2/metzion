@@ -20,6 +20,7 @@ public class User {
         this.uid=user.uid;
         this.status=user.status;
     }
+
     public String getEmail() {
         return email;
     }

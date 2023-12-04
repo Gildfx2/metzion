@@ -93,7 +93,7 @@ public class HomeChatFragment extends Fragment {
                         image_uri = Uri.parse(post.getImage());
                     }
                     chatData = new ChatData(post.getName(), post.getArea(), getUsernameFromUid(chatList.getUserUid()), image_uri, post.getCreatorUid(),
-                            post.getPostId(), chatList.getUserUid(), chatList.getLastMessage(), formatDate(chatList.getTimeStamp()));
+                            post.getPostId(), chatList.getUserUid(), chatList.getLastMessage(), formatDate(chatList.getTimeStamp()), chatList.getUnseenMessages());
                     arrayList.add(chatData);
                     break;
                 }
@@ -124,24 +124,33 @@ public class HomeChatFragment extends Fragment {
         }
     }
     private void readChats(){
-        Query query = FBDB.getReference().child("ChatList").child(fbUser.getUid()).orderByChild("timeStamp");
-        ValueEventListener chatsListener = new ValueEventListener() {
+        chatsListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 chats.clear();
-                for (DataSnapshot data : snapshot.getChildren()) {
-                    ChatList chatList = data.getValue(ChatList.class);
-                    chats.add(chatList);
+                if (snapshot.exists()) {
+                    for (DataSnapshot postIdSnapshot : snapshot.getChildren()) {
+                        String postId = postIdSnapshot.getKey();
+                        for (DataSnapshot userId2Snapshot : postIdSnapshot.getChildren()) {
+                            String userUid = userId2Snapshot.child("userUid").getValue(String.class);
+                            String lastMessage = userId2Snapshot.child("lastMessage").getValue(String.class);
+                            long timestamp = userId2Snapshot.child("timeStamp").getValue(Long.class);
+                            int unseenMessages = userId2Snapshot.child("unseenMessages").getValue(Integer.class);
+                            ChatList chatList = new ChatList(userUid, postId, timestamp, lastMessage, unseenMessages);
+                            chats.add(chatList);
+                            readPosts();
+                        }
+                    }
+                } else {
+                    Log.e("FirebaseError", "Snapshot does not exist");
                 }
-                Collections.reverse(chats);
-                readPosts();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("FirebaseError", error.getMessage());
             }
         };
-        query.addValueEventListener(chatsListener);
+        refChatList.child(fbUser.getUid()).addValueEventListener(chatsListener);
     }
     private void readPosts(){
         refPosts.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -174,10 +183,10 @@ public class HomeChatFragment extends Fragment {
 
     @Override
     public void onPause() {
+        super.onPause();
         arrayList.clear();
         if (chatsListener != null) {
-            refChatList.removeEventListener(chatsListener);
+            refChatList.child(fbUser.getUid()).removeEventListener(chatsListener);
         }
-        super.onPause();
     }
 }
