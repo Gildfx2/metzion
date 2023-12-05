@@ -37,8 +37,6 @@ public class MainActivity extends AppCompatActivity {
     UserFragment userFragment=new UserFragment();
     Dialog dialog;
     DetailedPostFragment detailedPostFragment = new DetailedPostFragment();
-    User user;
-
     Button lost, found;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,31 +115,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dS) {
-                for (DataSnapshot data : dS.getChildren()) {
-                    User userTmp = data.getValue(User.class);
-                    if(userTmp.getUid().equals(fbUser.getUid())) {
-                        user = new User(userTmp);
-                        user.setStatus("online");
-                        refUsers.child(fbUser.getUid()).setValue(user);
-                        break;
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.e("FirebaseError", error.getMessage());
-            }
-        });
+        refUsers.child(fbUser.getUid()).child("status").setValue("online");
 
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        user.setStatus(String.valueOf(System.currentTimeMillis()));
-        refUsers.child(fbUser.getUid()).setValue(user);
+        refUsers.child(fbUser.getUid()).child("status").setValue(String.valueOf(System.currentTimeMillis()));
     }
 }

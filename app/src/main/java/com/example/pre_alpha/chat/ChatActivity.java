@@ -1,7 +1,9 @@
 package com.example.pre_alpha.chat;
 
+import static com.example.pre_alpha.models.FBref.refChat;
 import static com.example.pre_alpha.models.FBref.refUsers;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.SharedPreferences;
@@ -16,27 +18,32 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 public class ChatActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
+    String postName, postArea, postImage, postId, creatorUid, username, otherUserUid, pick;
     FirebaseUser fbUser;
-    User user;
+    ValueEventListener currentUserListener, otherUserListener;
+    SharedPreferences chat;
+    static User currentUser, otherUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         auth=FirebaseAuth.getInstance();
         fbUser= auth.getCurrentUser();
-        SharedPreferences chat = getSharedPreferences("chat_pick", MODE_PRIVATE);
-        String pick = chat.getString("chat_pick", "");
+        chat = getSharedPreferences("chat_pick", MODE_PRIVATE);
+        pick = chat.getString("chat_pick", "");
         if(pick.equals("send message")) {
-            String postName = getIntent().getStringExtra("post_name");
-            String postArea = getIntent().getStringExtra("post_area");
-            String postImage = getIntent().getStringExtra("post_image");
-            String creatorUid = getIntent().getStringExtra("creator_uid");
-            String postId = getIntent().getStringExtra("post_id");
-            String username = getIntent().getStringExtra("username");
-            String otherUserUid = getIntent().getStringExtra("other_user_uid");
+             postName = getIntent().getStringExtra("post_name");
+             postArea = getIntent().getStringExtra("post_area");
+             postImage = getIntent().getStringExtra("post_image");
+             creatorUid = getIntent().getStringExtra("creator_uid");
+             postId = getIntent().getStringExtra("post_id");
+             username = getIntent().getStringExtra("username");
+             otherUserUid = getIntent().getStringExtra("other_user_uid");
 
             ChatFragment chatFragment = new ChatFragment();
             Bundle bundle = new Bundle();
@@ -64,31 +71,46 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dS) {
-                for (DataSnapshot data : dS.getChildren()) {
-                    User userTmp = data.getValue(User.class);
-                    if(userTmp.getUid().equals(fbUser.getUid())) {
-                        user = new User(userTmp);
-                        user.setStatus("online");
-                        refUsers.child(fbUser.getUid()).setValue(user);
-                        break;
-                    }
+        if(pick.equals("send message")) {
+            refUsers.child(fbUser.getUid()).child("status").setValue("online");
+            currentUserListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    currentUser = snapshot.getValue(User.class);
                 }
-            }
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.e("FirebaseError", error.getMessage());
-            }
-        });
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("FirebaseError", error.getMessage());
+                }
+            };
+            refUsers.child(fbUser.getUid()).child("status").addValueEventListener(currentUserListener);
+
+            otherUserListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    otherUser = snapshot.getValue(User.class);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("FirebaseError", error.getMessage());
+                }
+            };
+            refUsers.child(otherUserUid).child("status").addValueEventListener(otherUserListener);
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        user.setStatus(String.valueOf(System.currentTimeMillis()));
-        refUsers.child(fbUser.getUid()).setValue(user);
+        refUsers.child(fbUser.getUid()).child("status").setValue(String.valueOf(System.currentTimeMillis()));
+        if (currentUserListener != null) {
+            refUsers.removeEventListener(currentUserListener);
+        }
+        if (otherUserListener != null) {
+            refUsers.removeEventListener(otherUserListener);
+        }
     }
 
 }

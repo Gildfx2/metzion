@@ -1,5 +1,6 @@
 package com.example.pre_alpha.chat;
 
+import static com.example.pre_alpha.chat.ChatActivity.otherUser;
 import static com.example.pre_alpha.models.FBref.FBDB;
 import static com.example.pre_alpha.models.FBref.refChat;
 import static com.example.pre_alpha.models.FBref.refChatList;
@@ -56,7 +57,7 @@ public class HomeChatFragment extends Fragment {
     ChatAdapter chatAdapter;
     FragmentHomeChatBinding binding;
     ChatFragment chatFragment = new ChatFragment();
-    ValueEventListener chatsListener;
+    ValueEventListener chatsListener, otherUserListener;
     FirebaseAuth auth;
 
 
@@ -118,7 +119,19 @@ public class HomeChatFragment extends Fragment {
                         bundle.putString("post_image", arrayList.get(position).getImage().toString());
                     else bundle.putString("post_image", "");
                     chatFragment.setArguments(bundle);
-                    getParentFragmentManager().beginTransaction().replace(R.id.chatFrameLayout, chatFragment).commit();
+                    otherUserListener = new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            otherUser = snapshot.getValue(User.class);
+                            getParentFragmentManager().beginTransaction().replace(R.id.chatFrameLayout, chatFragment).commit();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e("FirebaseError", error.getMessage());
+                        }
+                    };
+                    refUsers.child(arrayList.get(position).getOtherUserUid()).child("status").addValueEventListener(otherUserListener);
                 }
             });
         }
@@ -187,6 +200,9 @@ public class HomeChatFragment extends Fragment {
         arrayList.clear();
         if (chatsListener != null) {
             refChatList.child(fbUser.getUid()).removeEventListener(chatsListener);
+        }
+        if (otherUserListener != null) {
+            refUsers.removeEventListener(otherUserListener);
         }
     }
 }

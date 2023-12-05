@@ -1,5 +1,7 @@
 package com.example.pre_alpha.chat;
 
+import static com.example.pre_alpha.chat.ChatActivity.currentUser;
+import static com.example.pre_alpha.chat.ChatActivity.otherUser;
 import static com.example.pre_alpha.models.FBref.refChat;
 import static com.example.pre_alpha.models.FBref.refChatList;
 import static com.example.pre_alpha.models.FBref.refUsers;
@@ -30,7 +32,6 @@ import com.example.pre_alpha.adapters.MessageAdapter;
 import com.example.pre_alpha.main.MainActivity;
 import com.example.pre_alpha.models.ChatList;
 import com.example.pre_alpha.models.Message;
-import com.example.pre_alpha.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -46,7 +47,7 @@ import java.util.Locale;
 
 public class ChatFragment extends Fragment {
 
-    String postName, postArea, image, creatorUid, username, postId, otherUserUid, messageId;
+    String postName, postArea, image, creatorUid, username, postId, otherUserUid, messageId, myStatus;
     int unseenMessages=1;
     ImageView postImage, returnBack;
     TextView nameTV, areaTV, usernameTV, userStatusTV;
@@ -54,11 +55,9 @@ public class ChatFragment extends Fragment {
     ImageButton sendMessage;
     FirebaseUser fbUser;
     FirebaseAuth auth;
-    ArrayList<User> userValues = new ArrayList<User>();
     List<Message> messages = new ArrayList<>();
     RecyclerView recyclerView;
     Button getData;
-    User user, otherUser;
     Message message;
     ValueEventListener userListener, chatListener;
 
@@ -129,29 +128,11 @@ public class ChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                userValues.clear();
-                for (DataSnapshot data : snapshot.getChildren()) {
-                    User userTmp = data.getValue(User.class);
-                    userValues.add(userTmp);
-                }
-                user = new User(findUserByUid(fbUser.getUid()));
-                user.setStatus("online_" + postId);
-                refUsers.child(fbUser.getUid()).setValue(user);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("FirebaseError", error.getMessage());
-            }
-        });
+        refUsers.child(fbUser.getUid()).child("status").setValue("online_" + postId);
         userListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 unseenMessages=1;
-                User userTmp = snapshot.getValue(User.class);
-                updateUserValues(userTmp);
                 loadChatMessages();
             }
             @Override
@@ -159,7 +140,7 @@ public class ChatFragment extends Fragment {
                 Log.e("FirebaseError", error.getMessage());
             }
         };
-        refUsers.child(otherUserUid).addValueEventListener(userListener);
+        refUsers.child(otherUserUid).child("status").addValueEventListener(userListener);
     }
 
     private void loadChatMessages(){
@@ -168,13 +149,12 @@ public class ChatFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 messages.clear();
                 unseenMessages=1;
-                otherUser = new User(findUserByUid(otherUserUid));
                 for (DataSnapshot data : snapshot.getChildren()) {
                     Message messageTmp = data.getValue(Message.class);
                     if((messageTmp.getReceiverUid().equals(fbUser.getUid()) && messageTmp.getSenderUid().equals(otherUserUid) && messageTmp.getPostId().equals(postId))
                             || (messageTmp.getSenderUid().equals(fbUser.getUid()) && messageTmp.getReceiverUid().equals(otherUserUid) && messageTmp.getPostId().equals(postId))) {
                         message = new Message(messageTmp);
-                        if(otherUser.getStatus().equals("online_" + postId) && user.getStatus().length()>6 && user.getStatus().substring(0,7).equals("online_")) {
+                        if(message.getReceiverUid().equals(fbUser.getUid()) && currentUser.getStatus().length()>6 && currentUser.getStatus().substring(0,7).equals("online_")) {
                             message.setSeen(true);
                             refChat.child(messageTmp.getMessageId()).setValue(message);
                             refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).child("unseenMessages").setValue(0);
@@ -225,29 +205,11 @@ public class ChatFragment extends Fragment {
         return dateFormat.format(date);
     }
 
-    private User findUserByUid(String uid){
-        for(User user : userValues){
-            if(user.getUid().equals(uid)){
-                return user;
-            }
-        }
-        return null;
-    }
-
-    private void updateUserValues(User user){
-        int count=0;
-        for(User userTmp : userValues){
-            if(user.getUid().equals(userTmp.getUid())) userValues.set(count, user);
-            count++;
-        }
-    }
-
     @Override
     public void onPause() {
         super.onPause();
         textMessage.setText("");
-        user.setStatus("online");
-        refUsers.child(fbUser.getUid()).setValue(user);
+        refUsers.child(fbUser.getUid()).child("status").setValue("online");
         if (userListener != null) {
             refUsers.removeEventListener(userListener);
         }
