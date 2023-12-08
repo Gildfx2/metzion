@@ -1,8 +1,6 @@
 package com.example.pre_alpha.chat;
 
-import static com.example.pre_alpha.chat.ChatActivity.otherUser;
-import static com.example.pre_alpha.models.FBref.FBDB;
-import static com.example.pre_alpha.models.FBref.refChat;
+import static com.example.pre_alpha.chat.ChatActivity.otherUserStatus;
 import static com.example.pre_alpha.models.FBref.refChatList;
 import static com.example.pre_alpha.models.FBref.refPosts;
 import static com.example.pre_alpha.models.FBref.refUsers;
@@ -22,25 +20,18 @@ import android.widget.AdapterView;
 import com.example.pre_alpha.R;
 import com.example.pre_alpha.adapters.ChatAdapter;
 import com.example.pre_alpha.adapters.ChatData;
-import com.example.pre_alpha.adapters.PostData;
 import com.example.pre_alpha.databinding.FragmentHomeChatBinding;
-import com.example.pre_alpha.databinding.FragmentListPostBinding;
 import com.example.pre_alpha.models.ChatList;
-import com.example.pre_alpha.models.Message;
 import com.example.pre_alpha.models.Post;
 import com.example.pre_alpha.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -122,8 +113,7 @@ public class HomeChatFragment extends Fragment {
                     otherUserListener = new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            otherUser = snapshot.getValue(User.class);
-                            getParentFragmentManager().beginTransaction().replace(R.id.chatFrameLayout, chatFragment).commit();
+                            otherUserStatus = snapshot.getValue(String.class);
                         }
 
                         @Override
@@ -131,7 +121,8 @@ public class HomeChatFragment extends Fragment {
                             Log.e("FirebaseError", error.getMessage());
                         }
                     };
-                    refUsers.child(arrayList.get(position).getOtherUserUid()).child("status").addValueEventListener(otherUserListener);
+                    refUsers.child(arrayList.get(position).getCreatorUid()).child("status").addValueEventListener(otherUserListener);
+                    getParentFragmentManager().beginTransaction().replace(R.id.chatFrameLayout, chatFragment).commit();
                 }
             });
         }

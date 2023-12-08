@@ -1,6 +1,5 @@
 package com.example.pre_alpha.chat;
 
-import static com.example.pre_alpha.models.FBref.refChat;
 import static com.example.pre_alpha.models.FBref.refUsers;
 
 import androidx.annotation.NonNull;
@@ -11,14 +10,11 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.example.pre_alpha.R;
-import com.example.pre_alpha.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-
-import java.util.ArrayList;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -27,7 +23,7 @@ public class ChatActivity extends AppCompatActivity {
     FirebaseUser fbUser;
     ValueEventListener currentUserListener, otherUserListener;
     SharedPreferences chat;
-    static User currentUser, otherUser;
+    static String currentUserStatus, otherUserStatus;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,14 +32,15 @@ public class ChatActivity extends AppCompatActivity {
         fbUser= auth.getCurrentUser();
         chat = getSharedPreferences("chat_pick", MODE_PRIVATE);
         pick = chat.getString("chat_pick", "");
+        refUsers.child(fbUser.getUid()).child("status").setValue("online");
         if(pick.equals("send message")) {
-             postName = getIntent().getStringExtra("post_name");
-             postArea = getIntent().getStringExtra("post_area");
-             postImage = getIntent().getStringExtra("post_image");
-             creatorUid = getIntent().getStringExtra("creator_uid");
-             postId = getIntent().getStringExtra("post_id");
-             username = getIntent().getStringExtra("username");
-             otherUserUid = getIntent().getStringExtra("other_user_uid");
+            postName = getIntent().getStringExtra("post_name");
+            postArea = getIntent().getStringExtra("post_area");
+            postImage = getIntent().getStringExtra("post_image");
+            creatorUid = getIntent().getStringExtra("creator_uid");
+            postId = getIntent().getStringExtra("post_id");
+            username = getIntent().getStringExtra("username");
+            otherUserUid = getIntent().getStringExtra("other_user_uid");
 
             ChatFragment chatFragment = new ChatFragment();
             Bundle bundle = new Bundle();
@@ -55,41 +52,11 @@ public class ChatActivity extends AppCompatActivity {
             bundle.putString("username", username);
             bundle.putString("other_user_uid", otherUserUid);
             chatFragment.setArguments(bundle);
-
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.chatFrameLayout, chatFragment)
-                    .commit();
-        }
-        else if(pick.equals("see chats")){
-            HomeChatFragment homeChatFragment = new HomeChatFragment();
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.chatFrameLayout, homeChatFragment)
-                    .commit();
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(pick.equals("send message")) {
-            refUsers.child(fbUser.getUid()).child("status").setValue("online");
-            currentUserListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    currentUser = snapshot.getValue(User.class);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.e("FirebaseError", error.getMessage());
-                }
-            };
-            refUsers.child(fbUser.getUid()).child("status").addValueEventListener(currentUserListener);
-
             otherUserListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    otherUser = snapshot.getValue(User.class);
+                    otherUserStatus = snapshot.getValue(String.class);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.chatFrameLayout, chatFragment).commit();
                 }
 
                 @Override
@@ -98,7 +65,26 @@ public class ChatActivity extends AppCompatActivity {
                 }
             };
             refUsers.child(otherUserUid).child("status").addValueEventListener(otherUserListener);
+
         }
+        else if(pick.equals("see chats")){
+            HomeChatFragment homeChatFragment = new HomeChatFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.chatFrameLayout, homeChatFragment).commit();
+        }
+        currentUserListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                currentUserStatus = snapshot.getValue(String.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("FirebaseError", error.getMessage());
+            }
+        };
+        refUsers.child(fbUser.getUid()).child("status").addValueEventListener(currentUserListener);
+
+
     }
 
     @Override

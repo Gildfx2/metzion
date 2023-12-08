@@ -1,7 +1,7 @@
 package com.example.pre_alpha.chat;
 
-import static com.example.pre_alpha.chat.ChatActivity.currentUser;
-import static com.example.pre_alpha.chat.ChatActivity.otherUser;
+import static com.example.pre_alpha.chat.ChatActivity.currentUserStatus;
+import static com.example.pre_alpha.chat.ChatActivity.otherUserStatus;
 import static com.example.pre_alpha.models.FBref.refChat;
 import static com.example.pre_alpha.models.FBref.refChatList;
 import static com.example.pre_alpha.models.FBref.refUsers;
@@ -154,7 +154,7 @@ public class ChatFragment extends Fragment {
                     if((messageTmp.getReceiverUid().equals(fbUser.getUid()) && messageTmp.getSenderUid().equals(otherUserUid) && messageTmp.getPostId().equals(postId))
                             || (messageTmp.getSenderUid().equals(fbUser.getUid()) && messageTmp.getReceiverUid().equals(otherUserUid) && messageTmp.getPostId().equals(postId))) {
                         message = new Message(messageTmp);
-                        if(message.getReceiverUid().equals(fbUser.getUid()) && currentUser.getStatus().length()>6 && currentUser.getStatus().substring(0,7).equals("online_")) {
+                        if(message.getReceiverUid().equals(fbUser.getUid()) && currentUserStatus.length()>6 && currentUserStatus.substring(0,7).equals("online_")) {
                             message.setSeen(true);
                             refChat.child(messageTmp.getMessageId()).setValue(message);
                             refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).child("unseenMessages").setValue(0);
@@ -191,12 +191,12 @@ public class ChatFragment extends Fragment {
             Glide.with(this)
                     .load(Uri.parse(image))
                     .into(postImage);
-        if(otherUser.getStatus().equals("online_" + postId))
+        if(otherUserStatus.equals("online_" + postId))
             userStatusTV.setText("בצ'אט");
-        else if(otherUser.getStatus().substring(0,6).equals("online"))
+        else if(otherUserStatus.substring(0,6).equals("online"))
             userStatusTV.setText("מחובר");
         else
-            userStatusTV.setText(formatDate(Long.parseLong(otherUser.getStatus())));
+            userStatusTV.setText(formatDate(Long.parseLong(otherUserStatus)));
     }
 
     private String formatDate(long timestamp) {
