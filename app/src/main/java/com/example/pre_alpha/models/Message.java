@@ -9,6 +9,8 @@ public class Message {
     private String messageId;
     private boolean isSeen;
     private long timeStamp;
+    private boolean isImage;
+    private String imageUrl;
 
     public Message(){}
 
@@ -20,7 +22,10 @@ public class Message {
         this.messageId=messageId;
         this.isSeen=false;
         this.timeStamp=timeStamp;
+        this.isImage = false;
+        this.imageUrl = "";
     }
+
     public Message(Message message){
         this.message=message.message;
         this.senderUid=message.senderUid;
@@ -29,6 +34,20 @@ public class Message {
         this.messageId=message.messageId;
         this.isSeen=message.isSeen;
         this.timeStamp=message.timeStamp;
+        this.isImage = message.isImage;
+        this.imageUrl = message.imageUrl;
+    }
+
+    public Message(String imageUrl, String senderUid, String receiverUid, String postId, String messageId, long timeStamp, boolean isSeen){
+        this.message = "";
+        this.senderUid = senderUid;
+        this.receiverUid = receiverUid;
+        this.postId = postId;
+        this.messageId = messageId;
+        this.isSeen = false;
+        this.timeStamp = timeStamp;
+        this.isImage = true;
+        this.imageUrl = imageUrl;
     }
 
     public String getMessage() {
@@ -78,5 +97,21 @@ public class Message {
     }
     public void setMessageId(String messageId) {
         this.messageId = messageId;
+    }
+
+    public boolean isImage() {
+        return isImage;
+    }
+
+    public void setImage(boolean image) {
+        isImage = image;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

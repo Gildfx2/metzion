@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:padding="8dp"
     android:layout_height="wrap_content">
-    
+
     <RelativeLayout
         android:layout_width="300dp"
         android:layout_height="wrap_content"
@@ -26,14 +26,11 @@
                 android:textSize="12sp"
                 android:textColor="#6E6E6E"
                 />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="גם לך"
-                android:fontFamily="@font/rubik_regular"
-                android:id="@+id/messages"
+            <ImageView
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:id="@+id/chat_images"
                 android:padding="8dp"
-                android:textSize="18sp"
                 android:background="@drawable/message_background_right"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"/>
