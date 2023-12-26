@@ -100,7 +100,6 @@ public class ChatFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         fbUser = auth.getCurrentUser();
         storageReference = FirebaseStorage.getInstance().getReference();
-        Bundle bundle = this.getArguments();
         nameTV = view.findViewById(R.id.chat_post_name);
         areaTV = view.findViewById(R.id.chat_post_area);
         usernameTV = view.findViewById(R.id.chat_username);
@@ -115,6 +114,7 @@ public class ChatFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setReverseLayout(false);
         recyclerView.setLayoutManager(layoutManager);
+        Bundle bundle = this.getArguments();
         postName = bundle.getString("post_name");
         postArea = bundle.getString("post_area");
         userImage = bundle.getString("post_image");
