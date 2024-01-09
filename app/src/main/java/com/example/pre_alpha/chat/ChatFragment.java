@@ -13,20 +13,9 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -40,6 +29,15 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.pre_alpha.R;
@@ -76,6 +74,7 @@ public class ChatFragment extends Fragment {
     String postName, postArea, userImage, creatorUid, username, postId, otherUserUid, messageId;
     int unseenMessages=1;
     boolean result, result1, result2;
+    boolean emptyChatList;
     Uri image_uri, download_uri;
     ImageView postImage, returnBack;
     TextView nameTV, areaTV, usernameTV, userStatusTV;
@@ -86,9 +85,10 @@ public class ChatFragment extends Fragment {
     FirebaseAuth auth;
     StorageReference storageReference;
     List<Message> messages = new ArrayList<>();
+    MessageAdapter adapter;
     RecyclerView recyclerView;
     Button getData;
-    Message message, messageOrImageToSend;
+    Message message, messageOrImageToSend, messageTmp;
     ValueEventListener userListener, chatListener;
     ChatList chatList1, chatList2;
     String storagePath = "Users_messages_Images/";
@@ -185,6 +185,7 @@ public class ChatFragment extends Fragment {
                                     image.setImageDrawable(null);
                                     textMessage.setEnabled(true);
                                     textMessage.setHint("הקלידו הודעה...");
+                                    image_uri=null;
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
@@ -230,7 +231,6 @@ public class ChatFragment extends Fragment {
         userListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                unseenMessages=1;
                 loadChatMessages();
             }
             @Override
@@ -242,24 +242,50 @@ public class ChatFragment extends Fragment {
     }
 
     private void loadChatMessages(){
+
         chatListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                messages.clear();
-                unseenMessages=1;
-                for (DataSnapshot data : snapshot.getChildren()) {
-                    Message messageTmp = data.getValue(Message.class);
-                    if((messageTmp.getReceiverUid().equals(fbUser.getUid()) && messageTmp.getSenderUid().equals(otherUserUid) && messageTmp.getPostId().equals(postId))
-                            || (messageTmp.getSenderUid().equals(fbUser.getUid()) && messageTmp.getReceiverUid().equals(otherUserUid) && messageTmp.getPostId().equals(postId))) {
-                        message = new Message(messageTmp);
-                        if(message.getReceiverUid().equals(fbUser.getUid()) && currentUserStatus.length()>6 && currentUserStatus.substring(0,7).equals("online_")) {
-                            message.setSeen(true);
-                            refChat.child(messageTmp.getMessageId()).setValue(message);
-                            refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).child("unseenMessages").setValue(0);
+                emptyChatList=messages.isEmpty();
+                if(emptyChatList) {
+                    for (DataSnapshot data : snapshot.getChildren()) {
+                        messageTmp = data.getValue(Message.class);
+                        if ((messageTmp.getReceiverUid().equals(fbUser.getUid()) && messageTmp.getSenderUid().equals(otherUserUid) && messageTmp.getPostId().equals(postId))
+                                || (messageTmp.getSenderUid().equals(fbUser.getUid()) && messageTmp.getReceiverUid().equals(otherUserUid) && messageTmp.getPostId().equals(postId))) {
+                            message = new Message(messageTmp);
+                            if (message.getReceiverUid().equals(fbUser.getUid()) && currentUserStatus.length() > 6 && currentUserStatus.substring(0, 7).equals("online_")) {
+                                message.setSeen(true);
+                                refChat.child(messageTmp.getMessageId()).setValue(message);
+                                refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).child("unseenMessages").setValue(0);
+                            }
+                            if (!message.isSeen()) unseenMessages++;
+                            messages.add(message);
                         }
-                        if(!message.isSeen()) unseenMessages++;
-                        messages.add(message);
                     }
+                    adapter = new MessageAdapter(messages);
+                    recyclerView.setAdapter(adapter);
+                    adapter.notifyDataSetChanged();
+                    if (adapter.getItemCount() > 0) {
+                        recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
+                    }
+                }
+                else{
+                    for (DataSnapshot data : snapshot.getChildren()) {
+                        messageTmp = data.getValue(Message.class);
+                        if ((messageTmp.getReceiverUid().equals(fbUser.getUid()) && messageTmp.getSenderUid().equals(otherUserUid) && messageTmp.getPostId().equals(postId))
+                                || (messageTmp.getSenderUid().equals(fbUser.getUid()) && messageTmp.getReceiverUid().equals(otherUserUid) && messageTmp.getPostId().equals(postId))) {
+                            message = new Message(messageTmp);
+                        }
+                    }
+                    if (message.getReceiverUid().equals(fbUser.getUid()) && currentUserStatus.length() > 6 && currentUserStatus.substring(0, 7).equals("online_")) {
+                        message.setSeen(true);
+                        refChat.child(messageTmp.getMessageId()).setValue(message);
+                        refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).child("unseenMessages").setValue(0);
+                    }
+                    if (!message.isSeen()) unseenMessages++;
+                    messages.add(message);
+                    adapter.notifyItemInserted(messages.size() - 1);
+                    recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
                 }
                 updateChatUI();
             }
@@ -360,16 +386,6 @@ public class ChatFragment extends Fragment {
     }
 
     private void updateChatUI(){
-        mainChat();
-
-        MessageAdapter adapter = new MessageAdapter(messages);
-        recyclerView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
-        if (adapter.getItemCount() > 0) {
-            recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
-        }
-    }
-    private void mainChat(){
         usernameTV.setText(username);
         nameTV.setText(postName);
         areaTV.setText(postArea);
@@ -395,6 +411,7 @@ public class ChatFragment extends Fragment {
     public void onPause() {
         super.onPause();
         textMessage.setText("");
+        messages.clear();
         refUsers.child(fbUser.getUid()).child("status").setValue("online");
         if (userListener != null) {
             refUsers.removeEventListener(userListener);
