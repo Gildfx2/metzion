@@ -82,7 +82,7 @@ public class ListPostFragment extends Fragment {
         String checkListState = listState.getString("list_state", "");
         if (checkListState.equals("found")) {
             for (Post foundValue : foundValues) {
-                if (!foundValue.getImage().isEmpty()) {
+                if (foundValue.getImage() != null) {
                     image_uri = Uri.parse(foundValue.getImage());
                     postData = new PostData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), image_uri, foundValue.getAbout(), foundValue.getCreatorUid(), foundValue.getPostId());
                 } else

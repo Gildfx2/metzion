@@ -134,6 +134,12 @@ public class SelectImageFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        image_uri=null;
+    }
+
     private void updateDatabase(){
         String name = getArguments().getString("name", "");
         String item = getArguments().getString("item", "");
