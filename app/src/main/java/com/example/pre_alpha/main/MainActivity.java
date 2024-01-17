@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     Dialog dialog;
     DetailedPostFragment detailedPostFragment = new DetailedPostFragment();
     Button lost, found;
+    String mUID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,14 +111,32 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        updateToken(FirebaseMessaging.getInstance().getToken())
 
+    }
+
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        checkUserStatus();
+    }
+
+    private void checkUserStatus() {
+        if(fbUser != null){
+            mUID = fbUser.getUid();
+            SharedPreferences sp = getSharedPreferences("SP_USER", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString("Current_USERID", mUID);
+            editor.apply();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         refUsers.child(fbUser.getUid()).child("status").setValue("online");
-
     }
 
     @Override
