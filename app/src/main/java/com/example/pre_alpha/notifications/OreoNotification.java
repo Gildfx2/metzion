@@ -1,5 +1,6 @@
 package com.example.pre_alpha.notifications;
 
+import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -9,39 +10,40 @@ import android.content.ContextWrapper;
 import android.net.Uri;
 import android.os.Build;
 
-public class MessageNotification extends ContextWrapper {
-    private static final String ID = "some_id";
-    private static final String NAME = "FirebaseAPP";
+public class OreoNotification extends ContextWrapper {
+    private static final String CHANNEL_ID = "com.example.pre_alpha.app";
+    private static final String CHANNEL_NAME = "FirebaseAPP";
     private NotificationManager notificationManager;
 
-    public MessageNotification(Context base){
+    public OreoNotification(Context base){
         super(base);
-        if(Build.VERSION.SDK_INT>Build.VERSION_CODES.O){
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
             createChannel();
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.O)
     private void createChannel() {
-        NotificationChannel notificationChannel = new NotificationChannel(ID, NAME, NotificationManager.IMPORTANCE_DEFAULT);
-        notificationChannel.enableLights(true);
+        NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
+        notificationChannel.enableLights(false);
         notificationChannel.enableVibration(true);
         notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-        getManeger().createNotificationChannel(notificationChannel);
+        getManager().createNotificationChannel(notificationChannel);
     }
 
-    public NotificationManager getManeger(){
+    public NotificationManager getManager(){
         if(notificationManager == null){
             notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         }
         return notificationManager;
     }
-
-    public Notification.Builder getNotifications(String title,
+    @TargetApi(Build.VERSION_CODES.O)
+    public Notification.Builder getOreoNotification(String title,
                                                  String body,
                                                  PendingIntent pIntent,
                                                  Uri soundUri,
                                                  String icon){
-        return new Notification.Builder(getApplicationContext(), ID)
+        return new Notification.Builder(getApplicationContext(), CHANNEL_ID)
                 .setContentIntent(pIntent)
                 .setContentTitle(title)
                 .setContentText(body)

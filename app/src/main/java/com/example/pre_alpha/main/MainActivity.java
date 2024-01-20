@@ -1,9 +1,7 @@
 package com.example.pre_alpha.main;
 
+import static com.example.pre_alpha.models.FBref.refTokens;
 import static com.example.pre_alpha.models.FBref.refUsers;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
 import android.content.SharedPreferences;
@@ -13,18 +11,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.pre_alpha.R;
-import com.example.pre_alpha.models.User;
+import com.example.pre_alpha.notifications.Token;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
-
-import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -39,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     Dialog dialog;
     DetailedPostFragment detailedPostFragment = new DetailedPostFragment();
     Button lost, found;
-    String mUID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,31 +106,24 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        updateToken(FirebaseMessaging.getInstance().getToken())
-
     }
 
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        checkUserStatus();
-    }
-
-    private void checkUserStatus() {
-        if(fbUser != null){
-            mUID = fbUser.getUid();
-            SharedPreferences sp = getSharedPreferences("SP_USER", MODE_PRIVATE);
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putString("Current_USERID", mUID);
-            editor.apply();
-        }
+    private void updateToken(String token) {
+        Token mToken = new Token(token);
+        if(fbUser!=null)
+            refTokens.child(fbUser.getUid()).setValue(mToken);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                String token = task.getResult();
+                Log.i("my token", token);
+                updateToken(token);
+            }
+        });
         refUsers.child(fbUser.getUid()).child("status").setValue("online");
     }
 

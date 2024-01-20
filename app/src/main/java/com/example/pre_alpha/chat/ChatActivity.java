@@ -2,12 +2,12 @@ package com.example.pre_alpha.chat;
 
 import static com.example.pre_alpha.models.FBref.refUsers;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.pre_alpha.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -99,4 +99,16 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        currentUser();
+    }
+
+    private void currentUser() {
+        SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+        editor.putString("currentuser", otherUserUid);
+        editor.apply();
+        editor.commit();
+    }
 }

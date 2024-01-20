@@ -5,6 +5,7 @@ import static com.example.pre_alpha.chat.ChatActivity.currentUserStatus;
 import static com.example.pre_alpha.chat.ChatActivity.otherUserStatus;
 import static com.example.pre_alpha.models.FBref.refChat;
 import static com.example.pre_alpha.models.FBref.refChatList;
+import static com.example.pre_alpha.models.FBref.refTokens;
 import static com.example.pre_alpha.models.FBref.refUsers;
 
 import android.Manifest;
@@ -45,6 +46,13 @@ import com.example.pre_alpha.adapters.MessageAdapter;
 import com.example.pre_alpha.main.MainActivity;
 import com.example.pre_alpha.models.ChatList;
 import com.example.pre_alpha.models.Message;
+import com.example.pre_alpha.models.User;
+import com.example.pre_alpha.notifications.APIService;
+import com.example.pre_alpha.notifications.Client;
+import com.example.pre_alpha.notifications.Data;
+import com.example.pre_alpha.notifications.Response;
+import com.example.pre_alpha.notifications.Sender;
+import com.example.pre_alpha.notifications.Token;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -52,6 +60,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -63,6 +72,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+
 
 public class ChatFragment extends Fragment {
     private static final int CAMERA_REQUEST_CODE = 100;
@@ -71,7 +83,7 @@ public class ChatFragment extends Fragment {
     private static final int IMAGE_PICK_CAMERA_CODE = 400;
     String[] cameraPermissions;
     String[] storagePermissions;
-    String postName, postArea, userImage, creatorUid, username, postId, otherUserUid, messageId;
+    String postName, postArea, userImage, creatorUid, username, postId, otherUserUid, messageId, msg;
     int unseenMessages=1;
     boolean result, result1, result2;
     boolean emptyChatList;
@@ -92,6 +104,8 @@ public class ChatFragment extends Fragment {
     ValueEventListener userListener, chatListener;
     ChatList chatList1, chatList2;
     String storagePath = "Users_messages_Images/";
+    APIService apiService;
+    boolean notify = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -100,6 +114,7 @@ public class ChatFragment extends Fragment {
         auth = FirebaseAuth.getInstance();
         fbUser = auth.getCurrentUser();
         storageReference = FirebaseStorage.getInstance().getReference();
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
         nameTV = view.findViewById(R.id.chat_post_name);
         areaTV = view.findViewById(R.id.chat_post_area);
         usernameTV = view.findViewById(R.id.chat_username);
@@ -152,18 +167,35 @@ public class ChatFragment extends Fragment {
         sendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                notify = true;
+                msg=textMessage.getText().toString();
                 messageId = refChat.push().getKey();
                 String filePathAndName = storagePath + "image" + "_" + messageId;
                 StorageReference messagesStorageReference = storageReference.child(filePathAndName);
                 if (image_uri==null){
-                    if(!textMessage.getText().toString().isEmpty()) {
-                        messageOrImageToSend = new Message(textMessage.getText().toString(), fbUser.getUid(), otherUserUid, postId, messageId, System.currentTimeMillis());
+                    if(!msg.isEmpty()) {
+                        messageOrImageToSend = new Message(msg, fbUser.getUid(), otherUserUid, postId, messageId, System.currentTimeMillis());
                         textMessage.setText("");
                         chatList1 = new ChatList(otherUserUid, postId, System.currentTimeMillis(), messageOrImageToSend.getMessage());
                         chatList2 = new ChatList(fbUser.getUid(), postId, System.currentTimeMillis(), messageOrImageToSend.getMessage(), unseenMessages);
                         refChat.child(messageId).setValue(messageOrImageToSend);
                         refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).setValue(chatList1);
                         refChatList.child(otherUserUid).child(postId).child(fbUser.getUid()).setValue(chatList2);
+                        refUsers.child(fbUser.getUid()).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                User user = snapshot.getValue(User.class);
+                                if(notify){
+                                    sendNotification(otherUserUid, user.getUsername(), msg);
+                                }
+                                notify = false;
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
                     }
                     else showImageDialog();
                 }
@@ -186,6 +218,7 @@ public class ChatFragment extends Fragment {
                                     textMessage.setEnabled(true);
                                     textMessage.setHint("הקלידו הודעה...");
                                     image_uri=null;
+
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
@@ -219,9 +252,45 @@ public class ChatFragment extends Fragment {
                 transaction.commit();
             }
         });
+
         return view;
     }
 
+    private void sendNotification(String otherUserUid, String username, String textMessage) {
+        Query query = refTokens.orderByKey().equalTo(otherUserUid);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds : snapshot.getChildren()){
+                    Token token = ds.getValue(Token.class);
+                    Data data = new Data(fbUser.getUid(), username+":"+textMessage, "New Message", otherUserUid, R.drawable.baseline_person_24);
+                    Sender sender = new Sender(data, token.getToken());
+                    apiService.sendNotification(sender)
+                            .enqueue(new Callback<Response>() {
+                                @Override
+                                public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                                    if(response.code()==200){
+                                        if (response.body().success == 1) {
+                                        }
+                                        else Toast.makeText(getActivity(), "Failed!", Toast.LENGTH_SHORT).show();
+                                    }
+
+                                }
+
+                                @Override
+                                public void onFailure(Call<Response> call, Throwable t) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 
 
     @Override

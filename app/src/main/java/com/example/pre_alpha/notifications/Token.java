@@ -1,7 +1,7 @@
 package com.example.pre_alpha.notifications;
 
 public class Token {
-    String token;
+    private String token;
 
     public Token(){}
 

@@ -2,11 +2,11 @@ package com.example.pre_alpha.notifications;
 
 public class Data {
     private String user, body, title, sent;
-    private Integer icon;
+    private int icon;
 
     public Data(){}
 
-    public Data(String user, String body, String title, String sent, Integer icon) {
+    public Data(String user, String body, String title, String sent, int icon) {
         this.user = user;
         this.body = body;
         this.title = title;
@@ -42,10 +42,10 @@ public class Data {
         this.sent = sent;
     }
 
-    public Integer getIcon() {
+    public int getIcon() {
         return icon;
     }
-    public void setIcon(Integer icon) {
+    public void setIcon(int icon) {
         this.icon = icon;
     }
 }
