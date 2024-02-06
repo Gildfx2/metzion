@@ -1,7 +1,6 @@
 package com.example.pre_alpha.chat;
 
 import static android.app.Activity.RESULT_OK;
-import static com.example.pre_alpha.chat.ChatActivity.currentUserStatus;
 import static com.example.pre_alpha.chat.ChatActivity.otherUserStatus;
 import static com.example.pre_alpha.models.FBref.refChat;
 import static com.example.pre_alpha.models.FBref.refChatList;
@@ -296,74 +295,49 @@ public class ChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        refUsers.child(fbUser.getUid()).child("status").setValue("online_" + postId);
-        userListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                loadChatMessages();
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("FirebaseError", error.getMessage());
-            }
-        };
-        refUsers.child(otherUserUid).child("status").addValueEventListener(userListener);
-    }
-
-    private void loadChatMessages(){
-
         chatListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                emptyChatList=messages.isEmpty();
-                if(emptyChatList) {
-                    for (DataSnapshot data : snapshot.getChildren()) {
-                        messageTmp = data.getValue(Message.class);
-                        if ((messageTmp.getReceiverUid().equals(fbUser.getUid()) && messageTmp.getSenderUid().equals(otherUserUid) && messageTmp.getPostId().equals(postId))
-                                || (messageTmp.getSenderUid().equals(fbUser.getUid()) && messageTmp.getReceiverUid().equals(otherUserUid) && messageTmp.getPostId().equals(postId))) {
-                            message = new Message(messageTmp);
-                            if (message.getReceiverUid().equals(fbUser.getUid()) && currentUserStatus.length() > 6 && currentUserStatus.substring(0, 7).equals("online_")) {
-                                message.setSeen(true);
-                                refChat.child(messageTmp.getMessageId()).setValue(message);
-                                refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).child("unseenMessages").setValue(0);
-                            }
-                            if (!message.isSeen()) unseenMessages++;
-                            messages.add(message);
-                        }
-                    }
-                    adapter = new MessageAdapter(messages);
-                    recyclerView.setAdapter(adapter);
-                    adapter.notifyDataSetChanged();
-                    if (adapter.getItemCount() > 0) {
-                        recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
+                messages.clear();
+                unseenMessages=1;
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    messageTmp = data.getValue(Message.class);
+                    if (isMessageRelevant(messageTmp)) {
+                        Message message = new Message(messageTmp);
+                        handleSeenMessage(message);
+                        messages.add(message);
                     }
                 }
-                else{
-                    for (DataSnapshot data : snapshot.getChildren()) {
-                        messageTmp = data.getValue(Message.class);
-                        if ((messageTmp.getReceiverUid().equals(fbUser.getUid()) && messageTmp.getSenderUid().equals(otherUserUid) && messageTmp.getPostId().equals(postId))
-                                || (messageTmp.getSenderUid().equals(fbUser.getUid()) && messageTmp.getReceiverUid().equals(otherUserUid) && messageTmp.getPostId().equals(postId))) {
-                            message = new Message(messageTmp);
-                        }
-                    }
-                    if (message.getReceiverUid().equals(fbUser.getUid()) && currentUserStatus.length() > 6 && currentUserStatus.substring(0, 7).equals("online_")) {
-                        message.setSeen(true);
-                        refChat.child(messageTmp.getMessageId()).setValue(message);
-                        refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).child("unseenMessages").setValue(0);
-                    }
-                    if (!message.isSeen()) unseenMessages++;
-                    messages.add(message);
-                    adapter.notifyItemInserted(messages.size() - 1);
+                adapter = new MessageAdapter(messages);
+                recyclerView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+                if (adapter.getItemCount() > 0) {
                     recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
                 }
                 updateChatUI();
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("FirebaseError", error.getMessage());
             }
         };
         refChat.addValueEventListener(chatListener);
+    }
+
+
+    private boolean isMessageRelevant(Message message) {
+        return (message.getReceiverUid().equals(fbUser.getUid()) && message.getSenderUid().equals(otherUserUid) && message.getPostId().equals(postId))
+                || (message.getSenderUid().equals(fbUser.getUid()) && message.getReceiverUid().equals(otherUserUid) && message.getPostId().equals(postId));
+    }
+
+    private void handleSeenMessage(Message message) {
+        if (message.getReceiverUid().equals(fbUser.getUid())) {
+            message.setSeen(true);
+            refChat.child(messageTmp.getMessageId()).setValue(message);
+            refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).child("unseenMessages").setValue(0);
+        }
+        if (!message.isSeen()) unseenMessages++;
     }
 
     private void showImageDialog(){
