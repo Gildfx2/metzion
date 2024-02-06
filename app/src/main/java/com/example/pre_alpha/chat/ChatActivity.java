@@ -21,9 +21,9 @@ public class ChatActivity extends AppCompatActivity {
     FirebaseAuth auth;
     String postName, postArea, postImage, postId, creatorUid, username, otherUserUid, pick;
     FirebaseUser fbUser;
-    ValueEventListener currentUserListener, otherUserListener;
+    ValueEventListener otherUserListener;
     SharedPreferences chat;
-    static String currentUserStatus, otherUserStatus;
+    static String otherUserStatus;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,19 +71,6 @@ public class ChatActivity extends AppCompatActivity {
             HomeChatFragment homeChatFragment = new HomeChatFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.chatFrameLayout, homeChatFragment).commit();
         }
-        currentUserListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                currentUserStatus = snapshot.getValue(String.class);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("FirebaseError", error.getMessage());
-            }
-        };
-        refUsers.child(fbUser.getUid()).child("status").addValueEventListener(currentUserListener);
-
 
     }
 
@@ -91,9 +78,6 @@ public class ChatActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         refUsers.child(fbUser.getUid()).child("status").setValue(String.valueOf(System.currentTimeMillis()));
-        if (currentUserListener != null) {
-            refUsers.removeEventListener(currentUserListener);
-        }
         if (otherUserListener != null) {
             refUsers.removeEventListener(otherUserListener);
         }
