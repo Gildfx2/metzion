@@ -1,7 +1,6 @@
 package com.example.pre_alpha.main;
 
 import static android.content.Context.MODE_PRIVATE;
-
 import static com.example.pre_alpha.models.FBref.refPosts;
 import static com.example.pre_alpha.models.FBref.refUsers;
 
@@ -10,11 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +17,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.bumptech.glide.Glide;
 import com.example.pre_alpha.R;
 import com.example.pre_alpha.chat.ChatActivity;
-import com.example.pre_alpha.chat.ChatFragment;
 import com.example.pre_alpha.models.Post;
 import com.example.pre_alpha.models.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -128,13 +125,11 @@ public class DetailedPostFragment extends Fragment {
 
     private void moveToChatScreen(){
         Intent intent = new Intent(getActivity(), ChatActivity.class);
-        intent.putExtra("post_name", name);
-        intent.putExtra("post_area", area);
-        intent.putExtra("post_image", image);
-        intent.putExtra("creator_uid", creatorUid);
-        intent.putExtra("post_id", postId);
-        intent.putExtra("username", getUsernameFromUid(creatorUid));
-        intent.putExtra("other_user_uid", creatorUid);
+        Bundle bundle = new Bundle();
+        bundle.putString("post_id", postId);
+        bundle.putString("username", getUsernameFromUid(creatorUid));
+        bundle.putString("other_user_uid", creatorUid);
+        intent.putExtras(bundle);
         SharedPreferences chat = getActivity().getSharedPreferences("chat_pick", MODE_PRIVATE);
         SharedPreferences.Editor editor = chat.edit();
         editor.putString("chat_pick", "send message");

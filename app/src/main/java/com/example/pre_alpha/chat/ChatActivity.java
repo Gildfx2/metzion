@@ -1,15 +1,16 @@
 package com.example.pre_alpha.chat;
 
+import static com.example.pre_alpha.models.FBref.refPosts;
 import static com.example.pre_alpha.models.FBref.refUsers;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.pre_alpha.R;
+import com.example.pre_alpha.models.Post;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -19,11 +20,10 @@ import com.google.firebase.database.ValueEventListener;
 public class ChatActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
-    String postName, postArea, postImage, postId, creatorUid, username, otherUserUid, pick;
+    String postId, username, otherUserUid, pick;
     FirebaseUser fbUser;
-    ValueEventListener otherUserListener;
     SharedPreferences chat;
-    static String otherUserStatus;
+    Post post;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,38 +34,25 @@ public class ChatActivity extends AppCompatActivity {
         pick = chat.getString("chat_pick", "");
         refUsers.child(fbUser.getUid()).child("status").setValue("online");
         if(pick.equals("send message")) {
-            postName = getIntent().getStringExtra("post_name");
-            postArea = getIntent().getStringExtra("post_area");
-            postImage = getIntent().getStringExtra("post_image");
-            creatorUid = getIntent().getStringExtra("creator_uid");
-            postId = getIntent().getStringExtra("post_id");
-            username = getIntent().getStringExtra("username");
-            otherUserUid = getIntent().getStringExtra("other_user_uid");
-
-            ChatFragment chatFragment = new ChatFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString("post_name", postName);
-            bundle.putString("post_area", postArea);
-            bundle.putString("post_image", postImage);
-            bundle.putString("creator_uid", creatorUid);
-            bundle.putString("post_id", postId);
-            bundle.putString("username", username);
-            bundle.putString("other_user_uid", otherUserUid);
-            chatFragment.setArguments(bundle);
-            otherUserListener = new ValueEventListener() {
+            Bundle bundleExt = getIntent().getExtras();
+            postId = bundleExt.getString("post_id");
+            otherUserUid = bundleExt.getString("other_user_uid");
+            username = bundleExt.getString("username");
+            refPosts.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    otherUserStatus = snapshot.getValue(String.class);
-                    getSupportFragmentManager().beginTransaction().replace(R.id.chatFrameLayout, chatFragment).commit();
+                    for(DataSnapshot ds : snapshot.getChildren()){
+                        post = ds.getValue(Post.class);
+                        if(post.getPostId().equals(postId)) break;
+                    }
+                    goToChat();
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
-                    Log.e("FirebaseError", error.getMessage());
-                }
-            };
-            refUsers.child(otherUserUid).child("status").addValueEventListener(otherUserListener);
 
+                }
+            });
         }
         else if(pick.equals("see chats")){
             HomeChatFragment homeChatFragment = new HomeChatFragment();
@@ -74,13 +61,25 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
+    private void goToChat(){
+        ChatFragment chatFragment = new ChatFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("post_name", post.getName());
+        bundle.putString("post_area", post.getArea());
+        bundle.putString("post_image", post.getImage());
+        bundle.putString("creator_uid", post.getCreatorUid());
+        bundle.putString("post_id", postId);
+        bundle.putString("other_user_uid", otherUserUid);
+        bundle.putString("username", username);
+        chatFragment.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction().replace(R.id.chatFrameLayout, chatFragment).commit();
+
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
         refUsers.child(fbUser.getUid()).child("status").setValue(String.valueOf(System.currentTimeMillis()));
-        if (otherUserListener != null) {
-            refUsers.removeEventListener(otherUserListener);
-        }
     }
 
     @Override

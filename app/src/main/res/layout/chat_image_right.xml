@@ -15,17 +15,6 @@
             android:gravity="right"
             android:orientation="horizontal"
             android:id="@+id/message_pattern">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="נשלחה"
-                android:id="@+id/message_status"
-                android:padding="2dp"
-                android:layout_gravity="bottom"
-                android:layout_marginEnd="2dp"
-                android:textSize="12sp"
-                android:textColor="#6E6E6E"
-                />
             <ImageView
                 android:layout_width="250dp"
                 android:layout_height="250dp"

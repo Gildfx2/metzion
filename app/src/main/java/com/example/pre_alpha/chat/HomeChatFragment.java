@@ -1,21 +1,19 @@
 package com.example.pre_alpha.chat;
 
-import static com.example.pre_alpha.chat.ChatActivity.otherUserStatus;
 import static com.example.pre_alpha.models.FBref.refChatList;
 import static com.example.pre_alpha.models.FBref.refPosts;
 import static com.example.pre_alpha.models.FBref.refUsers;
 
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 
 import com.example.pre_alpha.R;
 import com.example.pre_alpha.adapters.ChatAdapter;
@@ -110,18 +108,6 @@ public class HomeChatFragment extends Fragment {
                         bundle.putString("post_image", arrayList.get(position).getImage().toString());
                     else bundle.putString("post_image", "");
                     chatFragment.setArguments(bundle);
-                    otherUserListener = new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            otherUserStatus = snapshot.getValue(String.class);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            Log.e("FirebaseError", error.getMessage());
-                        }
-                    };
-                    refUsers.child(arrayList.get(position).getCreatorUid()).child("status").addValueEventListener(otherUserListener);
                     getParentFragmentManager().beginTransaction().replace(R.id.chatFrameLayout, chatFragment).commit();
                 }
             });

@@ -1,7 +1,6 @@
 package com.example.pre_alpha.chat;
 
 import static android.app.Activity.RESULT_OK;
-import static com.example.pre_alpha.chat.ChatActivity.otherUserStatus;
 import static com.example.pre_alpha.models.FBref.refChat;
 import static com.example.pre_alpha.models.FBref.refChatList;
 import static com.example.pre_alpha.models.FBref.refTokens;
@@ -82,10 +81,9 @@ public class ChatFragment extends Fragment {
     private static final int IMAGE_PICK_CAMERA_CODE = 400;
     String[] cameraPermissions;
     String[] storagePermissions;
-    String postName, postArea, userImage, creatorUid, username, postId, otherUserUid, messageId, msg;
+    String postName, postArea, userImage, creatorUid, username, postId, otherUserUid, messageId, msg, otherUserStatus;
     int unseenMessages=1;
     boolean result, result1, result2;
-    boolean emptyChatList;
     Uri image_uri, download_uri;
     ImageView postImage, returnBack;
     TextView nameTV, areaTV, usernameTV, userStatusTV;
@@ -96,15 +94,16 @@ public class ChatFragment extends Fragment {
     FirebaseAuth auth;
     StorageReference storageReference;
     List<Message> messages = new ArrayList<>();
+    List<Message> messagesTemp = new ArrayList<>();
     MessageAdapter adapter;
     RecyclerView recyclerView;
     Button getData;
-    Message message, messageOrImageToSend, messageTmp;
+    Message messageOrImageToSend, messageTmp;
     ValueEventListener userListener, chatListener;
     ChatList chatList1, chatList2;
     String storagePath = "Users_messages_Images/";
     APIService apiService;
-    boolean notify = false;
+    boolean notify = false, shouldStartAddingMessages = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -112,6 +111,7 @@ public class ChatFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
         auth = FirebaseAuth.getInstance();
         fbUser = auth.getCurrentUser();
+        refUsers.child(fbUser.getUid()).child("status").setValue("online");
         storageReference = FirebaseStorage.getInstance().getReference();
         apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
         nameTV = view.findViewById(R.id.chat_post_name);
@@ -206,7 +206,7 @@ public class ChatFragment extends Fragment {
                                     Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
                                     while (!uriTask.isSuccessful()) ;
                                     download_uri = uriTask.getResult();
-                                    messageOrImageToSend = new Message(download_uri.toString(), fbUser.getUid(), otherUserUid, postId, messageId, System.currentTimeMillis(), false);
+                                    messageOrImageToSend = new Message(download_uri, fbUser.getUid(), otherUserUid, postId, messageId, System.currentTimeMillis());
                                     chatList1 = new ChatList(otherUserUid, postId, System.currentTimeMillis(), "תמונה");
                                     chatList2 = new ChatList(fbUser.getUid(), postId, System.currentTimeMillis(), "תמונה", unseenMessages);
                                     refChat.child(messageId).setValue(messageOrImageToSend);
@@ -262,25 +262,27 @@ public class ChatFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot ds : snapshot.getChildren()){
                     Token token = ds.getValue(Token.class);
-                    Data data = new Data(fbUser.getUid(), username+":"+textMessage, "New Message", otherUserUid, R.drawable.baseline_person_24);
+                    Data data = new Data(fbUser.getUid(), username+":"+textMessage, "New Message", otherUserUid, postId, username, R.drawable.baseline_person_24);
                     Sender sender = new Sender(data, token.getToken());
-                    apiService.sendNotification(sender)
-                            .enqueue(new Callback<Response>() {
-                                @Override
-                                public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
-                                    if(response.code()==200){
-                                        if (response.body().success == 1) {
+                    if(!otherUserStatus.equals("online")) {
+                        apiService.sendNotification(sender)
+                                .enqueue(new Callback<Response>() {
+                                    @Override
+                                    public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                                        if (response.code() == 200) {
+                                            if (response.body().success == 1) {
+                                            } else
+                                                Toast.makeText(getActivity(), "Failed!", Toast.LENGTH_SHORT).show();
                                         }
-                                        else Toast.makeText(getActivity(), "Failed!", Toast.LENGTH_SHORT).show();
+
                                     }
 
-                                }
+                                    @Override
+                                    public void onFailure(Call<Response> call, Throwable t) {
 
-                                @Override
-                                public void onFailure(Call<Response> call, Throwable t) {
-
-                                }
-                            });
+                                    }
+                                });
+                    }
                 }
             }
 
@@ -295,22 +297,24 @@ public class ChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        adapter = new MessageAdapter(messages);
+        recyclerView.setAdapter(adapter);
         chatListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                messages.clear();
-                unseenMessages=1;
+
+                int startIndex = 0;
                 for (DataSnapshot data : snapshot.getChildren()) {
-                    messageTmp = data.getValue(Message.class);
-                    if (isMessageRelevant(messageTmp)) {
-                        Message message = new Message(messageTmp);
-                        handleSeenMessage(message);
-                        messages.add(message);
+                    if (startIndex >= messages.size()) {
+                        messageTmp = data.getValue(Message.class);
+                        if (isMessageRelevant(messageTmp)) {
+                            Message message = new Message(messageTmp);
+                            messages.add(message);
+                            adapter.notifyItemInserted(messages.size() - 1);
+                        }
                     }
+                    startIndex++;
                 }
-                adapter = new MessageAdapter(messages);
-                recyclerView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
                 if (adapter.getItemCount() > 0) {
                     recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
                 }
@@ -329,15 +333,6 @@ public class ChatFragment extends Fragment {
     private boolean isMessageRelevant(Message message) {
         return (message.getReceiverUid().equals(fbUser.getUid()) && message.getSenderUid().equals(otherUserUid) && message.getPostId().equals(postId))
                 || (message.getSenderUid().equals(fbUser.getUid()) && message.getReceiverUid().equals(otherUserUid) && message.getPostId().equals(postId));
-    }
-
-    private void handleSeenMessage(Message message) {
-        if (message.getReceiverUid().equals(fbUser.getUid())) {
-            message.setSeen(true);
-            refChat.child(messageTmp.getMessageId()).setValue(message);
-            refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).child("unseenMessages").setValue(0);
-        }
-        if (!message.isSeen()) unseenMessages++;
     }
 
     private void showImageDialog(){
@@ -436,12 +431,22 @@ public class ChatFragment extends Fragment {
             Glide.with(this)
                     .load(Uri.parse(userImage))
                     .into(postImage);
-        if(otherUserStatus.equals("online_" + postId))
-            userStatusTV.setText("בצ'אט");
-        else if(otherUserStatus.substring(0,6).equals("online"))
-            userStatusTV.setText("מחובר");
-        else
-            userStatusTV.setText(formatDate(Long.parseLong(otherUserStatus)));
+        refUsers.child(otherUserUid).child("status").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                otherUserStatus = snapshot.getValue(String.class);
+                if(otherUserStatus.equals("online"))
+                    userStatusTV.setText("מחובר");
+                else
+                    userStatusTV.setText(formatDate(Long.parseLong(otherUserStatus)));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
     private String formatDate(long timestamp) {

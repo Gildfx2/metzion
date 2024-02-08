@@ -79,7 +79,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             super(itemView);
             messageTextView = itemView.findViewById(R.id.messages);
             messageTimeStamp = itemView.findViewById(R.id.message_time_stamp);
-            messageStatus = itemView.findViewById(R.id.message_status);
             if (viewType == IMAGE_VIEW_TYPE_LEFT || viewType == IMAGE_VIEW_TYPE_RIGHT) {
                 messageImageView = itemView.findViewById(R.id.chat_images);
             }
@@ -92,13 +91,6 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 messageTextView.setText(message.getMessage());
             }
             messageTimeStamp.setText(formatTimestamp(message.getTimeStamp()));
-            if (message.getSenderUid().equals(fbUser.getUid())) {
-                if (message.isSeen()) {
-                    messageStatus.setText("נראתה");
-                } else {
-                    messageStatus.setText("נשלחה");
-                }
-            }
         }
 
     }

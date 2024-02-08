@@ -1,7 +1,5 @@
 package com.example.pre_alpha.adapters;
 
-import static java.security.AccessController.getContext;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +36,6 @@ public class ChatAdapter extends ArrayAdapter<ChatData> {
         TextView username = view.findViewById(R.id.username);
         TextView lastMessage = view.findViewById(R.id.last_message);
         TextView date = view.findViewById(R.id.date);
-        TextView unseenMessages = view.findViewById(R.id.unseen_messages);
 
         if(chatData!=null && !chatData.image.toString().isEmpty()) {
             Glide.with(getContext())
@@ -51,13 +48,7 @@ public class ChatAdapter extends ArrayAdapter<ChatData> {
         area.setText(chatData.area);
         lastMessage.setText(chatData.lastMessage);
         date.setText(chatData.date);
-        if (chatData.unseenMessages == 0) {
-            unseenMessages.setBackground(null);
-            unseenMessages.setText("");
-        }
-        else{
-            unseenMessages.setText(Integer.toString(chatData.unseenMessages));
-        }
+
         return view;
     }
 }

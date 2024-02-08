@@ -1,5 +1,7 @@
 package com.example.pre_alpha.models;
 
+import android.net.Uri;
+
 public class Message {
 
     private String message;
@@ -7,7 +9,6 @@ public class Message {
     private String receiverUid;
     private String postId;
     private String messageId;
-    private boolean isSeen;
     private long timeStamp;
     private boolean isImage;
     private String imageUrl;
@@ -20,7 +21,6 @@ public class Message {
         this.receiverUid=receiverUid;
         this.postId=postId;
         this.messageId=messageId;
-        this.isSeen=false;
         this.timeStamp=timeStamp;
         this.isImage = false;
         this.imageUrl = "";
@@ -32,22 +32,20 @@ public class Message {
         this.receiverUid=message.receiverUid;
         this.postId=message.postId;
         this.messageId=message.messageId;
-        this.isSeen=message.isSeen;
         this.timeStamp=message.timeStamp;
         this.isImage = message.isImage;
         this.imageUrl = message.imageUrl;
     }
 
-    public Message(String imageUrl, String senderUid, String receiverUid, String postId, String messageId, long timeStamp, boolean isSeen){
+    public Message(Uri imageUrl, String senderUid, String receiverUid, String postId, String messageId, long timeStamp){
         this.message = "";
         this.senderUid = senderUid;
         this.receiverUid = receiverUid;
         this.postId = postId;
         this.messageId = messageId;
-        this.isSeen = false;
         this.timeStamp = timeStamp;
         this.isImage = true;
-        this.imageUrl = imageUrl;
+        this.imageUrl = String.valueOf(imageUrl);
     }
 
     public String getMessage() {
@@ -85,12 +83,6 @@ public class Message {
         this.timeStamp = timeStamp;
     }
 
-    public boolean isSeen() {
-        return isSeen;
-    }
-    public void setSeen(boolean seen) {
-        isSeen = seen;
-    }
 
     public String getMessageId() {
         return messageId;

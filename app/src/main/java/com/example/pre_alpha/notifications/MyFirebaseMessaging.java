@@ -69,7 +69,6 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 
         Map<String, String> data_notify = remoteMessage.getData();
 
-//      String sented = remoteMessage.getData().get("sented");
         String user = remoteMessage.getData().get("user");
 
         SharedPreferences preferences  = getSharedPreferences("PREFS", MODE_PRIVATE);
@@ -95,6 +94,8 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
         String body = remoteMessage.getData().get("body");
+        String post = remoteMessage.getData().get("post");
+        String username = remoteMessage.getData().get("username");
 
         RemoteMessage.Notification notification  = remoteMessage.getNotification();
 
@@ -103,7 +104,15 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         Intent intent = new Intent(this, ChatActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("other_user_uid", user);
+        bundle.putString("post_id", post);
+        bundle.putString("username", username);
         intent.putExtras(bundle);
+
+        SharedPreferences chat = getSharedPreferences("chat_pick", MODE_PRIVATE);
+        SharedPreferences.Editor editor = chat.edit();
+        editor.putString("chat_pick", "send message");
+        editor.apply();
+        editor.commit();
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
@@ -126,6 +135,8 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
         String body = remoteMessage.getData().get("body");
+        String post = remoteMessage.getData().get("post");
+        String username = remoteMessage.getData().get("username");
 
         RemoteMessage.Notification notification  = remoteMessage.getNotification();
 
@@ -134,6 +145,8 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         Intent intent = new Intent(this, ChatActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("other_user_uid", user);
+        bundle.putString("post_id", post);
+        bundle.putString("username", username);
         intent.putExtras(bundle);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
