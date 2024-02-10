@@ -5,24 +5,14 @@ public class ChatList {
     private String postId;
     private String lastMessage;
     private long timeStamp;
-    private int unseenMessages;
 
     public ChatList(){}
-
-    public ChatList(String userUid, String postId, long timeStamp, String lastMessage, int unseenMessages) {
-        this.userUid = userUid;
-        this.postId = postId;
-        this.lastMessage = lastMessage;
-        this.timeStamp = timeStamp;
-        this.unseenMessages = unseenMessages;
-    }
 
     public ChatList(String userUid, String postId, long timeStamp, String lastMessage) {
         this.userUid = userUid;
         this.postId = postId;
         this.lastMessage = lastMessage;
         this.timeStamp = timeStamp;
-        this.unseenMessages = 0;
     }
 
     public String getUserUid() {
@@ -53,10 +43,4 @@ public class ChatList {
         this.lastMessage = lastMessage;
     }
 
-    public int getUnseenMessages() {
-        return unseenMessages;
-    }
-    public void setUnseenMessages(int unseenMessages) {
-        this.unseenMessages = unseenMessages;
-    }
 }

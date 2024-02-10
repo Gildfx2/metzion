@@ -30,6 +30,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -83,7 +85,7 @@ public class HomeChatFragment extends Fragment {
                         image_uri = Uri.parse(post.getImage());
                     }
                     chatData = new ChatData(post.getName(), post.getArea(), getUsernameFromUid(chatList.getUserUid()), image_uri, post.getCreatorUid(),
-                            post.getPostId(), chatList.getUserUid(), chatList.getLastMessage(), formatDate(chatList.getTimeStamp()), chatList.getUnseenMessages());
+                            post.getPostId(), chatList.getUserUid(), chatList.getLastMessage(), formatDate(chatList.getTimeStamp()));
                     arrayList.add(chatData);
                     break;
                 }
@@ -125,12 +127,18 @@ public class HomeChatFragment extends Fragment {
                             String userUid = userId2Snapshot.child("userUid").getValue(String.class);
                             String lastMessage = userId2Snapshot.child("lastMessage").getValue(String.class);
                             long timestamp = userId2Snapshot.child("timeStamp").getValue(Long.class);
-                            int unseenMessages = userId2Snapshot.child("unseenMessages").getValue(Integer.class);
-                            ChatList chatList = new ChatList(userUid, postId, timestamp, lastMessage, unseenMessages);
+                            ChatList chatList = new ChatList(userUid, postId, timestamp, lastMessage);
                             chats.add(chatList);
                             readPosts();
                         }
                     }
+                    Collections.sort(chats, new Comparator<ChatList>() {
+                        @Override
+                        public int compare(ChatList chat1, ChatList chat2) {
+                            return Long.compare(chat2.getTimeStamp(), chat1.getTimeStamp());
+                        }
+                    });
+                    showChats();
                 } else {
                     Log.e("FirebaseError", "Snapshot does not exist");
                 }
@@ -150,7 +158,6 @@ public class HomeChatFragment extends Fragment {
                     Post post = data.getValue(Post.class);
                     postValues.add(post);
                 }
-                showChats();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

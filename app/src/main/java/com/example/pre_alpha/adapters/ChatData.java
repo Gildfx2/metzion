@@ -7,7 +7,7 @@ public class ChatData {
     String name, area, username, creatorUid, postId, otherUserUid, lastMessage, date;
     Uri image;
 
-    public ChatData(String name, String area, String username, Uri image, String creatorUid, String postId, String otherUserUid, String lastMessage, String date, int unseenMessages) {
+    public ChatData(String name, String area, String username, Uri image, String creatorUid, String postId, String otherUserUid, String lastMessage, String date) {
         this.name = name;
         this.area = area;
         this.username = username;

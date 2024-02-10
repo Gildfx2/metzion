@@ -81,8 +81,7 @@ public class ChatFragment extends Fragment {
     private static final int IMAGE_PICK_CAMERA_CODE = 400;
     String[] cameraPermissions;
     String[] storagePermissions;
-    String postName, postArea, userImage, creatorUid, username, postId, otherUserUid, messageId, msg, otherUserStatus;
-    int unseenMessages=1;
+    String postName, postArea, userImage, username, postId, otherUserUid, messageId, msg, otherUserStatus;
     boolean result, result1, result2;
     Uri image_uri, download_uri;
     ImageView postImage, returnBack;
@@ -94,7 +93,6 @@ public class ChatFragment extends Fragment {
     FirebaseAuth auth;
     StorageReference storageReference;
     List<Message> messages = new ArrayList<>();
-    List<Message> messagesTemp = new ArrayList<>();
     MessageAdapter adapter;
     RecyclerView recyclerView;
     Button getData;
@@ -103,7 +101,7 @@ public class ChatFragment extends Fragment {
     ChatList chatList1, chatList2;
     String storagePath = "Users_messages_Images/";
     APIService apiService;
-    boolean notify = false, shouldStartAddingMessages = false;
+    boolean notify = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -132,7 +130,6 @@ public class ChatFragment extends Fragment {
         postName = bundle.getString("post_name");
         postArea = bundle.getString("post_area");
         userImage = bundle.getString("post_image");
-        creatorUid = bundle.getString("creator_uid");
         postId = bundle.getString("post_id");
         username = bundle.getString("username");
         otherUserUid = bundle.getString("other_user_uid");
@@ -176,7 +173,7 @@ public class ChatFragment extends Fragment {
                         messageOrImageToSend = new Message(msg, fbUser.getUid(), otherUserUid, postId, messageId, System.currentTimeMillis());
                         textMessage.setText("");
                         chatList1 = new ChatList(otherUserUid, postId, System.currentTimeMillis(), messageOrImageToSend.getMessage());
-                        chatList2 = new ChatList(fbUser.getUid(), postId, System.currentTimeMillis(), messageOrImageToSend.getMessage(), unseenMessages);
+                        chatList2 = new ChatList(fbUser.getUid(), postId, System.currentTimeMillis(), messageOrImageToSend.getMessage());
                         refChat.child(messageId).setValue(messageOrImageToSend);
                         refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).setValue(chatList1);
                         refChatList.child(otherUserUid).child(postId).child(fbUser.getUid()).setValue(chatList2);
@@ -208,7 +205,7 @@ public class ChatFragment extends Fragment {
                                     download_uri = uriTask.getResult();
                                     messageOrImageToSend = new Message(download_uri, fbUser.getUid(), otherUserUid, postId, messageId, System.currentTimeMillis());
                                     chatList1 = new ChatList(otherUserUid, postId, System.currentTimeMillis(), "תמונה");
-                                    chatList2 = new ChatList(fbUser.getUid(), postId, System.currentTimeMillis(), "תמונה", unseenMessages);
+                                    chatList2 = new ChatList(fbUser.getUid(), postId, System.currentTimeMillis(), "תמונה");
                                     refChat.child(messageId).setValue(messageOrImageToSend);
                                     refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).setValue(chatList1);
                                     refChatList.child(otherUserUid).child(postId).child(fbUser.getUid()).setValue(chatList2);
@@ -305,7 +302,7 @@ public class ChatFragment extends Fragment {
 
                 int startIndex = 0;
                 for (DataSnapshot data : snapshot.getChildren()) {
-                    if (startIndex >= messages.size()) {
+                    if (startIndex > messages.size()) {
                         messageTmp = data.getValue(Message.class);
                         if (isMessageRelevant(messageTmp)) {
                             Message message = new Message(messageTmp);
