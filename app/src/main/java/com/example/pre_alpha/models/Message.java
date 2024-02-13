@@ -13,31 +13,35 @@ public class Message {
     private boolean isImage;
     private String imageUrl;
 
-    public Message(){}
 
-    public Message(String message, String senderUid, String receiverUid, String postId, String messageId, long timeStamp){
-        this.message=message;
-        this.senderUid=senderUid;
-        this.receiverUid=receiverUid;
-        this.postId=postId;
-        this.messageId=messageId;
-        this.timeStamp=timeStamp;
+    public Message() {
+    }
+
+    public Message(String message, String senderUid, String receiverUid, String postId, String messageId, long timeStamp) {
+        this.message = message;
+        this.senderUid = senderUid;
+        this.receiverUid = receiverUid;
+        this.postId = postId;
+        this.messageId = messageId;
+        this.timeStamp = timeStamp;
         this.isImage = false;
         this.imageUrl = "";
+
     }
 
-    public Message(Message message){
-        this.message=message.message;
-        this.senderUid=message.senderUid;
-        this.receiverUid=message.receiverUid;
-        this.postId=message.postId;
-        this.messageId=message.messageId;
-        this.timeStamp=message.timeStamp;
+    public Message(Message message) {
+        this.message = message.message;
+        this.senderUid = message.senderUid;
+        this.receiverUid = message.receiverUid;
+        this.postId = message.postId;
+        this.messageId = message.messageId;
+        this.timeStamp = message.timeStamp;
         this.isImage = message.isImage;
         this.imageUrl = message.imageUrl;
+
     }
 
-    public Message(Uri imageUrl, String senderUid, String receiverUid, String postId, String messageId, long timeStamp){
+    public Message(Uri imageUrl, String senderUid, String receiverUid, String postId, String messageId, long timeStamp) {
         this.message = "";
         this.senderUid = senderUid;
         this.receiverUid = receiverUid;
@@ -51,6 +55,7 @@ public class Message {
     public String getMessage() {
         return message;
     }
+
     public void setMessage(String message) {
         this.message = message;
     }
@@ -58,6 +63,7 @@ public class Message {
     public String getSenderUid() {
         return senderUid;
     }
+
     public void setSenderUid(String senderUid) {
         this.senderUid = senderUid;
     }
@@ -65,6 +71,7 @@ public class Message {
     public String getReceiverUid() {
         return receiverUid;
     }
+
     public void setReceiverUid(String receiverUid) {
         this.receiverUid = receiverUid;
     }
@@ -72,6 +79,7 @@ public class Message {
     public String getPostId() {
         return postId;
     }
+
     public void setPostId(String postId) {
         this.postId = postId;
     }
@@ -79,6 +87,7 @@ public class Message {
     public long getTimeStamp() {
         return timeStamp;
     }
+
     public void setTimeStamp(long timeStamp) {
         this.timeStamp = timeStamp;
     }
@@ -87,6 +96,7 @@ public class Message {
     public String getMessageId() {
         return messageId;
     }
+
     public void setMessageId(String messageId) {
         this.messageId = messageId;
     }

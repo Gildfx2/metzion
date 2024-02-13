@@ -58,6 +58,13 @@ public class HomeChatFragment extends Fragment {
         binding = FragmentHomeChatBinding.inflate(inflater, container, false);
         auth=FirebaseAuth.getInstance();
         fbUser= auth.getCurrentUser();
+
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -73,7 +80,6 @@ public class HomeChatFragment extends Fragment {
                 Log.e("FirebaseError", error.getMessage());
             }
         });
-        return binding.getRoot();
     }
 
     private void showChats(){
@@ -85,13 +91,12 @@ public class HomeChatFragment extends Fragment {
                         image_uri = Uri.parse(post.getImage());
                     }
                     chatData = new ChatData(post.getName(), post.getArea(), getUsernameFromUid(chatList.getUserUid()), image_uri, post.getCreatorUid(),
-                            post.getPostId(), chatList.getUserUid(), chatList.getLastMessage(), formatDate(chatList.getTimeStamp()));
+                            post.getPostId(), chatList.getUserUid(), chatList.getLastMessage(), formatDate(chatList.getTimeStamp()), chatList.getUnseenMessages());
                     arrayList.add(chatData);
                     break;
                 }
             }
         }
-        Log.d("check list", String.valueOf(arrayList.size()));
         if(getActivity()!=null) {
             chatAdapter = new ChatAdapter(getActivity(), arrayList);
             binding.listOfChats.setAdapter(chatAdapter);
@@ -127,9 +132,9 @@ public class HomeChatFragment extends Fragment {
                             String userUid = userId2Snapshot.child("userUid").getValue(String.class);
                             String lastMessage = userId2Snapshot.child("lastMessage").getValue(String.class);
                             long timestamp = userId2Snapshot.child("timeStamp").getValue(Long.class);
-                            ChatList chatList = new ChatList(userUid, postId, timestamp, lastMessage);
+                            int unseenMessages = userId2Snapshot.child("unseenMessages").getValue(Integer.class);
+                            ChatList chatList = new ChatList(userUid, postId, timestamp, lastMessage, unseenMessages);
                             chats.add(chatList);
-                            readPosts();
                         }
                     }
                     Collections.sort(chats, new Comparator<ChatList>() {
@@ -138,7 +143,7 @@ public class HomeChatFragment extends Fragment {
                             return Long.compare(chat2.getTimeStamp(), chat1.getTimeStamp());
                         }
                     });
-                    showChats();
+                    readPosts();
                 } else {
                     Log.e("FirebaseError", "Snapshot does not exist");
                 }
@@ -158,6 +163,7 @@ public class HomeChatFragment extends Fragment {
                     Post post = data.getValue(Post.class);
                     postValues.add(post);
                 }
+                showChats();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
