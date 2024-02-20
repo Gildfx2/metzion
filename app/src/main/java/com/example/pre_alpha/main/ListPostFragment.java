@@ -1,31 +1,32 @@
 package com.example.pre_alpha.main;
 
 import static android.content.Context.MODE_PRIVATE;
-
 import static com.example.pre_alpha.models.FBref.refPosts;
 
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+
+import androidx.fragment.app.Fragment;
 
 import com.example.pre_alpha.R;
 import com.example.pre_alpha.adapters.PostAdapter;
+import com.example.pre_alpha.adapters.PostData;
 import com.example.pre_alpha.databinding.FragmentListPostBinding;
 import com.example.pre_alpha.models.Post;
-import com.example.pre_alpha.adapters.PostData;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ListPostFragment extends Fragment {
     ArrayList<Post> foundValues = new ArrayList<Post>();
@@ -37,13 +38,16 @@ public class ListPostFragment extends Fragment {
     FragmentListPostBinding binding;
     DetailedPostFragment detailedPostFragment = new DetailedPostFragment();
     ValueEventListener postListener;
+    Button filter;
+    FilterFragment filterFragment=new FilterFragment();
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         binding = FragmentListPostBinding.inflate(inflater, container, false);
+
+        filter=binding.getRoot().findViewById(R.id.filter);
         postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dS) {
@@ -56,6 +60,18 @@ public class ListPostFragment extends Fragment {
                         else lostValues.add(postTmp);
                     }
                 }
+                Collections.sort(foundValues, new Comparator<Post>() {
+                    @Override
+                    public int compare(Post post1, Post post2) {
+                        return Long.compare(post2.getTimeStamp(), post1.getTimeStamp());
+                    }
+                });
+                Collections.sort(lostValues, new Comparator<Post>() {
+                    @Override
+                    public int compare(Post post1, Post post2) {
+                        return Long.compare(post2.getTimeStamp(), post1.getTimeStamp());
+                    }
+                });
                 showPosts();
             }
             @Override
@@ -64,6 +80,12 @@ public class ListPostFragment extends Fragment {
             }
         };
         refPosts.addValueEventListener(postListener);
+        filter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, filterFragment).commit();
+            }
+        });
 
         return binding.getRoot();
     }
@@ -84,18 +106,16 @@ public class ListPostFragment extends Fragment {
             for (Post foundValue : foundValues) {
                 if (foundValue.getImage() != null) {
                     image_uri = Uri.parse(foundValue.getImage());
-                    postData = new PostData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), image_uri, foundValue.getAbout(), foundValue.getCreatorUid(), foundValue.getPostId());
-                } else
-                    postData = new PostData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), image_uri, foundValue.getAbout(), foundValue.getCreatorUid(), foundValue.getPostId());
+                }
+                postData = new PostData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), image_uri, foundValue.getAbout(), foundValue.getCreatorUid(), foundValue.getPostId(), foundValue.getTimeStamp());
                 arrayList.add(postData);
             }
         } else {
             for (Post lostValue : lostValues) {
                 if (lostValue.getImage() != null) {
                     image_uri = Uri.parse(lostValue.getImage());
-                    postData = new PostData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), image_uri, lostValue.getAbout(), lostValue.getCreatorUid(), lostValue.getPostId());
-                } else
-                    postData = new PostData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), image_uri, lostValue.getAbout(), lostValue.getCreatorUid(), lostValue.getPostId());
+                }
+                postData = new PostData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), image_uri, lostValue.getAbout(), lostValue.getCreatorUid(), lostValue.getPostId(), lostValue.getTimeStamp());
                 arrayList.add(postData);
             }
         }

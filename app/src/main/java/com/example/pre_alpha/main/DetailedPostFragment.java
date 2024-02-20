@@ -32,12 +32,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 
 public class DetailedPostFragment extends Fragment {
-    TextView tvName, tvItem, tvArea, tvAbout;
+    TextView tvName, tvItem, tvArea, tvAbout, tvDate;
     ImageView ivImage;
     ImageView returnBack;
     Button sendMessage;
@@ -46,6 +49,7 @@ public class DetailedPostFragment extends Fragment {
     FirebaseUser fbUser;
     Dialog dialog;
     Button btnOkay;
+    long timeStamp;
     String name, item, area, about, image="", creatorUid, postId;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,6 +62,7 @@ public class DetailedPostFragment extends Fragment {
         ivImage=view.findViewById(R.id.post_image);
         returnBack=view.findViewById(R.id.return_back);
         sendMessage=view.findViewById(R.id.send_message);
+        tvDate=view.findViewById(R.id.post_date);
         fbUser= FirebaseAuth.getInstance().getCurrentUser();
         Bundle bundle = this.getArguments();
         postId = bundle.getString("post_id");
@@ -147,16 +152,23 @@ public class DetailedPostFragment extends Fragment {
                 creatorUid=post.getCreatorUid();
                 if(post.getImage()!=null)
                     image=post.getImage();
+                timeStamp=post.getTimeStamp();
             }
         }
         tvName.setText(name);
         tvItem.setText("שם החפץ: "+item);
         tvArea.setText("שם הישוב: "+area);
         tvAbout.setText("פרטים:\n"+about);
+        tvDate.setText(formatDate(timeStamp));
         if(getActivity()!=null && !image.isEmpty())
             Glide.with(this)
                     .load(Uri.parse(image))
                     .into(ivImage);
+    }
+    private String formatDate(long timestamp) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        Date date = new Date(timestamp);
+        return dateFormat.format(date);
     }
 
 

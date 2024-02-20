@@ -9,8 +9,10 @@ public class Post {
     private String lostOrFound;
     private String creatorUid;
     private String postId;
+    private long timeStamp;
+
     public Post(){}
-    public Post(String name, String item, String area, String about, String image, String lostOrFound, String creatorUid, String postId){
+    public Post(String name, String item, String area, String about, String image, String lostOrFound, String creatorUid, String postId, long timeStamp){
         this.name=name;
         this.item=item;
         this.area=area;
@@ -19,6 +21,7 @@ public class Post {
         this.lostOrFound=lostOrFound;
         this.creatorUid=creatorUid;
         this.postId=postId;
+        this.timeStamp=timeStamp;
     }
 
     public String getName() {
@@ -75,5 +78,12 @@ public class Post {
     }
     public void setPostId(String postId) {
         this.postId = postId;
+    }
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
     }
 }

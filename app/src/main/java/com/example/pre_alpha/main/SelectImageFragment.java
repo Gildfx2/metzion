@@ -2,10 +2,7 @@ package com.example.pre_alpha.main;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
-
 import static com.example.pre_alpha.models.FBref.refPosts;
-import static com.example.pre_alpha.models.FBref.refUsers;
-
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -15,17 +12,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +22,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import com.example.pre_alpha.R;
 import com.example.pre_alpha.models.Post;
@@ -148,10 +143,10 @@ public class SelectImageFragment extends Fragment {
         SharedPreferences state = getActivity().getSharedPreferences("state", MODE_PRIVATE);
         String checkState = state.getString("state", "");
         if(image_uri!=null){
-            post=new Post(name, item, area, about, downloadUri.toString(), checkState, fbUser.getUid(), postId);
+            post=new Post(name, item, area, about, downloadUri.toString(), checkState, fbUser.getUid(), postId, System.currentTimeMillis());
         }
         else{
-            post=new Post(name, item, area, about, "", checkState, fbUser.getUid(), postId);
+            post=new Post(name, item, area, about, "", checkState, fbUser.getUid(), postId, System.currentTimeMillis());
         }
         refPosts.child(postId).setValue(post).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

@@ -4,9 +4,10 @@ import android.net.Uri;
 
 public class PostData {
     String name, area, item, about, creatorUid, postId;
+    long timeStamp;
     Uri image;
 
-    public PostData(String name, String area, String item, Uri image, String about, String creatorUid, String postId){
+    public PostData(String name, String area, String item, Uri image, String about, String creatorUid, String postId, long timeStamp){
         this.name = name;
         this.area = area;
         this.item = item;
@@ -14,6 +15,7 @@ public class PostData {
         this.about = about;
         this.creatorUid = creatorUid;
         this.postId = postId;
+        this.timeStamp = timeStamp;
     }
 
     public String getName() {
@@ -21,6 +23,14 @@ public class PostData {
     }
     public void setName(String name) {
         this.name = name;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public String getArea() {
