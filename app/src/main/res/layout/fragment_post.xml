@@ -97,87 +97,77 @@
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ישוב"
-            android:textSize="20dp"
-            android:fontFamily="@font/rubik_regular"
-            android:layout_gravity="right"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="30dp"/>
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
-            android:id="@+id/area"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginHorizontal="20dp"
-            android:hint="בחירת ישוב"
-            app:boxStrokeColor="@color/brown"
-            app:hintTextColor="@color/black"
-            app:helperTextTextColor="@color/black"
-            app:helperTextEnabled="true"
-            app:helperText="">
-            <AutoCompleteTextView
-                android:id="@+id/list_of_areas"
-                android:fontFamily="@font/rubik_regular"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="טקסט חופשי"
-            android:textSize="20dp"
-            android:fontFamily="@font/rubik_regular"
-            android:layout_gravity="right"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="30dp"/>
-        <com.google.android.material.textfield.TextInputLayout
-            android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
-            android:layout_width="match_parent"
-            android:layout_height="130dp"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="10dp"
-            app:counterEnabled="true"
-            app:counterMaxLength="150"
-            app:boxStrokeErrorColor="#6f1d1b"
-            app:boxStrokeColor="@color/brown"
-            app:hintTextColor="@color/black"
-            app:hintEnabled="false">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/about"
-                android:hint="הכנס טקסט כאן"
-                android:textColor="@color/black"
-                android:gravity="top"
-                android:layout_width="match_parent"
-                android:layout_height="110dp"
+            android:orientation="horizontal">
+            <ImageView
+                android:layout_width="170dp"
+                android:layout_height="170dp"
+                android:id="@+id/select_location"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/twotone_map_24"
+                android:scaleType="centerCrop"/>
+
+            <ImageView
+                android:id="@+id/pick_location_check"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginTop="125dp"
+                android:layout_marginLeft="125dp"
+                android:src="@drawable/baseline_library_add_24"/>
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/radius_slider"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="50dp"
+                android:contentDescription="בחירת רדיוס\n מהמיקום הנוכחי"
+                android:stepSize="1"
+                android:valueFrom="3"
+                android:valueTo="50"
+                app:haloColor="@color/message_brown"
+                app:labelStyle="@style/MyTooltip"
+                app:thumbColor="@color/brown"
+                app:thumbStrokeColor="@color/message_brown"
+                app:tickColor="@color/message_brown"
+                app:trackColorActive="@color/gray"
+                app:trackColorInactive="@color/gray" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="50dp"
+                android:layout_below="@id/radius_slider"
                 android:fontFamily="@font/rubik_regular"
-                android:inputType="text"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:gravity="center"
+                android:text="בחירת רדיוס\n מהמיקום הנבחר"
+                android:textSize="17sp" />
+
+        </RelativeLayout>
+
+
     </LinearLayout>
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
         android:layout_gravity="bottom">
+
         <Button
             android:id="@+id/next"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:text="הבא"
-            android:textSize="20sp"
-            android:layout_marginStart="130dp"
-            android:layout_marginBottom="10dp"
-            android:fontFamily="@font/rubik_regular"
             android:background="@drawable/custom_button"
-            app:backgroundTint="@null"
-            />
+            android:fontFamily="@font/rubik_regular"
+            android:text="הבא"
+            android:layout_centerInParent="true"
+            android:textSize="20sp"
+            app:backgroundTint="@null" />
     </RelativeLayout>
 
 </FrameLayout>
