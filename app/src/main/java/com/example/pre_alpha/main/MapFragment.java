@@ -48,11 +48,13 @@ public class MapFragment extends Fragment {
     boolean mLocationPermissionsGranted = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
+    String returnTo;
     TextView addressTv;
     Button applyBtn;
     Switch myPosition;
     double myLatitude, myLongitude, chosenLatitude, chosenLongitude;
     CreatePostFragment createPostFragment = new CreatePostFragment();
+    ListPostFragment listPostFragment = new ListPostFragment();
 
 
     @Override
@@ -62,6 +64,7 @@ public class MapFragment extends Fragment {
         addressTv=view.findViewById(R.id.addressTv);
         applyBtn=view.findViewById(R.id.applyBtn);
         myPosition=view.findViewById(R.id.my_location);
+        returnTo = getArguments().getString("from_where", "");
         getLocationPermission();
         return view;
     }
@@ -91,8 +94,21 @@ public class MapFragment extends Fragment {
                     bundle.putDouble("latitude", chosenLatitude);
                     bundle.putDouble("longitude", chosenLongitude);
                 }
-                createPostFragment.setArguments(bundle);
-                getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, createPostFragment).commit();
+                if(returnTo.equals("create_post")){
+                    String name = getArguments().getString("state_name", "");
+                    String item = getArguments().getString("state_item", "");
+                    String date = getArguments().getString("state_date", "");
+                    bundle.putString("state_name", name);
+                    bundle.putString("state_item", item);
+                    bundle.putString("state_date", date);
+                    createPostFragment.setArguments(bundle);
+                    getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, createPostFragment).commit();
+                }
+                if(returnTo.equals("filter_post")){
+                    listPostFragment.setArguments(bundle);
+                    getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, listPostFragment).commit();
+                }
+
             }
         });
 

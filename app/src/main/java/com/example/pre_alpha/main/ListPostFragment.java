@@ -107,7 +107,7 @@ public class ListPostFragment extends Fragment {
                 if (foundValue.getImage() != null) {
                     image_uri = Uri.parse(foundValue.getImage());
                 }
-                postData = new PostData(foundValue.getName(), foundValue.getArea(), foundValue.getItem(), image_uri, foundValue.getAbout(), foundValue.getCreatorUid(), foundValue.getPostId(), foundValue.getTimeStamp());
+                postData = new PostData(foundValue.getName(), foundValue.getItem(), image_uri, foundValue.getAbout(), foundValue.getCreatorUid(), foundValue.getPostId(), foundValue.getTimeStamp());
                 arrayList.add(postData);
             }
         } else {
@@ -115,7 +115,7 @@ public class ListPostFragment extends Fragment {
                 if (lostValue.getImage() != null) {
                     image_uri = Uri.parse(lostValue.getImage());
                 }
-                postData = new PostData(lostValue.getName(), lostValue.getArea(), lostValue.getItem(), image_uri, lostValue.getAbout(), lostValue.getCreatorUid(), lostValue.getPostId(), lostValue.getTimeStamp());
+                postData = new PostData(lostValue.getName(), lostValue.getItem(), image_uri, lostValue.getAbout(), lostValue.getCreatorUid(), lostValue.getPostId(), lostValue.getTimeStamp());
                 arrayList.add(postData);
             }
         }

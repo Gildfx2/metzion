@@ -32,7 +32,6 @@ public class ChatAdapter extends ArrayAdapter<ChatData> {
         }
         ImageView image = view.findViewById(R.id.chat_image);
         TextView name = view.findViewById(R.id.name);
-        TextView area = view.findViewById(R.id.area);
         TextView username = view.findViewById(R.id.username);
         TextView lastMessage = view.findViewById(R.id.last_message);
         TextView date = view.findViewById(R.id.date);
@@ -46,7 +45,6 @@ public class ChatAdapter extends ArrayAdapter<ChatData> {
 
         username.setText(chatData.username);
         name.setText(chatData.name);
-        area.setText(chatData.area);
         lastMessage.setText(chatData.lastMessage);
         date.setText(chatData.date);
         if (chatData.unseenMessages == 0) {

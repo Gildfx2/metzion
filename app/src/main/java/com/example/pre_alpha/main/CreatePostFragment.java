@@ -2,6 +2,8 @@ package com.example.pre_alpha.main;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +27,8 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.Calendar;
 
 
 public class CreatePostFragment extends Fragment {
@@ -39,8 +44,9 @@ public class CreatePostFragment extends Fragment {
     TextView tvState;
     TextInputEditText etName;
     ImageView mapIv, checkPickLocation;
+    DatePickerDialog datePickerDialog;
     Slider radiusSlider;
-    Button next;
+    Button next, dateButton;
     TextInputLayout layoutItem;
     AutoCompleteTextView pickItem;
     ArrayAdapter<String> adapterItems;
@@ -59,21 +65,32 @@ public class CreatePostFragment extends Fragment {
         pickItem = view.findViewById(R.id.list_of_items);
         layoutItem = view.findViewById(R.id.item);
         checkPickLocation=view.findViewById(R.id.pick_location_check);
+        dateButton=view.findViewById(R.id.datePickerButton);
+        dateButton.setText(getTodaysDate());
+        pickItem.setAdapter(adapterItems);
         SharedPreferences state = getActivity().getSharedPreferences("state", MODE_PRIVATE);
         String checkState = state.getString("state", "");
         if(checkState.equals("lost")) tvState.setText("מה איבדת?");
         else tvState.setText("מה מצאת?");
-        pickItem.setAdapter(adapterItems);
+
 
         return view;
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
+        if(getArguments()!=null){
+            etName.setText(getArguments().getString("state_name", ""));
+            pickItem.setText(getArguments().getString("state_item", ""));
+            dateButton.setText(getArguments().getString("state_date", getTodaysDate()));
+
+        }
         if(isServicesOk()){
             init();
         }
+        initDatePicker();
     }
 
     private void init(){
@@ -89,8 +106,18 @@ public class CreatePostFragment extends Fragment {
                 MapFragment mapFragment = new MapFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString("from_where", "create_post");
+                bundle.putString("state_name", etName.getText().toString());
+                bundle.putString("state_item", pickItem.getText().toString());
+                bundle.putString("state_date", dateButton.getText().toString());
                 mapFragment.setArguments(bundle);
                 getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, mapFragment).commit();
+            }
+        });
+
+        dateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                datePickerDialog.show();
             }
         });
 
@@ -105,18 +132,73 @@ public class CreatePostFragment extends Fragment {
                 }
                 if(!name.isEmpty() && !item.isEmpty() && name.length()<=30 && latitude!=0 && longitude!=0) {
                     radius= (int) radiusSlider.getValue();
+                    Log.d(TAG, "onClick: radius is " + radius);
                     Bundle bundle = new Bundle();
                     bundle.putString("name", name);
                     bundle.putString("item", item);
                     bundle.putDouble("latitude", latitude);
                     bundle.putDouble("longitude", longitude);
                     bundle.putInt("radius", radius);
+                    bundle.putString("date", dateButton.getText().toString());
                     createPostFragment2.setArguments(bundle);
                     getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, createPostFragment2).commit();
                 }
             }
         });
 
+    }
+
+
+    private void initDatePicker(){
+        DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                month=month+1;
+                String date = makeDateString(dayOfMonth, month, year);
+                dateButton.setText(date);
+            }
+        };
+
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        int style = AlertDialog.THEME_HOLO_DARK;
+
+        datePickerDialog = new DatePickerDialog(getActivity(), style, dateSetListener, year, month, day);
+        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+
+    }
+
+    private String getTodaysDate() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        month=month+1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        return makeDateString(day, month, year);
+    }
+
+    private String makeDateString(int day, int month, int year){
+        return getMonthFormat(month) + " " + day + " " + year;
+    }
+
+    private String getMonthFormat(int month){
+        if(month==1) return "JAN";
+        if(month==2) return "FEB";
+        if(month==3) return "MAR";
+        if(month==4) return "APR";
+        if(month==5) return "MAY";
+        if(month==6) return "JUN";
+        if(month==7) return "JUL";
+        if(month==8) return "AUG";
+        if(month==9) return "SEP";
+        if(month==10) return "OCT";
+        if(month==11) return "NOV";
+        if(month==12) return "DEC";
+
+        return "JAN";
     }
 
     public boolean isServicesOk(){

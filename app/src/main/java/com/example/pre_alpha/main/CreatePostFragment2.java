@@ -36,6 +36,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -43,6 +44,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import java.util.Calendar;
 
 
 public class CreatePostFragment2 extends Fragment {
@@ -65,6 +68,7 @@ public class CreatePostFragment2 extends Fragment {
     String storagePath = "Users_Posts_Images/";
     Uri downloadUri;
     String postId;
+    TextInputEditText etAbout;
     StorageReference storageReference;
     boolean result, result1, result2;
 
@@ -78,6 +82,7 @@ public class CreatePostFragment2 extends Fragment {
         auth = FirebaseAuth.getInstance();
         fbUser = auth.getCurrentUser();
         bottomNavigationView = getActivity().findViewById(R.id.bottomNavigationBar);
+        etAbout=view.findViewById(R.id.about);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
             storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -136,17 +141,30 @@ public class CreatePostFragment2 extends Fragment {
     }
 
     private void updateDatabase(){
-        String name = getArguments().getString("name", "");
-        String item = getArguments().getString("item", "");
-        String area = getArguments().getString("area", "");
-        String about = getArguments().getString("about", "");
+        String name = getArguments().getString("name");
+        String item = getArguments().getString("item");
+        double latitude = getArguments().getDouble("latitude");
+        double longitude = getArguments().getDouble("longitude");
+        int radius = getArguments().getInt("radius");
+
+        String date = getArguments().getString("date");
+        String[] dateComponents = date.split(" ");
+        int month = getMonthFormat(dateComponents[0]) - 1; // Calendar months are 0-based
+        int dayOfMonth = Integer.parseInt(dateComponents[1]);
+        int year = Integer.parseInt(dateComponents[2]);
+        Calendar calender = Calendar.getInstance();
+        calender.set(Calendar.YEAR, year);
+        calender.set(Calendar.MONTH, month);
+        calender.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+        String about = etAbout.getText().toString();
         SharedPreferences state = getActivity().getSharedPreferences("state", MODE_PRIVATE);
         String checkState = state.getString("state", "");
         if(image_uri!=null){
-            post=new Post(name, item, area, about, downloadUri.toString(), checkState, fbUser.getUid(), postId, System.currentTimeMillis());
+            post=new Post(name, item, latitude, longitude, radius, about, downloadUri.toString(), checkState, fbUser.getUid(), postId, calender.getTimeInMillis());
         }
         else{
-            post=new Post(name, item, area, about, "", checkState, fbUser.getUid(), postId, System.currentTimeMillis());
+            post=new Post(name, item, latitude, longitude, radius, about, "", checkState, fbUser.getUid(), postId, calender.getTimeInMillis());
         }
         refPosts.child(postId).setValue(post).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -249,6 +267,23 @@ public class CreatePostFragment2 extends Fragment {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private int getMonthFormat(String month){
+        if(month.equals("JAN")) return 1;
+        if(month.equals("FEB")) return 2;
+        if(month.equals("MAR")) return 3;
+        if(month.equals("APR")) return 4;
+        if(month.equals("MAY")) return 5;
+        if(month.equals("JUN")) return 6;
+        if(month.equals("JUL")) return 7;
+        if(month.equals("AUG")) return 8;
+        if(month.equals("SEP")) return 9;
+        if(month.equals("OCT")) return 10;
+        if(month.equals("NOV")) return 11;
+        if(month.equals("DEC")) return 12;
+
+        return 1;
     }
 
 

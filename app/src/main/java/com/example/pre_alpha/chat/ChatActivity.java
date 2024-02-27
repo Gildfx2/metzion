@@ -65,7 +65,6 @@ public class ChatActivity extends AppCompatActivity {
         ChatFragment chatFragment = new ChatFragment();
         Bundle bundle = new Bundle();
         bundle.putString("post_name", post.getName());
-        bundle.putString("post_area", post.getArea());
         bundle.putString("post_image", post.getImage());
         bundle.putString("creator_uid", post.getCreatorUid());
         bundle.putString("post_id", postId);

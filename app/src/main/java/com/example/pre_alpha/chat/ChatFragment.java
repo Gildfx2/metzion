@@ -80,11 +80,11 @@ public class ChatFragment extends Fragment {
     private static final int IMAGE_PICK_CAMERA_CODE = 400;
     String[] cameraPermissions;
     String[] storagePermissions;
-    String postName, postArea, userImage, username, postId, otherUserUid, messageId, msg, otherUserStatus, currentUserUsername;
+    String postName, userImage, username, postId, otherUserUid, messageId, msg, otherUserStatus, currentUserUsername;
     boolean result, result1, result2;
     Uri image_uri, download_uri;
     ImageView postImage, returnBack;
-    TextView nameTV, areaTV, usernameTV, userStatusTV;
+    TextView nameTV, usernameTV, userStatusTV;
     ImageView image;
     EditText textMessage;
     ImageButton sendMessage;
@@ -112,7 +112,6 @@ public class ChatFragment extends Fragment {
         storageReference = FirebaseStorage.getInstance().getReference();
         apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
         nameTV = view.findViewById(R.id.chat_post_name);
-        areaTV = view.findViewById(R.id.chat_post_area);
         usernameTV = view.findViewById(R.id.chat_username);
         userStatusTV = view.findViewById(R.id.chat_user_status);
         postImage = view.findViewById(R.id.chat_post_image);
@@ -127,7 +126,6 @@ public class ChatFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         Bundle bundle = this.getArguments();
         postName = bundle.getString("post_name");
-        postArea = bundle.getString("post_area");
         userImage = bundle.getString("post_image");
         postId = bundle.getString("post_id");
         username = bundle.getString("username");
@@ -354,7 +352,6 @@ public class ChatFragment extends Fragment {
     private void updateChatUI(){
         usernameTV.setText(username);
         nameTV.setText(postName);
-        areaTV.setText(postArea);
         if (getActivity()!=null && !userImage.isEmpty())
             Glide.with(this)
                     .load(Uri.parse(userImage))

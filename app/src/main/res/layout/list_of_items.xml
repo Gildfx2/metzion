@@ -34,10 +34,9 @@
                 android:id="@+id/item"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
+                android:layout_marginEnd="25dp"
                 android:layout_marginTop="20dp"
                 android:layout_gravity="right"
-                android:layout_marginBottom="5dp"
                 android:text="חפץ"
                 android:textSize="20sp"
                 android:fontFamily="@font/rubik_medium"/>
@@ -46,24 +45,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="7dp"
+                android:layout_marginEnd="25dp"
+                android:layout_marginTop="10dp"
                 android:text="שם"
                 android:textSize="20sp"
                 android:layout_below="@+id/item"
                 android:fontFamily="@font/rubik_regular"/>
-            <TextView
-                android:id="@+id/area"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_below="@+id/name"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="7dp"
-                android:layout_marginTop="10dp"
-                android:text="ישוב"
-                android:textSize="20sp"
-                android:fontFamily="@font/rubik_medium"/>
         </LinearLayout>
     </RelativeLayout>
 

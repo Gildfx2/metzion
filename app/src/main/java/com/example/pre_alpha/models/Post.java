@@ -3,7 +3,9 @@ package com.example.pre_alpha.models;
 public class Post {
     private String name;
     private String item;
-    private String area;
+    private double latitude;
+    private double longitude;
+    private int radius;
     private String about;
     private String image;
     private String lostOrFound;
@@ -12,10 +14,12 @@ public class Post {
     private long timeStamp;
 
     public Post(){}
-    public Post(String name, String item, String area, String about, String image, String lostOrFound, String creatorUid, String postId, long timeStamp){
+    public Post(String name, String item, double latitude, double longitude, int radius, String about, String image, String lostOrFound, String creatorUid, String postId, long  timeStamp){
         this.name=name;
         this.item=item;
-        this.area=area;
+        this.latitude=latitude;
+        this.longitude=longitude;
+        this.radius=radius;
         this.about=about;
         this.image=image;
         this.lostOrFound=lostOrFound;
@@ -36,13 +40,6 @@ public class Post {
     }
     public void setItem(String item) {
         this.item=item;
-    }
-
-    public String getArea() {
-        return area;
-    }
-    public void setArea(String area) {
-        this.area=area;
     }
 
     public String getAbout() {
@@ -69,6 +66,39 @@ public class Post {
     public String getCreatorUid() {
         return creatorUid;
     }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public int getRadius() {
+        return radius;
+    }
+
+    public void setRadius(int radius) {
+        this.radius = radius;
+    }
+
+    public long getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
     public void setCreatorUid(String creatorUid) {
         this.creatorUid=creatorUid;
     }
@@ -79,11 +109,5 @@ public class Post {
     public void setPostId(String postId) {
         this.postId = postId;
     }
-    public long getTimeStamp() {
-        return timeStamp;
-    }
 
-    public void setTimeStamp(long timeStamp) {
-        this.timeStamp = timeStamp;
-    }
 }

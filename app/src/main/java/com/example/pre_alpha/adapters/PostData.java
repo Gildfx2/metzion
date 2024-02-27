@@ -3,13 +3,12 @@ package com.example.pre_alpha.adapters;
 import android.net.Uri;
 
 public class PostData {
-    String name, area, item, about, creatorUid, postId;
+    String name, item, about, creatorUid, postId;
     long timeStamp;
     Uri image;
 
-    public PostData(String name, String area, String item, Uri image, String about, String creatorUid, String postId, long timeStamp){
+    public PostData(String name, String item, Uri image, String about, String creatorUid, String postId, long timeStamp){
         this.name = name;
-        this.area = area;
         this.item = item;
         this.image = image;
         this.about = about;
@@ -31,13 +30,6 @@ public class PostData {
 
     public void setTimeStamp(long timeStamp) {
         this.timeStamp = timeStamp;
-    }
-
-    public String getArea() {
-        return area;
-    }
-    public void setArea(String area) {
-        this.area = area;
     }
 
     public String getItem() {

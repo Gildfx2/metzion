@@ -34,13 +34,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
 
 
 public class DetailedPostFragment extends Fragment {
-    TextView tvName, tvItem, tvArea, tvAbout, tvDate;
+    TextView tvName, tvItem, tvAbout, tvDate;
     ImageView ivImage;
     ImageView returnBack;
     Button sendMessage;
@@ -50,14 +49,14 @@ public class DetailedPostFragment extends Fragment {
     Dialog dialog;
     Button btnOkay;
     long timeStamp;
-    String name, item, area, about, image="", creatorUid, postId;
+    Calendar calendar;
+    String name, item, about, image="", creatorUid, postId;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detailed_post, container, false);
         tvName=view.findViewById(R.id.post_name);
         tvItem=view.findViewById(R.id.post_item);
-        tvArea=view.findViewById(R.id.post_area);
         tvAbout=view.findViewById(R.id.post_about);
         ivImage=view.findViewById(R.id.post_image);
         returnBack=view.findViewById(R.id.return_back);
@@ -65,6 +64,7 @@ public class DetailedPostFragment extends Fragment {
         tvDate=view.findViewById(R.id.post_date);
         fbUser= FirebaseAuth.getInstance().getCurrentUser();
         Bundle bundle = this.getArguments();
+        calendar = Calendar.getInstance();
         postId = bundle.getString("post_id");
         refPosts.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -147,7 +147,6 @@ public class DetailedPostFragment extends Fragment {
             if(post.getPostId().equals(postId)){
                 name=post.getName();
                 item=post.getItem();
-                area=post.getArea();
                 about=post.getAbout();
                 creatorUid=post.getCreatorUid();
                 if(post.getImage()!=null)
@@ -157,18 +156,18 @@ public class DetailedPostFragment extends Fragment {
         }
         tvName.setText(name);
         tvItem.setText("שם החפץ: "+item);
-        tvArea.setText("שם הישוב: "+area);
         tvAbout.setText("פרטים:\n"+about);
-        tvDate.setText(formatDate(timeStamp));
+        calendar.setTimeInMillis(timeStamp);
+        tvDate.setText(formatDate(calendar));
         if(getActivity()!=null && !image.isEmpty())
             Glide.with(this)
                     .load(Uri.parse(image))
                     .into(ivImage);
     }
-    private String formatDate(long timestamp) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-        Date date = new Date(timestamp);
-        return dateFormat.format(date);
+    private String formatDate(Calendar calendar) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String dateString = dateFormat.format(calendar.getTime());
+        return dateString;
     }
 
 

@@ -88,7 +88,7 @@
             android:text="יצירת מודעה"
             android:textSize="20sp"
             android:layout_marginStart="105dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="30dp"
             android:fontFamily="@font/rubik_medium"
             android:background="@drawable/custom_button"
             app:backgroundTint="@null"

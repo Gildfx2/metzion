@@ -90,7 +90,7 @@ public class HomeChatFragment extends Fragment {
                     if(post.getImage() != null) {
                         image_uri = Uri.parse(post.getImage());
                     }
-                    chatData = new ChatData(post.getName(), post.getArea(), getUsernameFromUid(chatList.getUserUid()), image_uri, post.getCreatorUid(),
+                    chatData = new ChatData(post.getName(), getUsernameFromUid(chatList.getUserUid()), image_uri, post.getCreatorUid(),
                             post.getPostId(), chatList.getUserUid(), chatList.getLastMessage(), formatDate(chatList.getTimeStamp()), chatList.getUnseenMessages());
                     arrayList.add(chatData);
                     break;
@@ -106,7 +106,6 @@ public class HomeChatFragment extends Fragment {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Bundle bundle = new Bundle();
                     bundle.putString("post_name", arrayList.get(position).getName());
-                    bundle.putString("post_area", arrayList.get(position).getArea());
                     bundle.putString("creator_uid", arrayList.get(position).getCreatorUid());
                     bundle.putString("post_id", arrayList.get(position).getPostId());
                     bundle.putString("username", arrayList.get(position).getUsername());

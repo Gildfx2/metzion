@@ -31,7 +31,6 @@ public class PostAdapter extends ArrayAdapter<PostData>{
         ImageView image = view.findViewById(R.id.image);
         TextView item = view.findViewById(R.id.item);
         TextView name = view.findViewById(R.id.name);
-        TextView area = view.findViewById(R.id.area);
 
         if(postData!=null && !postData.image.toString().isEmpty()) {
             Glide.with(this.getContext())
@@ -40,7 +39,6 @@ public class PostAdapter extends ArrayAdapter<PostData>{
         }
         item.setText(postData.item);
         name.setText(postData.name);
-        area.setText(postData.area);
         return view;
     }
 }
