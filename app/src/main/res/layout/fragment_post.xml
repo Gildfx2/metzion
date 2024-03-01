@@ -32,7 +32,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="שם החפץ"
+            android:text="תיאור קצר על הפריט"
             android:textSize="20dp"
             android:fontFamily="@font/rubik_regular"
             android:layout_gravity="right"
@@ -173,7 +173,6 @@
                 android:layout_marginRight="10dp"/>
 
             <TextView
-                android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="בחירת תאריך:"

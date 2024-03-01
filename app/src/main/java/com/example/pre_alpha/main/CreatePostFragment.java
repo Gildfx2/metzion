@@ -34,7 +34,7 @@ import java.util.Calendar;
 public class CreatePostFragment extends Fragment {
 
 
-    private static final int ERROR_DIALOG_REQUEST= 9001;
+    static final int ERROR_DIALOG_REQUEST= 9001;
     private static final String TAG = "CreatePostFragment";
 
     String[] items={"ארנק", "תיק", "סמארטפון", "משקפי ראייה / שמש","שעון חכם", "מצלמה" ,"תעודת זהות / דרכון", "רישיון נהיגה", "חוגר / חוגרון", "כרטיס רב קו", "כרטיסים כללי", "מפתחות בית / רכב", "שקית / שקית קניות", "אוזניות / קייס אוזניות", "שרשרת / תיליון", "צמיד", "טבעת", "תפילין", "מחשב נייד", "מטען", "כרטיס זיכרון / דיסק און קיי", "מעיל / סווטשירט", "קיטבג / מזוודה", "מכשיר שמיעה", "אחר"};

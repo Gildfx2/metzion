@@ -54,7 +54,7 @@ public class MapFragment extends Fragment {
     Switch myPosition;
     double myLatitude, myLongitude, chosenLatitude, chosenLongitude;
     CreatePostFragment createPostFragment = new CreatePostFragment();
-    ListPostFragment listPostFragment = new ListPostFragment();
+    FilterFragment filterFragment = new FilterFragment();
 
 
     @Override
@@ -104,9 +104,17 @@ public class MapFragment extends Fragment {
                     createPostFragment.setArguments(bundle);
                     getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, createPostFragment).commit();
                 }
-                if(returnTo.equals("filter_post")){
-                    listPostFragment.setArguments(bundle);
-                    getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, listPostFragment).commit();
+                if(returnTo.equals("filter_posts")){
+                    String lostOrFound = getArguments().getString("lost_or_found", "");
+                    String item = getArguments().getString("state_item", "");
+                    String dateFrom = getArguments().getString("state_date_from", "");
+                    String dateTo = getArguments().getString("state_date_to", "");
+                    bundle.putString("lost_or_found", lostOrFound);
+                    bundle.putString("state_item", item);
+                    bundle.putString("state_date_from", dateFrom);
+                    bundle.putString("state_date_to", dateTo);
+                    filterFragment.setArguments(bundle);
+                    getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, filterFragment).commit();
                 }
 
             }

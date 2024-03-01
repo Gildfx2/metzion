@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseUser fbUser;
     BottomNavigationView bottomNavigationView;
     public HomeFragment homeFragment=new HomeFragment();
-    SearchFragment searchFragment=new SearchFragment();
+    FilterFragment filterFragment=new FilterFragment();
     CreatePostFragment createPostFragment;
     FavouriteFragment favouriteFragment=new FavouriteFragment();
     UserFragment userFragment=new UserFragment();
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, homeFragment).commit();
                         return true;
                     case R.id.search:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, searchFragment).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, filterFragment).commit();
                         return true;
                     case R.id.post:
                         dialog=new Dialog(MainActivity.this);

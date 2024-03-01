@@ -3,15 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="@drawable/filter_bkg">
+    android:orientation="vertical">
 
-    <ImageView
-        android:layout_width="65dp"
-        android:layout_height="wrap_content"
-        android:src="@drawable/round_remove_24"
-        android:scaleType="centerCrop"
-        android:layout_gravity="center|top"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,44 +20,44 @@
             android:textColor="#969696"
             android:layout_marginStart="12dp"
             android:layout_marginTop="5dp"
-            android:layout_gravity="right"/>
+            android:layout_gravity="right"
+            android:fontFamily="@font/rubik_medium"/>
         <View
             android:layout_width="350dp"
             android:layout_height="2dp"
             android:background="#C8C8C8"
             android:layout_marginStart="30dp"
             />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ישוב"
-            android:textSize="20dp"
-            android:fontFamily="@font/rubik_regular"
-            android:layout_gravity="right"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="30dp"/>
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
-            android:id="@+id/area"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_marginTop="10dp"
-            android:layout_marginHorizontal="20dp"
-            android:hint="בחירת ישוב"
-            app:boxStrokeColor="@color/brown"
-            app:hintTextColor="@color/black"
-            app:helperTextTextColor="@color/black"
-            app:helperTextEnabled="true"
-            app:helperText="">
-            <AutoCompleteTextView
-                android:id="@+id/list_of_areas"
-                android:fontFamily="@font/rubik_regular"
-                android:layout_width="match_parent"
+            android:gravity="center">
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/filter_group"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="text"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
+                app:singleSelection="true">
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/filter_lost_items"
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:text="מציאות"
+                    android:layout_marginEnd="15dp"
+                    android:textSize="20sp"
+                    style="@style/Widget.MaterialComponents.Chip.Filter" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/filter_found_items"
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:text="אבדות"
+                    android:textSize="20sp"
+                    style="@style/Widget.MaterialComponents.Chip.Filter" />
+            </com.google.android.material.chip.ChipGroup>
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
@@ -75,209 +68,119 @@
             android:layout_gravity="right"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="30dp"/>
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
+            android:id="@+id/filter_item"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="right">
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginHorizontal="20dp"
+            android:hint="בחירת חפץ"
+            app:helperTextEnabled="true"
+            app:helperText=""
+            app:boxStrokeColor="@color/brown"
+            app:hintTextColor="@color/black"
+            app:helperTextTextColor="@color/black">
+            <AutoCompleteTextView
+                android:id="@+id/filter_list_of_items"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="ארנק"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="תיק"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="סמארטפון"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="משקפי ראייה / שמש"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-
-
-
-        </LinearLayout>
+                android:inputType="none"
+                android:fontFamily="@font/rubik_regular"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right">
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="תעודת זהות / דרכון"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="רישיון נהיגה"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="חוגר / חוגרון"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-
-
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right">
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="כרטיס רב קו"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="כרטיסים כללי"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="מפתחות בית / רכב"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right">
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="שקית / שקית קניות"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="אוזניות / קייס אוזניות"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="שעון חכם"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right">
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="מצלמה"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="שרשרת / תיליון"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="צמיד"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="טבעת"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="תפילין"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right">
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="מחשב נייד"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="מטען"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="כרטיס זיכרון / דיסק און קיי"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right">
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="מעיל / סווטשירט"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="קיטבג / מזוודה"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="מכשיר שמיעה"
-                android:layout_marginEnd="5dp"
-                style="@style/Widget.MaterialComponents.Chip.Filter"/>
-        </LinearLayout>
-        <com.google.android.material.chip.Chip
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="אחר"
-            android:layout_marginEnd="5dp"
+            android:orientation="horizontal"
             android:layout_gravity="right"
-            style="@style/Widget.MaterialComponents.Chip.Filter"/>
+            android:layout_marginTop="15dp">
+            <Button
+                android:id="@+id/from_date_picker_button"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:text="JAN 01 2020"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                style="?android:spinnerStyle"
+                android:background="@drawable/custom_button2"
+                app:backgroundTint="@null"
+                android:layout_marginRight="18dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="מ:"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:layout_marginRight="20dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="right"
+            android:layout_marginTop="10dp">
+            <Button
+                android:id="@+id/to_date_picker_button"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:text="JAN 01 2020"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                style="?android:spinnerStyle"
+                android:background="@drawable/custom_button2"
+                app:backgroundTint="@null"
+                android:layout_marginRight="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="עד:"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:layout_marginRight="20dp"/>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+        <ImageView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:id="@+id/select_location"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/twotone_map_24"
+            android:scaleType="centerCrop"/>
+
+        <ImageView
+            android:id="@+id/pick_location_check"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="105dp"
+            android:layout_marginLeft="105dp"
+            android:src="@drawable/baseline_library_add_24"/>
+        </RelativeLayout>
+
 
         <Button
+            android:id="@+id/show_results"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="הצגת תוצאות"
             android:textSize="30sp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:layout_marginHorizontal="10dp"
             android:fontFamily="@font/rubik_medium"
             android:background="@drawable/custom_button"

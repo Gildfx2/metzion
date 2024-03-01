@@ -98,9 +98,9 @@ public class DetailedPostFragment extends Fragment {
         returnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ListPostFragment listPostFragment = new ListPostFragment();
+                SearchFragment searchFragment = new SearchFragment();
                 FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                transaction.replace(R.id.frameLayout, listPostFragment);
+                transaction.replace(R.id.frameLayout, searchFragment);
                 transaction.addToBackStack(null);
                 transaction.commit();
             }
