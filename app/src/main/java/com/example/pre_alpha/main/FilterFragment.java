@@ -17,6 +17,7 @@ import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.pre_alpha.R;
@@ -69,8 +70,8 @@ public class FilterFragment extends Fragment {
         super.onResume();
         if(getArguments()!=null){
             lostOrFound = getArguments().getString("lost_or_found", "");
-            if(lostOrFound.equals("lost")) lostFilter.setCheckable(true);
-            if(lostOrFound.equals("found")) foundFilter.setCheckable(true);
+            if(lostOrFound.equals("lost")) lostFilter.setChecked(true);
+            if(lostOrFound.equals("found")) foundFilter.setChecked(true);
             pickItem.setText(getArguments().getString("state_item", ""));
             fromDatePickerButton.setText(getArguments().getString("state_date_from", getTodaysDate()));
             toDatePickerButton.setText(getArguments().getString("state_date_to", getTodaysDate()));
@@ -106,6 +107,7 @@ public class FilterFragment extends Fragment {
             public void onClick(View v) {
                 MapFragment mapFragment = new MapFragment();
                 Bundle bundle = new Bundle();
+                if(!lostFilter.isChecked() && !foundFilter.isChecked()) lostOrFound="";
                 bundle.putString("from_where", "filter_posts");
                 bundle.putString("lost_or_found", lostOrFound);
                 bundle.putString("state_item", pickItem.getText().toString());
@@ -116,7 +118,38 @@ public class FilterFragment extends Fragment {
             }
         });
 
+        showResults.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(lostOrFound.isEmpty()) Toast.makeText(getActivity() ,"יש לבחור אם החפץ המבוקש הוא מציאה או אבידה", Toast.LENGTH_SHORT).show();
+                else{
+                    SearchFragment searchFragment = new SearchFragment();
+                    Bundle bundle = new Bundle();
+                    if(!lostFilter.isChecked() && !foundFilter.isChecked()) lostOrFound="";
+                    bundle.putString("lost_or_found", lostOrFound);
+                    bundle.putString("state_item", pickItem.getText().toString());
+                    bundle.putString("state_date_from", fromDatePickerButton.getText().toString());
+                    bundle.putString("state_date_to", toDatePickerButton.getText().toString());
+                    bundle.putDouble("latitude", latitude);
+                    bundle.putDouble("longitude", longitude);
+                    searchFragment.setArguments(bundle);
+                    getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, searchFragment).commit();
+                }
+            }
+        });
 
+        filterGroup.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(@NonNull ChipGroup group, int checkedId) {
+                if (checkedId == foundFilter.getId()) {
+                    if(foundFilter.isChecked()) lostOrFound="found";
+                }
+                else if (checkedId == lostFilter.getId()) {
+                    if(lostFilter.isChecked()) lostOrFound="lost";
+                }
+
+            }
+        });
 
     }
 

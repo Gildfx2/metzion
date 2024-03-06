@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.example.pre_alpha.models.FBref.refPosts;
 
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,12 +26,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 
 public class SearchFragment extends Fragment {
-    ArrayList<Post> foundValues = new ArrayList<Post>();
-    ArrayList<Post> lostValues = new ArrayList<Post>();
+    private static final String TAG = "SearchFragment";
+    ArrayList<Post> postValues = new ArrayList<Post>();
     PostAdapter postAdapter;
     ArrayList<PostData> arrayList = new ArrayList<>();
     PostData postData;
@@ -40,46 +41,41 @@ public class SearchFragment extends Fragment {
     ValueEventListener postListener;
     Button filter;
     FilterFragment filterFragment=new FilterFragment();
+    String lostOrFound, item, fromDate, toDate;
+    double longitude, latitude;
+    Calendar postDateCalendar, fromDateCalendar, toDateCalendar;
+    int month, dayOfMonth, year;
+    Location postLocation, filterLocation;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentSearchBinding.inflate(inflater, container, false);
+        init();
 
         filter=binding.getRoot().findViewById(R.id.filter);
         postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dS) {
-                foundValues.clear();
-                lostValues.clear();
+                postValues.clear();
                 for (DataSnapshot data : dS.getChildren()) {
                     Post postTmp = data.getValue(Post.class);
-                    if(postTmp!=null){
-                        if(postTmp.getLostOrFound().equals("found")) foundValues.add(postTmp);
-                        else lostValues.add(postTmp);
+                    if (postTmp != null && isValidPost(postTmp)) {
+                        postValues.add(postTmp);
                     }
                 }
-                Collections.sort(foundValues, new Comparator<Post>() {
-                    @Override
-                    public int compare(Post post1, Post post2) {
-                        return Long.compare(post2.getTimeStamp(), post1.getTimeStamp());
-                    }
-                });
-                Collections.sort(lostValues, new Comparator<Post>() {
-                    @Override
-                    public int compare(Post post1, Post post2) {
-                        return Long.compare(post2.getTimeStamp(), post1.getTimeStamp());
-                    }
-                });
+                Collections.sort(postValues, (post1, post2) -> Long.compare(post2.getTimeStamp(), post1.getTimeStamp()));
                 showPosts();
             }
+
             @Override
             public void onCancelled(DatabaseError error) {
                 Log.e("FirebaseError", error.getMessage());
             }
         };
         refPosts.addValueEventListener(postListener);
+
         filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,6 +84,72 @@ public class SearchFragment extends Fragment {
         });
 
         return binding.getRoot();
+    }
+
+    private void init(){
+        lostOrFound = getArguments().getString("lost_or_found", "");
+        item = getArguments().getString("state_item", "");
+        fromDate = getArguments().getString("state_date_from");
+        toDate = getArguments().getString("state_date_to");
+        latitude = getArguments().getDouble("latitude", 0);
+        longitude = getArguments().getDouble("longitude", 0);
+        String[] fromDateComponents = fromDate.split(" ");
+        month = getMonthFormat(fromDateComponents[0]) - 1; // Calendar months are 0-based
+        dayOfMonth = Integer.parseInt(fromDateComponents[1]);
+        year = Integer.parseInt(fromDateComponents[2]);
+        fromDateCalendar = Calendar.getInstance();
+        fromDateCalendar.set(Calendar.YEAR, year);
+        fromDateCalendar.set(Calendar.MONTH, month);
+        fromDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        String[] toDateComponents = toDate.split(" ");
+        month = getMonthFormat(toDateComponents[0]) - 1; // Calendar months are 0-based
+        dayOfMonth = Integer.parseInt(toDateComponents[1]);
+        year = Integer.parseInt(toDateComponents[2]);
+        toDateCalendar = Calendar.getInstance();
+        toDateCalendar.set(Calendar.YEAR, year);
+        toDateCalendar.set(Calendar.MONTH, month);
+        toDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        postDateCalendar = Calendar.getInstance();
+        filterLocation = new Location("filter_location");
+        postLocation = new Location("post_location");
+        filterLocation.setLatitude(latitude);
+        filterLocation.setLongitude(longitude);
+        filterLocation = new Location("filter_location");
+        postLocation = new Location("post_location");
+        filterLocation.setLatitude(latitude);
+        filterLocation.setLongitude(longitude);
+    }
+
+    private boolean isValidPost(Post postTmp) {
+        postDateCalendar.setTimeInMillis(postTmp.getTimeStamp());
+        postLocation.setLatitude(postTmp.getLatitude());
+        postLocation.setLongitude(postTmp.getLongitude());
+
+        if (!postTmp.getLostOrFound().equals(lostOrFound)) {
+            Log.d(TAG, "isValidPost: the state is different");
+            return false;
+        }
+
+        if (postDateCalendar.compareTo(fromDateCalendar) < 0 || postDateCalendar.compareTo(toDateCalendar) > 0) {
+            Log.d(TAG, "isValidPost: the date is not in the range");
+            return false;
+        }
+
+        if (!item.isEmpty() && !item.equals(postTmp.getItem())) {
+            Log.d(TAG, "isValidPost: the item is different");
+            return false;
+        }
+
+        if (latitude != 0 && longitude != 0 && !distanceIsAccepted(filterLocation, postLocation, postTmp.getRadius())) {
+            Log.d(TAG, "isValidPost: the distance is above the given radius");
+            return false;
+        }
+
+        return true;
+    }
+    private boolean distanceIsAccepted(Location location1, Location location2, int radius){
+        if((location1.distanceTo(location2)/1000)<=radius) return true;
+        return false;
     }
 
     @Override
@@ -100,25 +162,13 @@ public class SearchFragment extends Fragment {
     }
 
     private void showPosts() {
-        SharedPreferences listState = getActivity().getSharedPreferences("list_state", MODE_PRIVATE);
-        String checkListState = listState.getString("list_state", "");
-        if (checkListState.equals("found")) {
-            for (Post foundValue : foundValues) {
-                if (foundValue.getImage() != null) {
-                    image_uri = Uri.parse(foundValue.getImage());
+            for (Post postValue : postValues) {
+                if (postValue.getImage() != null) {
+                    image_uri = Uri.parse(postValue.getImage());
                 }
-                postData = new PostData(foundValue.getName(), foundValue.getItem(), image_uri, foundValue.getAbout(), foundValue.getCreatorUid(), foundValue.getPostId(), foundValue.getTimeStamp());
+                postData = new PostData(postValue.getName(), postValue.getItem(), image_uri, postValue.getAbout(), postValue.getCreatorUid(), postValue.getPostId(), postValue.getTimeStamp());
                 arrayList.add(postData);
             }
-        } else {
-            for (Post lostValue : lostValues) {
-                if (lostValue.getImage() != null) {
-                    image_uri = Uri.parse(lostValue.getImage());
-                }
-                postData = new PostData(lostValue.getName(), lostValue.getItem(), image_uri, lostValue.getAbout(), lostValue.getCreatorUid(), lostValue.getPostId(), lostValue.getTimeStamp());
-                arrayList.add(postData);
-            }
-        }
         postAdapter = new PostAdapter(getActivity(), arrayList);
         binding.listOfPosts.setAdapter(postAdapter);
         binding.listOfPosts.setClickable(true);
@@ -136,6 +186,23 @@ public class SearchFragment extends Fragment {
                 getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, detailedPostFragment).commit();
             }
         });
+    }
+
+    private int getMonthFormat(String month){
+        if(month.equals("JAN")) return 1;
+        if(month.equals("FEB")) return 2;
+        if(month.equals("MAR")) return 3;
+        if(month.equals("APR")) return 4;
+        if(month.equals("MAY")) return 5;
+        if(month.equals("JUN")) return 6;
+        if(month.equals("JUL")) return 7;
+        if(month.equals("AUG")) return 8;
+        if(month.equals("SEP")) return 9;
+        if(month.equals("OCT")) return 10;
+        if(month.equals("NOV")) return 11;
+        if(month.equals("DEC")) return 12;
+
+        return 1;
     }
 
 }
