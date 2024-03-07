@@ -151,6 +151,7 @@ public class FilterFragment extends Fragment {
             }
         });
 
+
     }
 
     private void initDatePicker1(){
@@ -276,5 +277,13 @@ public class FilterFragment extends Fragment {
             Toast.makeText(getActivity(), "you can't make map requests", Toast.LENGTH_SHORT).show();
         }
         return false;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        foundFilter.setChecked(false);
+        lostFilter.setChecked(false);
+        pickItem.setText("");
     }
 }

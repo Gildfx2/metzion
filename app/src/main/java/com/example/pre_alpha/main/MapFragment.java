@@ -164,7 +164,7 @@ public class MapFragment extends Fragment {
         map.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull GoogleMap googleMap) {
-                Toast.makeText(getActivity(), "Map Is Ready", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "המפה מוכנה", Toast.LENGTH_SHORT).show();
                 mMap = googleMap;
 
                 if (mLocationPermissionsGranted) {
@@ -204,7 +204,7 @@ public class MapFragment extends Fragment {
                     }
                     else{
                         Log.d(TAG, "onComplete: current location is null");
-                        Toast.makeText(getActivity(), "unable to get current location", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "לא מסוגל להשיג מיקום נוכחי", Toast.LENGTH_SHORT).show();
                     }
 
                 }

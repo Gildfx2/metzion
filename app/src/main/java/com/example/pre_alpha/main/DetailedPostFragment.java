@@ -98,11 +98,20 @@ public class DetailedPostFragment extends Fragment {
         returnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SearchFragment searchFragment = new SearchFragment();
-                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                transaction.replace(R.id.frameLayout, searchFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                if(getArguments().getString("from_home_or_search").equals("search")){
+                    Bundle bundle = new Bundle(getArguments());
+                    SearchFragment searchFragment = new SearchFragment();
+                    searchFragment.setArguments(bundle);
+                    FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                    transaction.replace(R.id.frameLayout, searchFragment);
+                    transaction.commit();
+                } else if (getArguments().getString("from_home_or_search").equals("home")) {
+                    HomeFragment homeFragment = new HomeFragment();
+                    FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                    transaction.replace(R.id.frameLayout, homeFragment);
+                    transaction.commit();
+                }
+
             }
         });
         sendMessage.setOnClickListener(new View.OnClickListener() {

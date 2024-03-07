@@ -1,9 +1,7 @@
 package com.example.pre_alpha.main;
 
-import static android.content.Context.MODE_PRIVATE;
 import static com.example.pre_alpha.models.FBref.refPosts;
 
-import android.content.SharedPreferences;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -46,6 +44,7 @@ public class SearchFragment extends Fragment {
     Calendar postDateCalendar, fromDateCalendar, toDateCalendar;
     int month, dayOfMonth, year;
     Location postLocation, filterLocation;
+    Bundle bundle;
 
 
     @Override
@@ -79,6 +78,7 @@ public class SearchFragment extends Fragment {
         filter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                filterFragment.setArguments(getArguments());
                 getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, filterFragment).commit();
             }
         });
@@ -87,6 +87,7 @@ public class SearchFragment extends Fragment {
     }
 
     private void init(){
+        bundle = new Bundle(getArguments());
         lostOrFound = getArguments().getString("lost_or_found", "");
         item = getArguments().getString("state_item", "");
         fromDate = getArguments().getString("state_date_from");
@@ -175,13 +176,8 @@ public class SearchFragment extends Fragment {
         binding.listOfPosts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SharedPreferences chatOrList = getActivity().getSharedPreferences("chat_or_list", MODE_PRIVATE);
-                SharedPreferences.Editor editor = chatOrList.edit();
-                editor.putString("chat_or_list", "list");
-                editor.apply();
-                editor.commit();
-                Bundle bundle = new Bundle();
                 bundle.putString("post_id", arrayList.get(position).getPostId());
+                bundle.putString("from_home_or_search", "search");
                 detailedPostFragment.setArguments(bundle);
                 getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, detailedPostFragment).commit();
             }
