@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static com.example.pre_alpha.models.FBref.refPosts;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,6 +26,8 @@ import androidx.fragment.app.Fragment;
 import com.example.pre_alpha.R;
 import com.example.pre_alpha.chat.ChatActivity;
 import com.example.pre_alpha.models.Post;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -48,12 +52,16 @@ public class HomeFragment extends Fragment {
     private static final float DEFAULT_ZOOM = 15f;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private static final String TAG = "MainActivity";
+    static final int ERROR_DIALOG_REQUEST= 9001;
+
 
     boolean mLocationPermissionsGranted = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
-    double myLatitude, myLongitude, chosenLatitude, chosenLongitude;
-    Button showChats;
+    double myLatitude, myLongitude;
+    Dialog dialog;
+    Button btnOkay;
+    ImageView getDetails, getCurrentPosition, showChats;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -61,6 +69,8 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         showChats=view.findViewById(R.id.show_chats);
+        getDetails=view.findViewById(R.id.get_details_map);
+        getCurrentPosition=view.findViewById(R.id.get_current_position);
         getLocationPermission();
 
 
@@ -80,6 +90,28 @@ public class HomeFragment extends Fragment {
                 editor.apply();
                 editor.commit();
                 startActivity(intent);
+            }
+        });
+
+        getCurrentPosition.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getDeviceLocation();
+            }
+        });
+
+        getDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog = new Dialog(getActivity());
+                dialog.setContentView(R.layout.details_about_map);
+                btnOkay = dialog.findViewById(R.id.read_details);
+                btnOkay.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        dialog.cancel();
+                    }
+                });
+                dialog.show();
             }
         });
 
@@ -145,6 +177,7 @@ public class HomeFragment extends Fragment {
                         return;
                     }
                     mMap.setMyLocationEnabled(true);
+                    mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
                     init();
 
@@ -167,10 +200,12 @@ public class HomeFragment extends Fragment {
                     if(task.isSuccessful()){
                         Log.d(TAG, "onComplete: found location");
                         Location currentLocation = (Location) task.getResult();
-                        myLatitude=currentLocation.getLatitude();
-                        myLongitude=currentLocation.getLongitude();
+                        if(currentLocation!=null) {
+                            myLatitude = currentLocation.getLatitude();
+                            myLongitude = currentLocation.getLongitude();
 
-                        moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, "My Location");
+                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, "My Location");
+                        }
                     }
                     else{
                         Log.d(TAG, "onComplete: current location is null");
@@ -215,7 +250,7 @@ public class HomeFragment extends Fragment {
         if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                 mLocationPermissionsGranted=true;
-                initMap();
+                if(isServicesOk()) initMap();
             }
             else{
                 ActivityCompat.requestPermissions(getActivity(), permissions, LOCATION_PERMISSION_REQUEST_CODE);
@@ -242,9 +277,28 @@ public class HomeFragment extends Fragment {
                         }
                     }
                     mLocationPermissionsGranted = true;
-                    initMap();
+                    if(isServicesOk()) initMap();
                 }
             }
         }
+    }
+
+    public boolean isServicesOk(){
+        Log.d(TAG, "isServicesOk: checking google services version");
+
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getActivity());
+        if(available == ConnectionResult.SUCCESS){
+            Log.d(TAG, "isServicesOk: google play services is working");
+            return true;
+        }
+        else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)){
+            Log.d(TAG, "an error occured but we can fix it");
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), available, ERROR_DIALOG_REQUEST);
+            dialog.show();
+        }
+        else{
+            Toast.makeText(getActivity(), "you can't make map requests", Toast.LENGTH_SHORT).show();
+        }
+        return false;
     }
 }
