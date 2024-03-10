@@ -65,7 +65,7 @@
                 android:id="@+id/post_image"
                 android:layout_width="260dp"
                 android:layout_height="240dp"
-                android:scaleType="fitXY"
+                android:scaleType="centerCrop"
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/default_image" />
         </androidx.cardview.widget.CardView>

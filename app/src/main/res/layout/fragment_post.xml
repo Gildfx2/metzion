@@ -8,198 +8,267 @@
 
 
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/message_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginEnd="40dp"
-            android:layout_marginTop="30dp"
-            android:text=""
-            android:textSize="30dp"
-            android:fontFamily="@font/rubik_medium"/>
-        <View
-            android:layout_width="350dp"
-            android:layout_height="2dp"
-            android:background="#C8C8C8"
-            android:layout_marginTop="30dp"
-            android:layout_marginStart="30dp"
-            />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="תיאור קצר על הפריט"
-            android:textSize="20dp"
-            android:fontFamily="@font/rubik_regular"
-            android:layout_gravity="right"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="30dp"/>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
+        android:layout_height="match_parent">
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="10dp"
-            app:helperText="יופיע בכותרת המודעה שלך"
-            app:helperTextEnabled="true"
-            app:counterEnabled="true"
-            app:counterMaxLength="30"
-            app:endIconMode="clear_text"
-            app:boxStrokeErrorColor="#6f1d1b"
-            app:boxStrokeColor="@color/brown"
-            app:hintTextColor="@color/black"
-            app:helperTextTextColor="@color/black"
-            app:hintEnabled="false">
-            <com.google.android.material.textfield.TextInputEditText
-                android:hint="עד שלושים תווים"
-                android:id="@+id/name"
-                android:textColor="@color/black"
-                android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/message_state"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/rubik_regular"
-                android:inputType="text"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="חפץ"
-            android:textSize="20dp"
-            android:fontFamily="@font/rubik_regular"
-            android:layout_gravity="right"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="30dp"/>
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
-            android:id="@+id/item"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginHorizontal="20dp"
-            android:hint="בחירת חפץ"
-            app:helperTextEnabled="true"
-            app:helperText=""
-            app:boxStrokeColor="@color/brown"
-            app:hintTextColor="@color/black"
-            app:helperTextTextColor="@color/black">
-            <AutoCompleteTextView
-                android:id="@+id/list_of_items"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:fontFamily="@font/rubik_regular"
+                android:layout_gravity="right"
+                android:layout_marginEnd="40dp"
+                android:layout_marginTop="30dp"
+                android:text=""
+                android:textSize="30dp"
+                android:fontFamily="@font/rubik_medium"/>
+            <View
+                android:layout_width="350dp"
+                android:layout_height="2dp"
+                android:background="#C8C8C8"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="30dp"
                 />
-        </com.google.android.material.textfield.TextInputLayout>
-
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <ImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:id="@+id/select_location"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="תיאור קצר על הפריט"
+                android:textSize="20dp"
+                android:fontFamily="@font/rubik_regular"
+                android:layout_gravity="right"
                 android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
-                android:src="@drawable/twotone_map_24"
-                android:scaleType="centerCrop"/>
+                android:layout_marginEnd="30dp"/>
 
-            <ImageView
-                android:id="@+id/pick_location_check"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_marginTop="105dp"
-                android:layout_marginLeft="105dp"
-                android:src="@drawable/baseline_library_add_24"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="10dp"
+                app:helperText="יופיע בכותרת המודעה שלך"
+                app:helperTextEnabled="true"
+                app:counterEnabled="true"
+                app:counterMaxLength="30"
+                app:endIconMode="clear_text"
+                app:boxStrokeErrorColor="#6f1d1b"
+                app:boxStrokeColor="@color/brown"
+                app:hintTextColor="@color/black"
+                app:helperTextTextColor="@color/black"
+                app:hintEnabled="false">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:hint="עד שלושים תווים"
+                    android:id="@+id/name"
+                    android:textColor="@color/black"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/rubik_regular"
+                    android:inputType="text"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.slider.Slider
-                android:id="@+id/radius_slider"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="חפץ"
+                android:textSize="20dp"
+                android:fontFamily="@font/rubik_regular"
+                android:layout_gravity="right"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="30dp"/>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
+                android:id="@+id/item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="20dp"
+                android:hint="בחירת חפץ"
+                app:helperTextEnabled="true"
+                app:helperText=""
+                app:boxStrokeColor="@color/brown"
+                app:hintTextColor="@color/black"
+                app:helperTextTextColor="@color/black">
+                <AutoCompleteTextView
+                    android:id="@+id/list_of_items"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:fontFamily="@font/rubik_regular"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:id="@+id/select_location"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/twotone_map_24"
+                    android:scaleType="centerCrop"/>
+
+                <ImageView
+                    android:id="@+id/pick_location_check"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_marginTop="105dp"
+                    android:layout_marginLeft="105dp"
+                    android:src="@drawable/baseline_library_add_24"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="30dp"
+                    android:layout_alignParentRight="true">
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:cardElevation="5dp"
+                        android:layout_gravity="center"
+                        android:layout_marginRight="5dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/rubik_regular"
+                            android:id="@+id/radius_value"
+                            android:text="3"
+                            android:textSize="17sp" />
+                    </androidx.cardview.widget.CardView>
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/radius_slider"
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:contentDescription="בחירת רדיוס\n מהמיקום הנוכחי"
+                        android:stepSize="1"
+                        android:valueFrom="3"
+                        android:valueTo="50"
+                        app:haloColor="@color/message_brown"
+                        app:thumbColor="@color/brown"
+                        app:labelBehavior="gone"
+                        app:thumbStrokeColor="@color/message_brown"
+                        app:tickColor="@color/message_brown"
+                        app:trackColorActive="@color/brown"
+                        app:trackColorInactive="@color/gray"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/rubik_regular"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:text="בחירת רדיוס\n מהמיקום הנבחר"
+                        android:textSize="17sp" />
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="right"
+                android:layout_marginTop="20dp">
+                <Button
+                    android:id="@+id/datePickerButton"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:text="JAN 01 2020"
+                    android:textSize="20sp"
+                    android:textColor="@color/black"
+                    style="?android:spinnerStyle"
+                    android:background="@drawable/custom_button2"
+                    app:backgroundTint="@null"
+                    android:layout_marginRight="10dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="בחירת תאריך:"
+                    android:textSize="20sp"
+                    android:textColor="@color/black"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="20dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_width="300dp"
+                    android:layout_height="300dp"
+                    android:id="@+id/selectImage"
+                    android:src="@drawable/baseline_image_24"
+                    android:scaleType="centerCrop"/>
+
+            </LinearLayout>
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="טקסט חופשי"
+                android:textSize="20dp"
+                android:fontFamily="@font/rubik_regular"
+                android:layout_gravity="right"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="30dp"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="10dp"
+                app:counterEnabled="true"
+                app:counterMaxLength="150"
+                app:boxStrokeErrorColor="#6f1d1b"
+                app:boxStrokeColor="@color/brown"
+                app:hintTextColor="@color/black"
+                app:hintEnabled="false">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/about"
+                    android:hint="הכנס טקסט כאן"
+                    android:textColor="@color/black"
+                    android:gravity="top"
+                    android:layout_width="match_parent"
+                    android:layout_height="110dp"
+                    android:fontFamily="@font/rubik_regular"
+                    android:inputType="text"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <Button
+                android:id="@+id/upload"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="50dp"
-                android:contentDescription="בחירת רדיוס\n מהמיקום הנוכחי"
-                android:stepSize="1"
-                android:valueFrom="3"
-                android:valueTo="50"
-                app:haloColor="@color/message_brown"
-                app:labelStyle="@style/MyTooltip"
-                app:thumbColor="@color/brown"
-                app:thumbStrokeColor="@color/message_brown"
-                app:tickColor="@color/message_brown"
-                app:trackColorActive="@color/gray"
-                app:trackColorInactive="@color/gray"
-                app:labelBehavior="visible"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="50dp"
-                android:layout_below="@id/radius_slider"
-                android:fontFamily="@font/rubik_regular"
-                android:gravity="center"
-                android:text="בחירת רדיוס\n מהמיקום הנבחר"
-                android:textSize="17sp" />
-
-
-
-        </RelativeLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="right"
-            android:layout_marginTop="10dp">
-            <Button
-                android:id="@+id/datePickerButton"
-                android:layout_width="170dp"
-                android:layout_height="wrap_content"
-                android:text="JAN 01 2020"
+                android:layout_gravity="bottom"
+                android:text="יצירת מודעה"
                 android:textSize="20sp"
-                android:textColor="@color/black"
-                style="?android:spinnerStyle"
-                android:background="@drawable/custom_button2"
+                android:layout_marginStart="105dp"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/rubik_medium"
+                android:background="@drawable/custom_button"
                 app:backgroundTint="@null"
-                android:layout_marginRight="10dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="בחירת תאריך:"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:layout_gravity="center"
-                android:layout_marginRight="20dp"/>
+                />
 
         </LinearLayout>
+    </ScrollView>
 
-
-    </LinearLayout>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_gravity="bottom">
-
-        <Button
-            android:id="@+id/next"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:background="@drawable/custom_button"
-            android:fontFamily="@font/rubik_regular"
-            android:text="הבא"
-            android:textSize="20sp"
-            app:backgroundTint="@null" />
-    </RelativeLayout>
 
 </FrameLayout>
