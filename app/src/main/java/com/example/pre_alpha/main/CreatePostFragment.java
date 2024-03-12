@@ -142,16 +142,13 @@ public class CreatePostFragment extends Fragment {
 
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStop();
         if(getArguments()!=null){
             etName.setText(getArguments().getString("state_name", ""));
             pickItem.setText(getArguments().getString("state_item", ""));
             dateButton.setText(getArguments().getString("state_date", getTodaysDate()));
             etAbout.setText(getArguments().getString("state_about", ""));
-            if(!getArguments().getString("image_uri", "").isEmpty())
-                image_uri= Uri.parse(getArguments().getString("image_uri"));
-                image.setImageURI(image_uri);
 
         }
         if(isServicesOk()){
@@ -177,7 +174,6 @@ public class CreatePostFragment extends Fragment {
                 bundle.putString("state_name", etName.getText().toString());
                 bundle.putString("state_item", pickItem.getText().toString());
                 bundle.putString("state_date", dateButton.getText().toString());
-                bundle.putString("image_uri", String.valueOf(image_uri));
                 bundle.putString("state_about", etAbout.getText().toString());
                 mapFragment.setArguments(bundle);
                 getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, mapFragment).commit();

@@ -99,6 +99,7 @@ public class SearchFragment extends Fragment {
         dayOfMonth = Integer.parseInt(fromDateComponents[1]);
         year = Integer.parseInt(fromDateComponents[2]);
         fromDateCalendar = Calendar.getInstance();
+        fromDateCalendar.clear();
         fromDateCalendar.set(Calendar.YEAR, year);
         fromDateCalendar.set(Calendar.MONTH, month);
         fromDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -107,6 +108,7 @@ public class SearchFragment extends Fragment {
         dayOfMonth = Integer.parseInt(toDateComponents[1]);
         year = Integer.parseInt(toDateComponents[2]);
         toDateCalendar = Calendar.getInstance();
+        toDateCalendar.clear();
         toDateCalendar.set(Calendar.YEAR, year);
         toDateCalendar.set(Calendar.MONTH, month);
         toDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -133,6 +135,7 @@ public class SearchFragment extends Fragment {
 
         if (postDateCalendar.compareTo(fromDateCalendar) < 0 || postDateCalendar.compareTo(toDateCalendar) > 0) {
             Log.d(TAG, "isValidPost: the date is not in the range");
+            Log.d(TAG, "post:" + postDateCalendar.getTimeInMillis() + "from:" + fromDateCalendar.getTimeInMillis() + "to:" + toDateCalendar.getTimeInMillis());
             return false;
         }
 

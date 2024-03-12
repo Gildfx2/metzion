@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
     public HomeFragment homeFragment=new HomeFragment();
     FilterFragment filterFragment=new FilterFragment();
     CreatePostFragment createPostFragment;
-    FavouriteFragment favouriteFragment=new FavouriteFragment();
     UserFragment userFragment=new UserFragment();
     Dialog dialog;
     DetailedPostFragment detailedPostFragment = new DetailedPostFragment();
@@ -95,9 +94,6 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
                         dialog.show();
-                        return true;
-                    case R.id.favourite:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, favouriteFragment).commit();
                         return true;
                     case R.id.profile:
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, userFragment).commit();

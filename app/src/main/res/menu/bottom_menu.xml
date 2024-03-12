@@ -6,10 +6,6 @@
         android:icon="@drawable/user_selector"
         android:title=""/>
     <item
-        android:id="@+id/favourite"
-        android:icon="@drawable/heart_selector"
-        android:title=""/>
-    <item
         android:id="@+id/post"
         android:icon="@drawable/post_selector"
         android:title=""/>
