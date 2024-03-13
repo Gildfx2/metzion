@@ -73,13 +73,6 @@ public class HomeFragment extends Fragment {
         getCurrentPosition=view.findViewById(R.id.get_current_position);
         getLocationPermission();
 
-
-        return view;
-    }
-
-    private void init(){
-        Log.d(TAG, "init: initializing");
-
         showChats.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,6 +85,12 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        return view;
+    }
+
+    private void init(){
+        Log.d(TAG, "init: initializing");
 
         getCurrentPosition.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -250,14 +249,15 @@ public class HomeFragment extends Fragment {
         if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
             if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                 mLocationPermissionsGranted=true;
-                if(isServicesOk()) initMap();
+                if(isServicesOk())
+                    initMap();
             }
             else{
-                ActivityCompat.requestPermissions(getActivity(), permissions, LOCATION_PERMISSION_REQUEST_CODE);
+                requestPermissions(permissions, LOCATION_PERMISSION_REQUEST_CODE);
             }
         }
         else{
-            ActivityCompat.requestPermissions(getActivity(), permissions, LOCATION_PERMISSION_REQUEST_CODE);
+            requestPermissions(permissions, LOCATION_PERMISSION_REQUEST_CODE);
         }
     }
 
@@ -277,7 +277,7 @@ public class HomeFragment extends Fragment {
                         }
                     }
                     mLocationPermissionsGranted = true;
-                    if(isServicesOk()) initMap();
+                    initMap();
                 }
             }
         }
