@@ -143,7 +143,7 @@ public class CreatePostFragment extends Fragment {
 
     @Override
     public void onStart() {
-        super.onStop();
+        super.onStart();
         if(getArguments()!=null){
             etName.setText(getArguments().getString("state_name", ""));
             pickItem.setText(getArguments().getString("state_item", ""));
@@ -248,29 +248,36 @@ public class CreatePostFragment extends Fragment {
         calender.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
         String about = etAbout.getText().toString();
-        if(image_uri!=null){
-            post=new Post(name, item, latitude, longitude, radius, about, downloadUri.toString(), checkState, fbUser.getUid(), postId, calender.getTimeInMillis());
-        }
-        else{
-            post=new Post(name, item, latitude, longitude, radius, about, "", checkState, fbUser.getUid(), postId, calender.getTimeInMillis());
-        }
-        refPosts.child(postId).setValue(post).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                dialog=new Dialog(getActivity());
-                dialog.setContentView(R.layout.upload_post_dialog_layout);
-                btnUpload=dialog.findViewById(R.id.uploadSuccessfully);
-                btnUpload.setOnClickListener(new View.OnClickListener(){
-                    public void onClick(View view){
-                        dialog.cancel();
-                        getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, homeFragment).commit();
-                        bottomNavigationView.setSelectedItemId(R.id.home);
-                        bottomNavigationView.setItemIconTintList(null);
-                    }
-                });
-                dialog.show();
+        if(item.isEmpty())
+            layoutItem.setHelperText("יש לבחור את סוג החפץ");
+
+        if(latitude==0 && longitude==0)
+            Toast.makeText(getActivity(),"יש לבחור את מיקום המציאה/אבידה", Toast.LENGTH_SHORT).show();
+
+        if((latitude!=0 && longitude!=0) && !item.isEmpty() && !name.isEmpty()) {
+            if (image_uri != null) {
+                post = new Post(name, item, latitude, longitude, radius, about, downloadUri.toString(), checkState, fbUser.getUid(), postId, calender.getTimeInMillis());
+            } else {
+                post = new Post(name, item, latitude, longitude, radius, about, "", checkState, fbUser.getUid(), postId, calender.getTimeInMillis());
             }
-        });
+            refPosts.child(postId).setValue(post).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    dialog = new Dialog(getActivity());
+                    dialog.setContentView(R.layout.upload_post_dialog_layout);
+                    btnUpload = dialog.findViewById(R.id.uploadSuccessfully);
+                    btnUpload.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View view) {
+                            dialog.cancel();
+                            getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, homeFragment).commit();
+                            bottomNavigationView.setSelectedItemId(R.id.home);
+                            bottomNavigationView.setItemIconTintList(null);
+                        }
+                    });
+                    dialog.show();
+                }
+            });
+        }
     }
 
 
