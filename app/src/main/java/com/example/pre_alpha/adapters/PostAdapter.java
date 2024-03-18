@@ -37,6 +37,8 @@ public class PostAdapter extends ArrayAdapter<PostData>{
                     .load(postData.image)
                     .into(image);
         }
+        else
+            image.setImageResource(R.drawable.default_image);
         item.setText(postData.item);
         name.setText(postData.name);
         return view;

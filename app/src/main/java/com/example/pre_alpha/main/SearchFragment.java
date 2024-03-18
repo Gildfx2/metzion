@@ -166,13 +166,13 @@ public class SearchFragment extends Fragment {
     }
 
     private void showPosts() {
-            for (Post postValue : postValues) {
-                if (postValue.getImage() != null) {
-                    image_uri = Uri.parse(postValue.getImage());
-                }
-                postData = new PostData(postValue.getName(), postValue.getItem(), image_uri, postValue.getAbout(), postValue.getCreatorUid(), postValue.getPostId(), postValue.getTimeStamp());
-                arrayList.add(postData);
+        for (Post postValue : postValues) {
+            if (postValue.getImage() != null) {
+                image_uri = Uri.parse(postValue.getImage());
             }
+            postData = new PostData(postValue.getName(), postValue.getItem(), image_uri, postValue.getAbout(), postValue.getCreatorUid(), postValue.getPostId(), postValue.getTimeStamp());
+            arrayList.add(postData);
+        }
         postAdapter = new PostAdapter(getActivity(), arrayList);
         binding.listOfPosts.setAdapter(postAdapter);
         binding.listOfPosts.setClickable(true);

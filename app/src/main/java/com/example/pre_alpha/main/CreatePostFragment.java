@@ -2,10 +2,10 @@ package com.example.pre_alpha.main;
 
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
-
 import static com.example.pre_alpha.models.FBref.refPosts;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -35,7 +35,9 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.pre_alpha.R;
 import com.example.pre_alpha.models.Post;
 import com.google.android.gms.common.ConnectionResult;
@@ -73,9 +75,10 @@ public class CreatePostFragment extends Fragment {
     String[] items={"ארנק", "תיק", "סמארטפון", "משקפי ראייה / שמש","שעון חכם", "מצלמה" ,"תעודת זהות / דרכון", "רישיון נהיגה", "חוגר / חוגרון", "כרטיס רב קו", "כרטיסים כללי", "מפתחות בית / רכב", "שקית / שקית קניות", "אוזניות / קייס אוזניות", "שרשרת / תיליון", "צמיד", "טבעת", "תפילין", "מחשב נייד", "מטען", "כרטיס זיכרון / דיסק און קיי", "מעיל / סווטשירט", "קיטבג / מזוודה", "מכשיר שמיעה", "אחר"};
     String[] cameraPermissions;
     String[] storagePermissions;
-    String name, item, postId, checkState;
-    double latitude, longitude;
-    int radius;
+    private static String name="", item="", postId, checkState, about="", date=getTodaysDate();
+    private static double latitude, longitude;
+    private static int radius=3;
+    private static boolean firstInScreen=true;
     TextView tvState, tvRadius;
     TextInputEditText etName, etAbout;
     ImageView mapIv, checkPickLocation, image;
@@ -85,17 +88,20 @@ public class CreatePostFragment extends Fragment {
     TextInputLayout layoutItem;
     AutoCompleteTextView pickItem;
     ArrayAdapter<String> adapterItems;
-    Uri image_uri, downloadUri;
+    private static Uri image_uri;
+    Uri downloadUri;
     FirebaseAuth auth;
     Dialog dialog;
     Post post;
     FirebaseUser fbUser;
     BottomNavigationView bottomNavigationView;
     HomeFragment homeFragment = new HomeFragment();
+    MyPostsFragment myPostsFragment = new MyPostsFragment();
     String storagePath = "Users_Posts_Images/";
     StorageReference storageReference;
     DatabaseReference postsRef;
     boolean result, result1, result2;
+    FragmentActivity activity;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -111,12 +117,20 @@ public class CreatePostFragment extends Fragment {
         checkPickLocation=view.findViewById(R.id.pick_location_check);
         dateButton=view.findViewById(R.id.datePickerButton);
         tvRadius=view.findViewById(R.id.radius_value);
+        upload=view.findViewById(R.id.upload);
+        image=view.findViewById(R.id.selectImage);
         dateButton.setText(getTodaysDate());
         pickItem.setAdapter(adapterItems);
         SharedPreferences state = getActivity().getSharedPreferences("state", MODE_PRIVATE);
         checkState = state.getString("state", "");
-        if(checkState.equals("lost")) tvState.setText("מה איבדת?");
-        else tvState.setText("מה מצאת?");
+        if(checkState.equals("lost"))
+            tvState.setText("מה איבדת?");
+        else if(checkState.equals("found"))
+            tvState.setText("מה מצאת?");
+        else {
+            tvState.setText("עריכת מודעה");
+            upload.setText("שמור שינויים");
+        }
         storageReference = FirebaseStorage.getInstance().getReference();
         auth = FirebaseAuth.getInstance();
         fbUser = auth.getCurrentUser();
@@ -131,9 +145,6 @@ public class CreatePostFragment extends Fragment {
             storagePermissions = new String[]{Manifest.permission.READ_MEDIA_IMAGES};
         }
 
-        upload=view.findViewById(R.id.upload);
-        image=view.findViewById(R.id.selectImage);
-
         postsRef = FirebaseDatabase.getInstance().getReference("Users/" + fbUser.getUid() + "/Posts");
 
 
@@ -142,20 +153,46 @@ public class CreatePostFragment extends Fragment {
 
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
         if(getArguments()!=null){
-            etName.setText(getArguments().getString("state_name", ""));
-            pickItem.setText(getArguments().getString("state_item", ""));
-            dateButton.setText(getArguments().getString("state_date", getTodaysDate()));
-            etAbout.setText(getArguments().getString("state_about", ""));
-
+            postId=getArguments().getString("state_post_id", "");
+            if(!postId.isEmpty() && firstInScreen){
+                name=getArguments().getString("state_name", "");
+                item=getArguments().getString("state_item", "");
+                date=getArguments().getString("state_date", getTodaysDate());
+                radius=getArguments().getInt("state_radius", 3);
+                image_uri=Uri.parse(getArguments().getString("state_image", ""));
+                about=getArguments().getString("state_about", "");
+                firstInScreen=false;
+            }
+            etName.setText(name);
+            pickItem.setText(item);
+            dateButton.setText(date);
+            etAbout.setText(about);
+            if(image_uri!=null && !image_uri.toString().isEmpty()){
+                Glide.with(getActivity())
+                        .load(image_uri)  // Pass the URI to load the image from
+                        .into(image);
+            }
+            radiusSlider.setValue(radius);
+            tvRadius.setText(Integer.toString(radius));
         }
         if(isServicesOk()){
             initMap();
         }
         init();
         initDatePicker();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        name = etName.getText().toString();
+        item = pickItem.getText().toString();
+        radius = (int) radiusSlider.getValue();
+        about = etAbout.getText().toString();
+        date = dateButton.getText().toString();
     }
 
     private void initMap(){
@@ -175,12 +212,20 @@ public class CreatePostFragment extends Fragment {
                 bundle.putString("state_item", pickItem.getText().toString());
                 bundle.putString("state_date", dateButton.getText().toString());
                 bundle.putString("state_about", etAbout.getText().toString());
+                bundle.putInt("state_radius", (int) radiusSlider.getValue());
                 mapFragment.setArguments(bundle);
                 getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, mapFragment).commit();
             }
         });
 
     }
+
+    @Override
+    public void onAttach(@NonNull Activity activity) {
+        super.onAttach(activity);
+        this.activity = (FragmentActivity) activity;
+    }
+
 
     private void init(){
         dateButton.setOnClickListener(new View.OnClickListener() {
@@ -207,10 +252,11 @@ public class CreatePostFragment extends Fragment {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                postId = postsRef.push().getKey();
+                if(postId.isEmpty())
+                    postId = postsRef.push().getKey();
                 String filePathAndName = storagePath + "image" + "_" + postId;
                 StorageReference storageReference2 = storageReference.child(filePathAndName);
-                if(image_uri!=null) {
+                if(image_uri!=null && !image_uri.toString().isEmpty()) {
                     storageReference2.putFile(image_uri)
                             .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
@@ -263,18 +309,26 @@ public class CreatePostFragment extends Fragment {
             refPosts.child(postId).setValue(post).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    dialog = new Dialog(getActivity());
-                    dialog.setContentView(R.layout.upload_post_dialog_layout);
-                    btnUpload = dialog.findViewById(R.id.uploadSuccessfully);
-                    btnUpload.setOnClickListener(new View.OnClickListener() {
-                        public void onClick(View view) {
-                            dialog.cancel();
-                            getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, homeFragment).commit();
-                            bottomNavigationView.setSelectedItemId(R.id.home);
-                            bottomNavigationView.setItemIconTintList(null);
-                        }
-                    });
-                    dialog.show();
+                    if (activity != null) {
+                        dialog = new Dialog(activity);
+                        dialog.setContentView(R.layout.upload_post_dialog_layout);
+                        btnUpload = dialog.findViewById(R.id.uploadSuccessfully);
+                        btnUpload.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View view) {
+                                dialog.cancel();
+                                if (!checkState.equals("edit")){
+                                    bottomNavigationView.setSelectedItemId(R.id.home);
+                                }
+                                else {
+                                    activity.getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, myPostsFragment).commit();
+                                }
+                                bottomNavigationView.setItemIconTintList(null);
+                            }
+                        });
+                        dialog.show();
+                    } else {
+                        Log.e("CreatePostFragment", "Activity is null");
+                    }
                 }
             });
         }
@@ -303,7 +357,7 @@ public class CreatePostFragment extends Fragment {
 
     }
 
-    private String getTodaysDate() {
+    private static String getTodaysDate() {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
@@ -312,11 +366,11 @@ public class CreatePostFragment extends Fragment {
         return makeDateString(day, month, year);
     }
 
-    private String makeDateString(int day, int month, int year){
+    private static String makeDateString(int day, int month, int year){
         return getMonthFormatFromString(month) + " " + day + " " + year;
     }
 
-    private String getMonthFormatFromString(int month){
+    private static String getMonthFormatFromString(int month){
         if(month==1) return "JAN";
         if(month==2) return "FEB";
         if(month==3) return "MAR";
@@ -450,6 +504,7 @@ public class CreatePostFragment extends Fragment {
             if(requestCode == IMAGE_PICK_CAMERA_CODE){
                 image.setImageURI(image_uri);
             }
+
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

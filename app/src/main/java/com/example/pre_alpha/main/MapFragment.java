@@ -98,13 +98,13 @@ public class MapFragment extends Fragment {
                     String name = getArguments().getString("state_name", "");
                     String item = getArguments().getString("state_item", "");
                     String date = getArguments().getString("state_date", "");
-                    String image_uri = getArguments().getString("image_uri", "");
                     String about = getArguments().getString("state_about", "");
+                    int radius = getArguments().getInt("state_radius", 3);
                     bundle.putString("state_name", name);
                     bundle.putString("state_item", item);
                     bundle.putString("state_date", date);
-                    bundle.putString("image_uri", image_uri);
                     bundle.putString("state_about", about);
+                    bundle.putInt("state_radius", radius);
                     createPostFragment.setArguments(bundle);
                     getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, createPostFragment).commit();
                 }
