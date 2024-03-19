@@ -43,7 +43,6 @@ import com.example.pre_alpha.models.Post;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -95,7 +94,6 @@ public class CreatePostFragment extends Fragment {
     Post post;
     FirebaseUser fbUser;
     BottomNavigationView bottomNavigationView;
-    HomeFragment homeFragment = new HomeFragment();
     MyPostsFragment myPostsFragment = new MyPostsFragment();
     String storagePath = "Users_Posts_Images/";
     StorageReference storageReference;
@@ -226,7 +224,6 @@ public class CreatePostFragment extends Fragment {
         this.activity = (FragmentActivity) activity;
     }
 
-
     private void init(){
         dateButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -264,17 +261,10 @@ public class CreatePostFragment extends Fragment {
                                     Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
                                     while (!uriTask.isSuccessful()) ;
                                     downloadUri = uriTask.getResult();
-                                    updateDatabase();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                             });
                 }
-                else
-                    updateDatabase();
+                updateDatabase();
             }
         });
     }

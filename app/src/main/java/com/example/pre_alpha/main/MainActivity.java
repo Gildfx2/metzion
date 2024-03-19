@@ -67,29 +67,24 @@ public class MainActivity extends AppCompatActivity {
                         dialog.setContentView(R.layout.post_dialog_layout);
                         lost=dialog.findViewById(R.id.lost);
                         found=dialog.findViewById(R.id.found);
+                        createPostFragment =new CreatePostFragment();
+                        SharedPreferences state = getSharedPreferences("state", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = state.edit();
                         lost.setOnClickListener(new View.OnClickListener(){
                             public void onClick(View view){
-                                SharedPreferences state = getSharedPreferences("state", MODE_PRIVATE);
-                                SharedPreferences.Editor editor = state.edit();
                                 editor.putString("state", "lost");
                                 editor.apply();
                                 editor.commit();
                                 dialog.cancel();
-                                if(createPostFragment !=null) createPostFragment.tvState.setText("מה איבדת?");
-                                else createPostFragment =new CreatePostFragment();
                                 getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, createPostFragment).commit();
                             }
                         });
                         found.setOnClickListener(new View.OnClickListener(){
                             public void onClick(View view){
-                                SharedPreferences state = getSharedPreferences("state", MODE_PRIVATE);
-                                SharedPreferences.Editor editor = state.edit();
                                 editor.putString("state", "found");
                                 editor.apply();
                                 editor.commit();
                                 dialog.cancel();
-                                if(createPostFragment !=null) createPostFragment.tvState.setText("מה מצאת?");
-                                else createPostFragment =new CreatePostFragment();
                                 getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, createPostFragment).commit();
                             }
                         });

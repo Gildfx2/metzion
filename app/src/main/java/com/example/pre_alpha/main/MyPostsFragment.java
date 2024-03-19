@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.pre_alpha.R;
 import com.example.pre_alpha.adapters.PostData;
-import com.example.pre_alpha.adapters.MyPostAdapter;
+import com.example.pre_alpha.adapters.MyPostsAdapter;
 import com.example.pre_alpha.databinding.FragmentMyPostsBinding;
 import com.example.pre_alpha.models.Post;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,13 +34,15 @@ public class MyPostsFragment extends Fragment {
     ArrayList<Post> postValues = new ArrayList<Post>();
     PostData postData;
     ArrayList<PostData> arrayList = new ArrayList<>();
-    MyPostAdapter myPostAdapter;
+    MyPostsAdapter myPostsAdapter;
     Uri image_uri= Uri.parse("");
     FragmentMyPostsBinding binding;
     FirebaseUser fbUser;
     Button editBtn, deleteBtn;
     DetailedPostFragment detailedPostFragment = new DetailedPostFragment();
     ValueEventListener postListener;
+
+
 
 
     @Override
@@ -77,6 +80,7 @@ public class MyPostsFragment extends Fragment {
     }
 
     private void showPosts() {
+        arrayList.clear();
         for (Post postValue : postValues) {
             if (postValue.getImage() != null) {
                 image_uri = Uri.parse(postValue.getImage());
@@ -84,8 +88,8 @@ public class MyPostsFragment extends Fragment {
             postData = new PostData(postValue.getName(), postValue.getItem(), image_uri, postValue.getAbout(), postValue.getCreatorUid(), postValue.getPostId(), postValue.getTimeStamp());
             arrayList.add(postData);
         }
-        myPostAdapter = new MyPostAdapter(getActivity(), arrayList, getActivity().getSupportFragmentManager());
-        binding.listOfCreatedPosts.setAdapter(myPostAdapter);
+        myPostsAdapter = new MyPostsAdapter(getActivity(), arrayList, getActivity().getSupportFragmentManager());
+        binding.listOfCreatedPosts.setAdapter(myPostsAdapter);
         binding.listOfCreatedPosts.setClickable(true);
         binding.listOfCreatedPosts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -101,7 +105,6 @@ public class MyPostsFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        arrayList.clear();
         if (postListener != null) {
             refPosts.removeEventListener(postListener);
         }

@@ -3,6 +3,7 @@ package com.example.pre_alpha.adapters;
 import static android.content.Context.MODE_PRIVATE;
 import static com.example.pre_alpha.models.FBref.refPosts;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,8 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,19 +25,24 @@ import com.bumptech.glide.Glide;
 import com.example.pre_alpha.R;
 import com.example.pre_alpha.main.CreatePostFragment;
 import com.example.pre_alpha.models.Post;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class MyPostAdapter extends ArrayAdapter<PostData> {
+public class MyPostsAdapter extends ArrayAdapter<PostData> {
 
     private FragmentManager fragmentManager;
     Post postTmp;
 
-    public MyPostAdapter(@NonNull Context context, ArrayList<PostData> dataArrayList, FragmentManager fragmentManager) {
+    public MyPostsAdapter(@NonNull Context context, ArrayList<PostData> dataArrayList, FragmentManager fragmentManager) {
         super(context, R.layout.list_ot_my_items, dataArrayList);
         this.fragmentManager = fragmentManager;
     }
@@ -82,14 +90,47 @@ public class MyPostAdapter extends ArrayAdapter<PostData> {
             }
         });
 
-
-
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle delete button click
-                // You can use postData object to access post data of the current item
-                // Perform your delete operation here
+                Dialog dialog = new Dialog(getContext());
+                dialog.setContentView(R.layout.delete_post_confirmation_dialog);
+                Button delete, undelete;
+                delete=dialog.findViewById(R.id.confirm_delete_post);
+                undelete=dialog.findViewById(R.id.cancel_delete_post);
+                delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        refPosts.child(postData.getPostId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                dialog.cancel();
+                                Toast.makeText(getContext(),"המודעה נמחקה בהצלחה", Toast.LENGTH_SHORT).show();
+                                String storagePath = "Users_Posts_Images/";
+                                StorageReference storageReference;
+                                storageReference = FirebaseStorage.getInstance().getReference();
+                                String filePathAndName = storagePath + "image" + "_" + postData.getPostId();
+                                StorageReference storageReference2 = storageReference.child(filePathAndName);
+                                if(!postData.getImage().toString().isEmpty()) {
+                                    storageReference2.delete();
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                dialog.cancel();
+                                Toast.makeText(getContext(),"מודעה לא נמחקה, נסה שנית", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+                undelete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.cancel();
+                    }
+                });
+                dialog.show();
             }
         });
 

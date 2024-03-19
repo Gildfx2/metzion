@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="400dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="שינוי שם משתמש"
+        android:fontFamily="@font/rubik_medium"
+        android:textSize="30dp"
+        android:layout_gravity="right"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/black"
+        />
+    <View
+        android:layout_width="350dp"
+        android:layout_height="2dp"
+        android:background="#C8C8C8"
+        android:layout_marginTop="80dp"
+        android:layout_marginStart="30dp"
+        />
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:theme="@style/ThemeOverlay.AppTheme.TextInputEditText.Outlined"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="160dp"
+        android:id="@+id/layout_edit_username"
+        android:hint="@string/שם_משתמש"
+        app:helperTextEnabled="true"
+        app:helperText=""
+        app:counterEnabled="true"
+        app:counterMaxLength="25"
+        app:helperTextTextColor="@color/black"
+        app:boxStrokeErrorColor="#6f1d1b"
+        app:boxStrokeColor="@color/brown"
+        app:hintTextColor="@color/black"
+        app:startIconDrawable="@drawable/baseline_person_24">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/new_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/rubik_regular"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/apply_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="אישור"
+        android:layout_marginTop="140dp"
+        android:textSize="30sp"
+        android:layout_marginHorizontal="10dp"
+        android:fontFamily="@font/rubik_medium"
+        android:background="@drawable/custom_button"
+        app:backgroundTint="@null"
+        />
+
+
+
+</androidx.cardview.widget.CardView>

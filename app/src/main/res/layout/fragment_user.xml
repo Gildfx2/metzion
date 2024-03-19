@@ -25,6 +25,7 @@
                 android:fontFamily="@font/rubik_regular"
                 android:layout_marginTop="70dp"/>
             <ImageView
+                android:id="@+id/edit_username"
                 android:layout_width="40dp"
                 android:layout_height="30dp"
                 android:layout_marginTop="70dp"
@@ -43,7 +44,8 @@
             app:backgroundTint="@null"
             android:textSize="30sp"
             android:layout_gravity="center"
-            android:layout_marginTop="50dp"/>
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="20dp"/>
 
         <ListView
             android:layout_width="wrap_content"
