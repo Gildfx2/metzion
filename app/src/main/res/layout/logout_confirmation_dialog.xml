@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="230dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="אתה בטוח \nשברצונך להתנתק?"
+        android:fontFamily="@font/rubik_medium"
+        android:textSize="28dp"
+        android:gravity="center"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="15dp" android:textColor="@color/black"
+        />
+    <View
+        android:layout_width="350dp"
+        android:layout_height="2dp"
+        android:background="#C8C8C8"
+        android:layout_marginTop="100dp"
+        android:layout_marginStart="30dp"
+        />
+
+    <Button
+        android:id="@+id/confirm_logout"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:text="התנתק"
+        android:layout_gravity="left"
+        android:layout_marginTop="130dp"
+        android:textSize="20sp"
+        android:layout_marginHorizontal="30dp"
+        android:fontFamily="@font/rubik_bold"
+        android:background="@drawable/custom_button"
+        app:backgroundTint="@null"
+        />
+    <Button
+        android:id="@+id/cancel_logout"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:text="לא"
+        android:layout_gravity="right"
+        android:layout_marginTop="130dp"
+        android:textSize="20sp"
+        android:layout_marginHorizontal="30dp"
+        android:fontFamily="@font/rubik_bold"
+        android:background="@drawable/custom_button"
+        app:backgroundTint="@null"
+        />
+</androidx.cardview.widget.CardView>

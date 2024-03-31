@@ -27,7 +27,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Prealpha"
-        tools:targetApi="31" >
+        android:exported="true"
+        tools:targetApi="31">
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -39,16 +40,16 @@
 
         <activity
             android:name=".chat.ChatActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".entry.ForgotPassword"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".main.MainActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".entry.Register"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".entry.Login"
             android:exported="true" >

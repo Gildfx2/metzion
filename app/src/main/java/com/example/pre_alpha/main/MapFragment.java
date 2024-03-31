@@ -79,6 +79,7 @@ public class MapFragment extends Fragment {
                 chosenLatitude=latLng.latitude;
                 chosenLongitude=latLng.longitude;
                 moveCamera(new LatLng(chosenLatitude, chosenLongitude), DEFAULT_ZOOM, "Chosen Location");
+                getAddressAsync(latLng.latitude, latLng.longitude);
             }
         });
 
@@ -123,10 +124,6 @@ public class MapFragment extends Fragment {
 
             }
         });
-
-
-
-
     }
 
     private void getAddressAsync(double latitude, double longitude){

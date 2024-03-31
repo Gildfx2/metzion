@@ -173,7 +173,8 @@ public class ChatFragment extends Fragment {
         sendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notify = true;
+                if(!otherUserStatus.substring(6).equals("online"))
+                    notify = true;
                 msg=textMessage.getText().toString();
                 messageId = refChat.push().getKey();
                 String filePathAndName = storagePath + "image" + "_" + messageId;

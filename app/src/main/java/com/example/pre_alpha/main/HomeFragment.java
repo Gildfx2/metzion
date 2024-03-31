@@ -1,7 +1,9 @@
 package com.example.pre_alpha.main;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.example.pre_alpha.models.FBref.refChatList;
 import static com.example.pre_alpha.models.FBref.refPosts;
+import static com.example.pre_alpha.models.FBref.refUsers;
 
 import android.Manifest;
 import android.app.Dialog;
@@ -16,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,6 +28,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.pre_alpha.R;
 import com.example.pre_alpha.chat.ChatActivity;
+import com.example.pre_alpha.models.ChatList;
 import com.example.pre_alpha.models.Post;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -40,9 +44,17 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 public class HomeFragment extends Fragment {
@@ -58,9 +70,16 @@ public class HomeFragment extends Fragment {
     boolean mLocationPermissionsGranted = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
+    ArrayList<Post> postValues = new ArrayList<Post>();
     double myLatitude, myLongitude;
+    FirebaseUser fbUser;
+    ValueEventListener chatsListener;
+    int newMessagesCount=0;
+    Chip lostFilter, foundFilter;
+    ChipGroup filterGroup;
     Dialog dialog;
     Button btnOkay;
+    TextView newMessagesTv;
     ImageView getDetails, getCurrentPosition, showChats;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,7 +90,14 @@ public class HomeFragment extends Fragment {
         showChats=view.findViewById(R.id.show_chats);
         getDetails=view.findViewById(R.id.get_details_map);
         getCurrentPosition=view.findViewById(R.id.get_current_position);
-        getLocationPermission();
+        newMessagesTv=view.findViewById(R.id.new_messages);
+        lostFilter=view.findViewById(R.id.map_filter_lost_items);
+        foundFilter=view.findViewById(R.id.map_filter_found_items);
+        filterGroup=view.findViewById(R.id.map_filter_group);
+
+
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        fbUser=auth.getCurrentUser();
 
         showChats.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +113,41 @@ public class HomeFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        chatsListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                newMessagesCount=0;
+                if (snapshot.exists()) {
+                    for (DataSnapshot postIdSnapshot : snapshot.getChildren()) {
+                        for (DataSnapshot userId2Snapshot : postIdSnapshot.getChildren()) {
+                            newMessagesCount += userId2Snapshot.child("unseenMessages").getValue(Integer.class);
+                        }
+                    }
+
+                } else {
+                    Log.e("FirebaseError", "Snapshot does not exist");
+                }
+                if(newMessagesCount!=0) {
+                    newMessagesTv.setBackgroundResource(R.drawable.custom_button);
+                    newMessagesTv.setText(String.valueOf(newMessagesCount));
+                }
+                else{
+                    newMessagesTv.setBackground(null);
+                    newMessagesTv.setText("");
+                }
+                getLocationPermission();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("FirebaseError", error.getMessage());
+            }
+        };
+        refChatList.child(fbUser.getUid()).addValueEventListener(chatsListener);
     }
 
     private void init(){
@@ -133,25 +194,26 @@ public class HomeFragment extends Fragment {
             public void onMarkerDragEnd(Marker marker) {
             }
         });
-
-
         refPosts.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot data : snapshot.getChildren()) {
                     Post postTmp = data.getValue(Post.class);
-                    if (postTmp != null) {
-                        if(postTmp.getLostOrFound().equals("lost"))
-                            createLostMarker(new LatLng(postTmp.getLatitude(), postTmp.getLongitude()), postTmp.getItem(), postTmp.getPostId());
-                        else
-                            createFoundMarker(new LatLng(postTmp.getLatitude(), postTmp.getLongitude()), postTmp.getItem(), postTmp.getPostId());
-                    }
+                    postValues.add(postTmp);
                 }
+                showPosts();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("FirebaseError", error.getMessage());
+            }
+        });
+
+        filterGroup.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(@NonNull ChipGroup group, int checkedId) {
+                showPosts();
             }
         });
 
@@ -161,11 +223,9 @@ public class HomeFragment extends Fragment {
 
     private void initMap() {
         SupportMapFragment map = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-
         map.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull GoogleMap googleMap) {
-                Toast.makeText(getActivity(), "המפה מוכנה", Toast.LENGTH_SHORT).show();
                 mMap = googleMap;
 
                 if (mLocationPermissionsGranted) {
@@ -179,7 +239,6 @@ public class HomeFragment extends Fragment {
                     mMap.getUiSettings().setMyLocationButtonEnabled(false);
 
                     init();
-
                 }
             }
         });
@@ -300,5 +359,34 @@ public class HomeFragment extends Fragment {
             Toast.makeText(getActivity(), "you can't make map requests", Toast.LENGTH_SHORT).show();
         }
         return false;
+    }
+
+    private void showPosts(){
+        mMap.clear();
+        for(Post postTmp : postValues) {
+            if (postTmp != null) {
+                if (!lostFilter.isChecked() && !foundFilter.isChecked()) {
+                    if (postTmp.getLostOrFound().equals("lost"))
+                        createLostMarker(new LatLng(postTmp.getLatitude(), postTmp.getLongitude()), postTmp.getItem(), postTmp.getPostId());
+                    else
+                        createFoundMarker(new LatLng(postTmp.getLatitude(), postTmp.getLongitude()), postTmp.getItem(), postTmp.getPostId());
+                } else if (lostFilter.isChecked()) {
+                    if (postTmp.getLostOrFound().equals("lost"))
+                        createLostMarker(new LatLng(postTmp.getLatitude(), postTmp.getLongitude()), postTmp.getItem(), postTmp.getPostId());
+                } else {
+                    if (postTmp.getLostOrFound().equals("found"))
+                        createFoundMarker(new LatLng(postTmp.getLatitude(), postTmp.getLongitude()), postTmp.getItem(), postTmp.getPostId());
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        newMessagesCount=0;
+        if (chatsListener != null) {
+            refChatList.child(fbUser.getUid()).removeEventListener(chatsListener);
+        }
     }
 }

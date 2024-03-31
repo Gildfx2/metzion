@@ -2,11 +2,13 @@ package com.example.pre_alpha.main;
 
 import static android.content.Context.MODE_PRIVATE;
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+import static com.example.pre_alpha.models.FBref.refPosts;
 import static com.example.pre_alpha.models.FBref.refUsers;
 
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +20,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -25,6 +28,9 @@ import androidx.fragment.app.Fragment;
 import com.example.pre_alpha.R;
 import com.example.pre_alpha.chat.ChatActivity;
 import com.example.pre_alpha.entry.Login;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -33,6 +39,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -47,7 +55,7 @@ public class UserFragment extends Fragment {
     ListView lvOperations;
     Button createPost, applyUsername;
     ImageView editUsername;
-    String[] operations = {"המודעות שפרסמתי", "כניסה לצ'אט", "תנאי שימוש ומדיניות האפליקציה"};
+    String[] operations = {"המודעות שפרסמתי", "כניסה לצ'אט"};
     MyPostsFragment myPostsFragment = new MyPostsFragment();
     BottomNavigationView bottomNavigationView;
     Dialog dialog;
@@ -116,13 +124,30 @@ public class UserFragment extends Fragment {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences remember = getActivity().getSharedPreferences("check", MODE_PRIVATE);
-                SharedPreferences.Editor editor = remember.edit();
-                editor.putString("remember", "false");
-                editor.commit();
-                auth.signOut();
-                Intent intent = new Intent(getActivity(), Login.class);
-                startActivity(intent);
+                Dialog dialog = new Dialog(getContext());
+                dialog.setContentView(R.layout.logout_confirmation_dialog);
+                Button logoutCheck, logoutUncheck;
+                logoutCheck=dialog.findViewById(R.id.confirm_logout);
+                logoutUncheck=dialog.findViewById(R.id.cancel_logout);
+                logoutCheck.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        SharedPreferences remember = getActivity().getSharedPreferences("check", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = remember.edit();
+                        editor.putString("remember", "false");
+                        editor.commit();
+                        auth.signOut();
+                        Intent intent = new Intent(getActivity(), Login.class);
+                        startActivity(intent);
+                    }
+                });
+                logoutUncheck.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.cancel();
+                    }
+                });
+                dialog.show();
             }
         });
 
@@ -142,9 +167,6 @@ public class UserFragment extends Fragment {
                     editor.apply();
                     editor.commit();
                     startActivity(intent);
-                }
-                else{
-
                 }
             }
         });
