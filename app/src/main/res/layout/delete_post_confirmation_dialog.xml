@@ -8,25 +8,25 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="האם אתה בטוח במחיקה?"
+        android:text="האם אתה \nבטוח במחיקה?"
+        android:gravity="center"
         android:fontFamily="@font/rubik_medium"
         android:textSize="30dp"
-        android:layout_gravity="right"
-        android:layout_marginEnd="30dp"
-        android:layout_marginTop="30dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="15dp"
         android:textColor="@color/black"
         />
     <View
         android:layout_width="350dp"
         android:layout_height="2dp"
         android:background="#C8C8C8"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="100dp"
         android:layout_marginStart="30dp"
         />
 
     <Button
         android:id="@+id/confirm_delete_post"
-        android:layout_width="150dp"
+        android:layout_width="120dp"
         android:layout_height="50dp"
         android:text="מחק"
         android:layout_gravity="left"
@@ -39,7 +39,7 @@
         />
     <Button
         android:id="@+id/cancel_delete_post"
-        android:layout_width="150dp"
+        android:layout_width="120dp"
         android:layout_height="50dp"
         android:text="לא"
         android:layout_gravity="right"

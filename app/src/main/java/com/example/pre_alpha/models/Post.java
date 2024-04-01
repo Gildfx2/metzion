@@ -5,6 +5,7 @@ public class Post {
     private String item;
     private double latitude;
     private double longitude;
+    private String address;
     private int radius;
     private String about;
     private String image;
@@ -14,11 +15,12 @@ public class Post {
     private long timeStamp;
 
     public Post(){}
-    public Post(String name, String item, double latitude, double longitude, int radius, String about, String image, String lostOrFound, String creatorUid, String postId, long  timeStamp){
+    public Post(String name, String item, double latitude, double longitude, String addrsss, int radius, String about, String image, String lostOrFound, String creatorUid, String postId, long  timeStamp){
         this.name=name;
         this.item=item;
         this.latitude=latitude;
         this.longitude=longitude;
+        this.address=addrsss;
         this.radius=radius;
         this.about=about;
         this.image=image;
@@ -54,6 +56,14 @@ public class Post {
     }
     public void setImage(String image) {
         this.image=image;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getLostOrFound() {

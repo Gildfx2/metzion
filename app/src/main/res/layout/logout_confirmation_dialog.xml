@@ -13,19 +13,18 @@
         android:textSize="28dp"
         android:gravity="center"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="15dp" android:textColor="@color/black"
-        />
+        android:layout_marginTop="15dp"
+        android:textColor="@color/black" />
     <View
         android:layout_width="350dp"
         android:layout_height="2dp"
         android:background="#C8C8C8"
         android:layout_marginTop="100dp"
-        android:layout_marginStart="30dp"
-        />
+        android:layout_marginStart="30dp" />
 
     <Button
         android:id="@+id/confirm_logout"
-        android:layout_width="150dp"
+        android:layout_width="120dp"
         android:layout_height="50dp"
         android:text="התנתק"
         android:layout_gravity="left"
@@ -34,11 +33,10 @@
         android:layout_marginHorizontal="30dp"
         android:fontFamily="@font/rubik_bold"
         android:background="@drawable/custom_button"
-        app:backgroundTint="@null"
-        />
+        app:backgroundTint="@null" />
     <Button
         android:id="@+id/cancel_logout"
-        android:layout_width="150dp"
+        android:layout_width="120dp"
         android:layout_height="50dp"
         android:text="לא"
         android:layout_gravity="right"
@@ -47,6 +45,5 @@
         android:layout_marginHorizontal="30dp"
         android:fontFamily="@font/rubik_bold"
         android:background="@drawable/custom_button"
-        app:backgroundTint="@null"
-        />
+        app:backgroundTint="@null" />
 </androidx.cardview.widget.CardView>

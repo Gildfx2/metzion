@@ -38,7 +38,6 @@ public class MyPostsFragment extends Fragment {
     Uri image_uri= Uri.parse("");
     FragmentMyPostsBinding binding;
     FirebaseUser fbUser;
-    Button editBtn, deleteBtn;
     DetailedPostFragment detailedPostFragment = new DetailedPostFragment();
     ValueEventListener postListener;
 
@@ -52,8 +51,6 @@ public class MyPostsFragment extends Fragment {
         binding = FragmentMyPostsBinding.inflate(inflater, container, false);
         FirebaseAuth auth = FirebaseAuth.getInstance();
         fbUser = auth.getCurrentUser();
-        editBtn = binding.listOfCreatedPosts.findViewById(R.id.edit_post);
-        deleteBtn = binding.listOfCreatedPosts.findViewById(R.id.delete_post);
 
         postListener = new ValueEventListener() {
             @Override
@@ -96,6 +93,7 @@ public class MyPostsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Bundle bundle = new Bundle();
                 bundle.putString("post_id", arrayList.get(position).getPostId());
+                bundle.putString("from_home_or_search", "my_posts");
                 detailedPostFragment.setArguments(bundle);
                 getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, detailedPostFragment).commit();
             }

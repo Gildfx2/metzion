@@ -55,6 +55,17 @@
             android:text="dd/mm/yyyy"
             android:textSize="15sp"
             android:fontFamily="@font/rubik_regular" />
+        <TextView
+            android:id="@+id/post_address"
+            android:layout_width="match_parent"
+            android:layout_marginEnd="10dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="5dp"
+            android:textSize="17sp"
+            android:layout_gravity="center"
+            android:gravity="right"
+            android:text=""
+            android:fontFamily="@font/rubik_medium_italic" />
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

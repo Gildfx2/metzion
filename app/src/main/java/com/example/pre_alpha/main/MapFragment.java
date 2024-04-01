@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -51,7 +52,7 @@ public class MapFragment extends Fragment {
     String returnTo;
     TextView addressTv;
     Button applyBtn;
-    Switch myPosition;
+    SwitchCompat myPosition;
     double myLatitude, myLongitude, chosenLatitude, chosenLongitude;
     CreatePostFragment createPostFragment = new CreatePostFragment();
     FilterFragment filterFragment = new FilterFragment();
@@ -75,11 +76,29 @@ public class MapFragment extends Fragment {
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(@NonNull LatLng latLng) {
-                mMap.clear();
-                chosenLatitude=latLng.latitude;
-                chosenLongitude=latLng.longitude;
-                moveCamera(new LatLng(chosenLatitude, chosenLongitude), DEFAULT_ZOOM, "Chosen Location");
-                getAddressAsync(latLng.latitude, latLng.longitude);
+                if(!myPosition.isChecked()) {
+                    mMap.clear();
+                    chosenLatitude = latLng.latitude;
+                    chosenLongitude = latLng.longitude;
+                    moveCamera(new LatLng(chosenLatitude, chosenLongitude), DEFAULT_ZOOM, "Chosen Location");
+                    getAddressAsync(chosenLatitude, chosenLongitude);
+                }
+            }
+        });
+
+        myPosition.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(myPosition.isChecked()) {
+                    mMap.clear();
+                    getDeviceLocation();
+                    getAddressAsync(myLatitude, myLongitude);
+                }
+                else{
+                    addressTv.setText("");
+                    chosenLatitude=0;
+                    chosenLongitude=0;
+                }
             }
         });
 
@@ -90,10 +109,12 @@ public class MapFragment extends Fragment {
                 if(myPosition.isChecked()){
                     bundle.putDouble("latitude", myLatitude);
                     bundle.putDouble("longitude", myLongitude);
+                    bundle.putString("address", addressTv.getText().toString());
                 }
                 else{
                     bundle.putDouble("latitude", chosenLatitude);
                     bundle.putDouble("longitude", chosenLongitude);
+                    bundle.putString("address", addressTv.getText().toString());
                 }
                 if(returnTo.equals("create_post")){
                     String name = getArguments().getString("state_name", "");
@@ -126,6 +147,7 @@ public class MapFragment extends Fragment {
         });
     }
 
+
     private void getAddressAsync(double latitude, double longitude){
         new AsyncTask<Double, Void, String>() {
             @Override
@@ -146,11 +168,7 @@ public class MapFragment extends Fragment {
             @Override
             protected void onPostExecute(String address) {
                 super.onPostExecute(address);
-                // Handle the obtained address here
                 if (!address.isEmpty()) {
-                    moveCamera(new LatLng(latitude, longitude), DEFAULT_ZOOM, "Chosen Location");
-                    chosenLatitude=latitude;
-                    chosenLongitude=longitude;
                     addressTv.setText(address);
                 }
             }
@@ -200,7 +218,6 @@ public class MapFragment extends Fragment {
                         Location currentLocation = (Location) task.getResult();
                         myLatitude=currentLocation.getLatitude();
                         myLongitude=currentLocation.getLongitude();
-
                         moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, "My Location");
                     }
                     else{

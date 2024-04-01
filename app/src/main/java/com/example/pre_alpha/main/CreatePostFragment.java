@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -43,7 +44,6 @@ import com.example.pre_alpha.models.Post;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.slider.Slider;
@@ -55,7 +55,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.Calendar;
 
@@ -74,21 +73,20 @@ public class CreatePostFragment extends Fragment {
     String[] items={"ארנק", "תיק", "סמארטפון", "משקפי ראייה / שמש","שעון חכם", "מצלמה" ,"תעודת זהות / דרכון", "רישיון נהיגה", "חוגר / חוגרון", "כרטיס רב קו", "כרטיסים כללי", "מפתחות בית / רכב", "שקית / שקית קניות", "אוזניות / קייס אוזניות", "שרשרת / תיליון", "צמיד", "טבעת", "תפילין", "מחשב נייד", "מטען", "כרטיס זיכרון / דיסק און קיי", "מעיל / סווטשירט", "קיטבג / מזוודה", "מכשיר שמיעה", "אחר"};
     String[] cameraPermissions;
     String[] storagePermissions;
-    private static String name="", item="", postId, checkState, about="", date=getTodaysDate();
+    private static String name="", item="", postId, checkState, about="", date=getTodaysDate(), address="";
     private static double latitude, longitude;
     private static int radius=3;
-    private static boolean firstInScreen=true;
-    TextView tvState, tvRadius;
+    public static boolean editMyPost=true;
+    TextView tvState, tvRadius, addressTv;
     TextInputEditText etName, etAbout;
     ImageView mapIv, checkPickLocation, image;
     DatePickerDialog datePickerDialog;
     Slider radiusSlider;
-    Button dateButton, upload, btnUpload;
+    Button dateButton, upload, btnUpload, resetImage;
     TextInputLayout layoutItem;
     AutoCompleteTextView pickItem;
     ArrayAdapter<String> adapterItems;
     private static Uri image_uri;
-    Uri downloadUri;
     FirebaseAuth auth;
     Dialog dialog;
     Post post;
@@ -108,9 +106,11 @@ public class CreatePostFragment extends Fragment {
         tvState=view.findViewById(R.id.message_state);
         etName = view.findViewById(R.id.name);
         mapIv=view.findViewById(R.id.select_location);
+        addressTv=view.findViewById(R.id.picked_address);
         radiusSlider=view.findViewById(R.id.radius_slider);
         adapterItems = new ArrayAdapter<>(getActivity(),R.layout.list_item,items);
         pickItem = view.findViewById(R.id.list_of_items);
+        resetImage=view.findViewById(R.id.reset_image);
         layoutItem = view.findViewById(R.id.item);
         checkPickLocation=view.findViewById(R.id.pick_location_check);
         dateButton=view.findViewById(R.id.datePickerButton);
@@ -144,30 +144,28 @@ public class CreatePostFragment extends Fragment {
         }
 
         postsRef = FirebaseDatabase.getInstance().getReference("Users/" + fbUser.getUid() + "/Posts");
-
-
         return view;
     }
-
 
     @Override
     public void onResume() {
         super.onResume();
         if(getArguments()!=null){
-            postId=getArguments().getString("state_post_id", "");
-            if(!postId.isEmpty() && firstInScreen){
+            if(editMyPost){
+                postId=getArguments().getString("state_post_id", "");
                 name=getArguments().getString("state_name", "");
                 item=getArguments().getString("state_item", "");
                 date=getArguments().getString("state_date", getTodaysDate());
                 radius=getArguments().getInt("state_radius", 3);
                 image_uri=Uri.parse(getArguments().getString("state_image", ""));
                 about=getArguments().getString("state_about", "");
-                firstInScreen=false;
+                editMyPost=false;
             }
             etName.setText(name);
             pickItem.setText(item);
             dateButton.setText(date);
             etAbout.setText(about);
+            addressTv.setText(address);
             if(image_uri!=null && !image_uri.toString().isEmpty()){
                 Glide.with(getActivity())
                         .load(image_uri)  // Pass the URI to load the image from
@@ -191,12 +189,15 @@ public class CreatePostFragment extends Fragment {
         radius = (int) radiusSlider.getValue();
         about = etAbout.getText().toString();
         date = dateButton.getText().toString();
+        address = addressTv.getText().toString();
     }
 
     private void initMap(){
         if(this.getArguments()!=null) {
-            latitude = this.getArguments().getDouble("latitude");
-            longitude = this.getArguments().getDouble("longitude");
+            latitude = this.getArguments().getDouble("latitude", 0);
+            longitude = this.getArguments().getDouble("longitude", 0);
+            address = this.getArguments().getString("address", "");
+            addressTv.setText("כתובת: " + address);
             if(latitude!=0 && longitude!=0)  checkPickLocation.setImageResource(R.drawable.baseline_library_add_check_24);
         }
 
@@ -239,6 +240,14 @@ public class CreatePostFragment extends Fragment {
             }
         });
 
+        resetImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                image_uri=null;
+                image.setImageResource(R.drawable.baseline_image_24);
+            }
+        });
+
         radiusSlider.addOnChangeListener(new Slider.OnChangeListener() {
             @Override
             public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
@@ -254,15 +263,7 @@ public class CreatePostFragment extends Fragment {
                 String filePathAndName = storagePath + "image" + "_" + postId;
                 StorageReference storageReference2 = storageReference.child(filePathAndName);
                 if(image_uri!=null && !image_uri.toString().isEmpty()) {
-                    storageReference2.putFile(image_uri)
-                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                                    while (!uriTask.isSuccessful()) ;
-                                    downloadUri = uriTask.getResult();
-                                }
-                            });
+                    storageReference2.putFile(image_uri);
                 }
                 updateDatabase();
             }
@@ -290,11 +291,11 @@ public class CreatePostFragment extends Fragment {
         if(latitude==0 && longitude==0)
             Toast.makeText(getActivity(),"יש לבחור את מיקום המציאה/אבידה", Toast.LENGTH_SHORT).show();
 
-        if((latitude!=0 && longitude!=0) && !item.isEmpty() && !name.isEmpty()) {
+        if((latitude!=0 && longitude!=0) && !item.isEmpty() && (!name.isEmpty() && name.length()<=30) && about.length()<=150) {
             if (image_uri != null) {
-                post = new Post(name, item, latitude, longitude, radius, about, downloadUri.toString(), checkState, fbUser.getUid(), postId, calender.getTimeInMillis());
+                post = new Post(name, item, latitude, longitude, address, radius, about, image_uri.toString(), checkState, fbUser.getUid(), postId, calender.getTimeInMillis());
             } else {
-                post = new Post(name, item, latitude, longitude, radius, about, "", checkState, fbUser.getUid(), postId, calender.getTimeInMillis());
+                post = new Post(name, item, latitude, longitude, address, radius, about, "", checkState, fbUser.getUid(), postId, calender.getTimeInMillis());
             }
             refPosts.child(postId).setValue(post).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override

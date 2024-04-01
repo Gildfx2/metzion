@@ -39,7 +39,7 @@ import java.util.List;
 
 
 public class DetailedPostFragment extends Fragment {
-    TextView tvName, tvItem, tvAbout, tvDate;
+    TextView tvName, tvItem, tvAbout, tvDate, tvAddress;
     ImageView ivImage;
     ImageView returnBack;
     Button sendMessage;
@@ -50,7 +50,7 @@ public class DetailedPostFragment extends Fragment {
     Button btnOkay;
     long timeStamp;
     Calendar calendar;
-    String name, item, about, image="", creatorUid, postId;
+    String name, item, about, image="", creatorUid, postId, address;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -59,6 +59,7 @@ public class DetailedPostFragment extends Fragment {
         tvItem=view.findViewById(R.id.post_item);
         tvAbout=view.findViewById(R.id.post_about);
         ivImage=view.findViewById(R.id.post_image);
+        tvAddress=view.findViewById(R.id.post_address);
         returnBack=view.findViewById(R.id.return_back);
         sendMessage=view.findViewById(R.id.send_message);
         tvDate=view.findViewById(R.id.post_date);
@@ -110,7 +111,13 @@ public class DetailedPostFragment extends Fragment {
                     FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                     transaction.replace(R.id.frameLayout, homeFragment);
                     transaction.commit();
+                } else if (getArguments().getString("from_home_or_search").equals("my_posts")) {
+                    MyPostsFragment  myPostsFragment= new MyPostsFragment();
+                    FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                    transaction.replace(R.id.frameLayout, myPostsFragment);
+                    transaction.commit();
                 }
+
 
             }
         });
@@ -158,6 +165,7 @@ public class DetailedPostFragment extends Fragment {
                 item=post.getItem();
                 about=post.getAbout();
                 creatorUid=post.getCreatorUid();
+                address=post.getAddress();
                 if(post.getImage()!=null)
                     image=post.getImage();
                 timeStamp=post.getTimeStamp();
@@ -168,6 +176,7 @@ public class DetailedPostFragment extends Fragment {
         tvAbout.setText("פרטים:\n"+about);
         calendar.setTimeInMillis(timeStamp);
         tvDate.setText(formatDate(calendar));
+        tvAddress.setText("כתובת: " + address);
         if(getActivity()!=null && !image.isEmpty())
             Glide.with(this)
                     .load(Uri.parse(image))

@@ -22,8 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp">
-
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/my_location"
@@ -33,9 +32,11 @@
 
             <TextView
                 android:id="@+id/addressTv"
-                android:layout_width="220dp"
-                android:layout_height="55dp"
-                android:layout_marginLeft="90dp"
+                android:layout_width="match_parent"
+                android:layout_marginEnd="10dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:gravity="right"
                 android:text=""
                 android:fontFamily="@font/rubik_medium_italic" />
         </LinearLayout>
@@ -45,7 +46,7 @@
             android:layout_height="wrap_content"
             android:text="במיקום\n שלי"
             android:gravity="center"
-            android:layout_marginLeft="20dp"/>
+            android:layout_marginLeft="27dp"/>
 
         <Button
             android:id="@+id/applyBtn"

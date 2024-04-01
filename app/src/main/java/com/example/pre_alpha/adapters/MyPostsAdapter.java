@@ -1,6 +1,7 @@
 package com.example.pre_alpha.adapters;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.example.pre_alpha.main.CreatePostFragment.editMyPost;
 import static com.example.pre_alpha.models.FBref.refPosts;
 
 import android.app.Dialog;
@@ -160,6 +161,7 @@ public class MyPostsAdapter extends ArrayAdapter<PostData> {
 
     private void moveToEditScreen(){
         CreatePostFragment createPostFragment = new CreatePostFragment();
+        editMyPost=true;
         Bundle bundle = new Bundle();
         bundle.putString("state_name", postTmp.getName());
         bundle.putString("state_item", postTmp.getItem());
