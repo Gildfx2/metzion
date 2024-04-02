@@ -169,6 +169,9 @@ public class MapFragment extends Fragment {
             protected void onPostExecute(String address) {
                 super.onPostExecute(address);
                 if (!address.isEmpty()) {
+                    moveCamera(new LatLng(latitude, longitude), DEFAULT_ZOOM, "Chosen Location");
+                    chosenLatitude=latitude;
+                    chosenLongitude=longitude;
                     addressTv.setText(address);
                 }
             }

@@ -306,6 +306,8 @@ public class CreatePostFragment extends Fragment {
                         btnUpload = dialog.findViewById(R.id.uploadSuccessfully);
                         btnUpload.setOnClickListener(new View.OnClickListener() {
                             public void onClick(View view) {
+                                image_uri=null;
+                                image.setImageResource(R.drawable.baseline_image_24);
                                 dialog.cancel();
                                 if (!checkState.equals("edit")){
                                     bottomNavigationView.setSelectedItemId(R.id.home);

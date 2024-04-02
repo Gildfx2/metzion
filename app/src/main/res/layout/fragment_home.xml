@@ -61,17 +61,36 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="#C8C8C8"
-            />
+            android:background="#C8C8C8" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="right">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:fontFamily="@font/rubik_medium"
             android:padding="8dp"
-            android:text="לחיצה על ? - פירוט על פקודות המפה והסברים"
+            android:text="- פירוט על פקודות המפה והסברים"
             android:textColor="@color/black"
-            android:textSize="19sp" />
+            android:textSize="17sp" />
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/question"
+            android:layout_gravity="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/rubik_medium"
+            android:padding="8dp"
+            android:text="לחיצה על"
+            android:textColor="@color/black"
+            android:textSize="17sp"
+            android:layout_gravity="right"/>
+    </LinearLayout>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -84,7 +103,7 @@
                 android:padding="8dp"
                 android:text="- מחזירה למיקום הנוכחי"
                 android:textColor="@color/black"
-                android:textSize="19sp"
+                android:textSize="17sp"
                 android:layout_gravity="right"/>
             <ImageView
                 android:layout_width="25dp"
@@ -98,7 +117,7 @@
                 android:padding="8dp"
                 android:text="לחיצה על"
                 android:textColor="@color/black"
-                android:textSize="19sp"
+                android:textSize="17sp"
                 android:layout_gravity="right"/>
 
         </LinearLayout>
@@ -148,6 +167,7 @@
                 android:id="@+id/get_details_map"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:padding="5dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
@@ -159,13 +179,22 @@
                 android:id="@+id/get_current_position"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_alignParentRight="true"
+                android:padding="5dp"
+                android:layout_toLeftOf="@+id/empty_view_home"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
                 android:background="#D9FFFFFF"
                 android:src="@drawable/position" />
+            <View
+                android:id="@+id/empty_view_home"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:visibility="invisible"/>
+
 
 
         </RelativeLayout>
