@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "pre-alpha"
+rootProject.name = "מציאון"
 include(":app")

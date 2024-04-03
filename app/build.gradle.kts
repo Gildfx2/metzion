@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.pre_alpha"
+    namespace = "com.example.מציאון"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.pre_alpha"
+        applicationId = "com.example.מציאון"
         minSdk = 28
         targetSdk = 33
         versionCode = 1
