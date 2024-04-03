@@ -39,19 +39,19 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".chat.ChatActivity"
+            android:name="com.example.pre_alpha.chat.ChatActivity"
             android:exported="true" />
         <activity
-            android:name=".entry.ForgotPassword"
+            android:name="com.example.pre_alpha.entry.ForgotPassword"
             android:exported="true" />
         <activity
-            android:name=".main.MainActivity"
+            android:name="com.example.pre_alpha.main.MainActivity"
             android:exported="true" />
         <activity
-            android:name=".entry.Register"
+            android:name="com.example.pre_alpha.entry.Register"
             android:exported="true" />
         <activity
-            android:name=".entry.Login"
+            android:name="com.example.pre_alpha.entry.Login"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -60,7 +60,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".notifications.MyFirebaseMessaging"
+            android:name="com.example.pre_alpha.notifications.MyFirebaseMessaging"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

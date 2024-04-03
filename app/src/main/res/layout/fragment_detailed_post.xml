@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".main.DetailedPostFragment">
+    tools:context="com.example.pre_alpha.main.DetailedPostFragment">
     <ImageView
         android:id="@+id/return_back"
         android:layout_width="40dp"
