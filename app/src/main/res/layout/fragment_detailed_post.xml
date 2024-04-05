@@ -89,7 +89,7 @@
             android:textSize="20sp"
             android:layout_marginTop="40dp"
             android:layout_marginEnd="24dp"
-            android:text="שם החפץ" />
+            android:text="סוג החפץ" />
         <TextView
             android:id="@+id/post_about"
             android:layout_width="370dp"

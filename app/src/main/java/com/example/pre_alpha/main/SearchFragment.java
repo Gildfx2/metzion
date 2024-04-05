@@ -134,7 +134,8 @@ public class SearchFragment extends Fragment {
 
         if (postDateCalendar.compareTo(fromDateCalendar) < 0 || postDateCalendar.compareTo(toDateCalendar) > 0) {
             Log.d(TAG, "isValidPost: the date is not in the range");
-            Log.d(TAG, "post:" + postDateCalendar.getTimeInMillis() + "from:" + fromDateCalendar.getTimeInMillis() + "to:" + toDateCalendar.getTimeInMillis());
+            Log.d(TAG, "post:" + postDateCalendar.getTimeInMillis() + "from:" +
+                    fromDateCalendar.getTimeInMillis() + "to:" + toDateCalendar.getTimeInMillis());
             return false;
         }
 

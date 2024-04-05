@@ -171,7 +171,7 @@ public class DetailedPostFragment extends Fragment {
             }
         }
         tvName.setText(name);
-        tvItem.setText("שם החפץ: "+item);
+        tvItem.setText("סוג החפץ: "+item);
         tvAbout.setText("פרטים:\n"+about);
         calendar.setTimeInMillis(timeStamp);
         tvDate.setText(formatDate(calendar));

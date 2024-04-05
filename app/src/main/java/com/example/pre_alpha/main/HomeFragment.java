@@ -160,7 +160,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 dialog = new Dialog(getActivity());
-                dialog.setContentView(R.layout.details_about_map);
+                dialog.setContentView(R.layout.details_about_map_dialog);
                 btnOkay = dialog.findViewById(R.id.read_details);
                 btnOkay.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
@@ -384,5 +384,6 @@ public class HomeFragment extends Fragment {
         if (chatsListener != null) {
             refChatList.child(fbUser.getUid()).removeEventListener(chatsListener);
         }
+        postValues.clear();
     }
 }
