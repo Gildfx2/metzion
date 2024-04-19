@@ -239,7 +239,8 @@
                     android:background="@drawable/custom_button2"
                     app:backgroundTint="@null"
                     android:layout_marginTop="10dp"
-                    android:layout_gravity="center_horizontal"/>
+                    android:layout_gravity="center_horizontal"
+                    android:elevation="20dp"/>
             </LinearLayout>
 
 
@@ -289,7 +290,8 @@
                 android:layout_marginBottom="20dp"
                 android:fontFamily="@font/rubik_medium"
                 android:background="@drawable/custom_button"
-                app:backgroundTint="@null" />
+                app:backgroundTint="@null"
+                android:elevation="20dp"/>
 
         </LinearLayout>
     </ScrollView>

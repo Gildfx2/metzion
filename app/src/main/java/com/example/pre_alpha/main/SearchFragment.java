@@ -111,6 +111,10 @@ public class SearchFragment extends Fragment {
         toDateCalendar.set(Calendar.YEAR, year);
         toDateCalendar.set(Calendar.MONTH, month);
         toDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        toDateCalendar.set(Calendar.HOUR_OF_DAY, 23);
+        toDateCalendar.set(Calendar.MINUTE, 59);
+        toDateCalendar.set(Calendar.SECOND, 59);
+        toDateCalendar.set(Calendar.MILLISECOND, 999);
         postDateCalendar = Calendar.getInstance();
         filterLocation = new Location("filter_location");
         postLocation = new Location("post_location");

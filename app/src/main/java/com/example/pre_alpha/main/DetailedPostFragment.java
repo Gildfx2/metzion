@@ -106,9 +106,9 @@ public class DetailedPostFragment extends Fragment {
                     transaction.replace(R.id.frameLayout, searchFragment);
                     transaction.commit();
                 } else if (getArguments().getString("from_home_or_search").equals("home")) {
-                    HomeFragment homeFragment = new HomeFragment();
+                    MapSearchFragment mapSearchFragment = new MapSearchFragment();
                     FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                    transaction.replace(R.id.frameLayout, homeFragment);
+                    transaction.replace(R.id.frameLayout, mapSearchFragment);
                     transaction.commit();
                 } else if (getArguments().getString("from_home_or_search").equals("my_posts")) {
                     MyPostsFragment  myPostsFragment= new MyPostsFragment();

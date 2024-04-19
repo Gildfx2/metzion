@@ -25,13 +25,14 @@ public class MainActivity extends AppCompatActivity {
     FirebaseAuth auth;
     FirebaseUser fbUser;
     BottomNavigationView bottomNavigationView;
-    public HomeFragment homeFragment=new HomeFragment();
-    FilterFragment filterFragment=new FilterFragment();
     CreatePostFragment createPostFragment;
+    FilterFragment filterFragment;
+    MapSearchFragment mapSearchFragment;
+    public HomeFragment homeFragment = new HomeFragment();
     UserFragment userFragment=new UserFragment();
     Dialog dialog;
     DetailedPostFragment detailedPostFragment = new DetailedPostFragment();
-    Button lost, found;
+    Button lost, found, searchDetails, searchMap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +59,25 @@ public class MainActivity extends AppCompatActivity {
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, homeFragment).commit();
                         return true;
                     case R.id.search:
-                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, filterFragment).commit();
+                        dialog=new Dialog(MainActivity.this);
+                        dialog.setContentView(R.layout.search_dialog_layout);
+                        searchMap=dialog.findViewById(R.id.search_with_map);
+                        searchDetails=dialog.findViewById(R.id.search_with_details);
+                        searchMap.setOnClickListener(new View.OnClickListener(){
+                            public void onClick(View view){
+                                dialog.cancel();
+                                mapSearchFragment = new MapSearchFragment();
+                                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, mapSearchFragment).commit();
+                            }
+                        });
+                        searchDetails.setOnClickListener(new View.OnClickListener(){
+                            public void onClick(View view){
+                                dialog.cancel();
+                                filterFragment = new FilterFragment();
+                                getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, filterFragment).commit();
+                            }
+                        });
+                        dialog.show();
                         return true;
                     case R.id.post:
                         dialog=new Dialog(MainActivity.this);

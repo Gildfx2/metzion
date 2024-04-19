@@ -73,7 +73,6 @@ public class FilterFragment extends Fragment {
             pickItem.setText(getArguments().getString("state_item", ""));
             fromDatePickerButton.setText(getArguments().getString("state_date_from", getTodaysDate()));
             toDatePickerButton.setText(getArguments().getString("state_date_to", getTodaysDate()));
-
         }
         if(isServicesOk()){
             init();

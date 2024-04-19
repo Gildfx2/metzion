@@ -33,7 +33,8 @@
         android:layout_marginHorizontal="30dp"
         android:fontFamily="@font/rubik_bold"
         android:background="@drawable/custom_button"
-        app:backgroundTint="@null" />
+        app:backgroundTint="@null"
+        android:elevation="20dp"/>
     <Button
         android:id="@+id/cancel_logout"
         android:layout_width="120dp"
@@ -45,5 +46,6 @@
         android:layout_marginHorizontal="30dp"
         android:fontFamily="@font/rubik_bold"
         android:background="@drawable/custom_button"
-        app:backgroundTint="@null" />
+        app:backgroundTint="@null"
+        android:elevation="20dp"/>
 </androidx.cardview.widget.CardView>

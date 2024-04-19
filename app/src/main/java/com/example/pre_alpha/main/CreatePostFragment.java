@@ -73,7 +73,7 @@ public class CreatePostFragment extends Fragment {
     String[] cameraPermissions;
     String[] storagePermissions;
     private static String name="", item="", postId, checkState, about="", date=getTodaysDate(), address="";
-    private static double latitude, longitude;
+    private static double latitude=0, longitude=0;
     private static int radius=3;
     public static boolean editMyPost=true;
     TextView tvState, tvRadius, addressTv;
@@ -257,7 +257,7 @@ public class CreatePostFragment extends Fragment {
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(postId.isEmpty())
+                if(postId==null || postId.isEmpty())
                     postId = postsRef.push().getKey();
                 String filePathAndName = storagePath + "image" + "_" + postId;
                 StorageReference storageReference2 = storageReference.child(filePathAndName);

@@ -1,5 +1,6 @@
 package com.example.pre_alpha.chat;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -15,6 +17,7 @@ import com.example.pre_alpha.R;
 import com.example.pre_alpha.adapters.ChatAdapter;
 import com.example.pre_alpha.adapters.ChatData;
 import com.example.pre_alpha.databinding.FragmentHomeChatBinding;
+import com.example.pre_alpha.main.MainActivity;
 import com.example.pre_alpha.models.ChatList;
 import com.example.pre_alpha.models.Post;
 import com.example.pre_alpha.models.User;
@@ -47,6 +50,7 @@ public class HomeChatFragment extends Fragment {
     ChatFragment chatFragment = new ChatFragment();
     ValueEventListener chatsListener, otherUserListener;
     FirebaseAuth auth;
+    Button returnHome;
 
 
     @Override
@@ -55,6 +59,14 @@ public class HomeChatFragment extends Fragment {
         binding = FragmentHomeChatBinding.inflate(inflater, container, false);
         auth=FirebaseAuth.getInstance();
         fbUser= auth.getCurrentUser();
+        returnHome=binding.getRoot().findViewById(R.id.return_home);
+        returnHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent= new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+            }
+        });
 
         return binding.getRoot();
     }

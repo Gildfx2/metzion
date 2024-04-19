@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.example.pre_alpha.chat.HomeChatFragment">
 
     <RelativeLayout
@@ -12,9 +13,21 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/chat_tool_bar"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@color/white"
-            >
+            android:layout_height="80dp"
+            android:background="@color/white">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="חזרה לעמוד \nהבית"
+                android:textSize="16sp"
+                android:layout_marginVertical="10dp"
+                android:layout_marginHorizontal="10dp"
+                android:id="@+id/return_home"
+                android:layout_gravity="right"
+                android:fontFamily="@font/rubik_medium"
+                android:background="@drawable/custom_button"
+                app:backgroundTint="@null"
+                android:elevation="20dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -36,7 +49,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="60dp"
         tools:listitem="@layout/list_of_chats"
         android:layout_gravity="center"
         android:divider="#C8C8C8"

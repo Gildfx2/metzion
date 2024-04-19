@@ -45,7 +45,8 @@
             android:textSize="30sp"
             android:layout_gravity="center"
             android:layout_marginTop="30dp"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginBottom="20dp"
+            android:elevation="20dp"/>
 
         <ListView
             android:layout_width="wrap_content"
@@ -62,7 +63,8 @@
             app:backgroundTint="@null"
             android:fontFamily="@font/rubik_medium"
             android:textSize="30sp"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:elevation="20dp"/>
     </LinearLayout>
 
 </FrameLayout>

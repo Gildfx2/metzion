@@ -19,12 +19,12 @@
         android:layout_height="60dp"
         android:id="@+id/bottomNavigationBar"
         android:layout_alignParentBottom="true"
-        android:background="@color/white"
-        app:labelVisibilityMode="unlabeled"
+        android:background="?android:windowBackground"
+        app:itemTextColor="@color/icon_selected_text_color"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_menu"
         app:itemIconSize="28dp"
-        app:itemRippleColor="@null"
-        app:itemActiveIndicatorStyle="@null">
+        app:itemRippleColor="@null">
     </com.google.android.material.bottomnavigation.BottomNavigationView>
 </RelativeLayout>
 

@@ -18,7 +18,7 @@
             android:textSize="25sp"
             android:padding="8dp"
             android:textColor="#969696"
-            android:layout_marginStart="12dp"
+            android:layout_marginEnd="30dp"
             android:layout_marginTop="5dp"
             android:layout_gravity="right"
             android:fontFamily="@font/rubik_medium"/>
@@ -190,6 +190,7 @@
             android:fontFamily="@font/rubik_medium"
             android:background="@drawable/custom_button"
             app:backgroundTint="@null"
+            android:elevation="20dp"
             />
 
 
