@@ -75,76 +75,25 @@ public class MapSearchFragment extends Fragment {
     ChipGroup filterGroup;
     Dialog dialog;
     Button btnOkay;
-    TextView newMessagesTv;
-    ImageView getDetails, getCurrentPosition, showChats;
+    ImageView getDetails, getCurrentPosition;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_map_search, container, false);
 
-        showChats=view.findViewById(R.id.show_chats);
         getDetails=view.findViewById(R.id.get_details_map);
         getCurrentPosition=view.findViewById(R.id.get_current_position);
-        newMessagesTv=view.findViewById(R.id.new_messages);
         lostFilter=view.findViewById(R.id.map_filter_lost_items);
         foundFilter=view.findViewById(R.id.map_filter_found_items);
         filterGroup=view.findViewById(R.id.map_filter_group);
 
-
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        fbUser=auth.getCurrentUser();
-
-        showChats.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ChatActivity.class);
-                SharedPreferences chat = getActivity().getSharedPreferences("chat_pick", MODE_PRIVATE);
-                SharedPreferences.Editor editor = chat.edit();
-                editor.putString("chat_pick", "see chats");
-                editor.apply();
-                editor.commit();
-                startActivity(intent);
-            }
-        });
+        getLocationPermission();
 
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        chatsListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                newMessagesCount=0;
-                if (snapshot.exists()) {
-                    for (DataSnapshot postIdSnapshot : snapshot.getChildren()) {
-                        for (DataSnapshot userId2Snapshot : postIdSnapshot.getChildren()) {
-                            newMessagesCount += userId2Snapshot.child("unseenMessages").getValue(Integer.class);
-                        }
-                    }
 
-                } else {
-                    Log.e("FirebaseError", "Snapshot does not exist");
-                }
-                if(newMessagesCount!=0) {
-                    newMessagesTv.setBackgroundResource(R.drawable.custom_button);
-                    newMessagesTv.setText(String.valueOf(newMessagesCount));
-                }
-                else{
-                    newMessagesTv.setBackground(null);
-                    newMessagesTv.setText("");
-                }
-                getLocationPermission();
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("FirebaseError", error.getMessage());
-            }
-        };
-        refChatList.child(fbUser.getUid()).addValueEventListener(chatsListener);
-    }
 
     private void init(){
         Log.d(TAG, "init: initializing");

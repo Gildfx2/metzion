@@ -11,45 +11,9 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/chat_tool_bar"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@color/white">
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/messages"
-                    android:id="@+id/show_chats" />
-                <TextView
-                    android:id="@+id/new_messages"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginStart="24dp"
-                    android:gravity="center"
-                    android:text="0"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
-                    android:background="@drawable/custom_button"
-                    android:fontFamily="@font/rubik_regular"
-                    />
-            </RelativeLayout>
-
-            </androidx.appcompat.widget.Toolbar>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#C8C8C8"
-                android:layout_below="@id/chat_tool_bar"
-                />
-
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_gravity="right"
             android:layout_marginTop="5dp"
             android:fontFamily="@font/rubik_medium"
@@ -58,67 +22,60 @@
             android:text="חיפוש מציאות ואבדות לפי מיקום"
             android:textColor="@color/black"
             android:textSize="25sp" />
+
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:background="#C8C8C8" />
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="right">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:fontFamily="@font/rubik_medium"
-            android:padding="8dp"
-            android:text="- פירוט על פקודות המפה והסברים"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
-        <ImageView
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:src="@drawable/question"
-            android:layout_gravity="center"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/rubik_medium"
-            android:padding="8dp"
-            android:text="לחיצה על"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:layout_gravity="right"/>
-    </LinearLayout>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="right">
+            android:layout_gravity="right"
+            android:orientation="horizontal">
+
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
                 android:fontFamily="@font/rubik_medium"
                 android:padding="8dp"
-                android:text="- מחזירה למיקום הנוכחי"
+                android:text="- פירוט על פקודות המפה והסברים"
                 android:textColor="@color/black"
-                android:textSize="16sp"
-                android:layout_gravity="right"/>
+                android:textSize="19sp" />
+
             <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:src="@drawable/position"
-                android:layout_gravity="center"/>
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginEnd="5dp"
+                android:layout_gravity="center"
+                android:src="@drawable/question" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
                 android:fontFamily="@font/rubik_medium"
                 android:padding="8dp"
-                android:text="לחיצה על"
+                android:text="- מחזיר למיקום הנוכחי"
                 android:textColor="@color/black"
-                android:textSize="16sp"
-                android:layout_gravity="right"/>
+                android:textSize="19sp" />
+
+            <ImageView
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginEnd="5dp"
+                android:layout_gravity="center"
+                android:src="@drawable/position" />
+
 
         </LinearLayout>
 
@@ -138,72 +95,69 @@
                 android:id="@+id/map_filter_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:singleSelection="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp">
+                android:layout_marginTop="5dp"
+                app:singleSelection="true">
+
                 <com.google.android.material.chip.Chip
                     android:id="@+id/map_filter_found_items"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="60dp"
-                    android:text="מציאות"
                     android:layout_marginEnd="15dp"
-                    android:textSize="17sp"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:text="מציאות"
                     android:textColor="@color/chip_text_color"
-                    app:chipBackgroundColor="@color/chip_background"/>
+                    android:textSize="17sp"
+                    app:chipBackgroundColor="@color/chip_background" />
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/map_filter_lost_items"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="60dp"
                     android:text="אבדות"
-                    android:textSize="17sp"
-                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:textColor="@color/chip_text_color"
-                    app:chipBackgroundColor="@color/chip_background"/>
+                    android:textSize="17sp"
+                    app:chipBackgroundColor="@color/chip_background" />
             </com.google.android.material.chip.ChipGroup>
 
             <ImageView
                 android:id="@+id/get_details_map"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:padding="5dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginBottom="10dp"
                 android:background="@color/white"
+                android:padding="5dp"
                 android:src="@drawable/question" />
 
             <ImageView
                 android:id="@+id/get_current_position"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:padding="5dp"
-                android:layout_toLeftOf="@+id/empty_view_home"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
+                android:layout_toLeftOf="@+id/empty_view_home"
                 android:background="@color/white"
+                android:padding="5dp"
                 android:src="@drawable/position" />
+
             <View
                 android:id="@+id/empty_view_home"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
-                android:visibility="invisible"/>
-
+                android:visibility="invisible" />
 
 
         </RelativeLayout>
 
     </LinearLayout>
-
-
-
-
 
 
 </FrameLayout>

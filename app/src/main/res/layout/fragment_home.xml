@@ -11,24 +11,58 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/chat_tool_bar"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/white">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/messages"
+                    android:id="@+id/show_chats" />
+                <TextView
+                    android:id="@+id/new_messages"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="24dp"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:background="@drawable/custom_button"
+                    android:fontFamily="@font/rubik_regular"
+                    />
+            </RelativeLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#C8C8C8"
+            android:layout_below="@id/chat_tool_bar"
+            />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="מצאת או איבדת חפץ?\n פרסם מודעה"
             android:fontFamily="@font/rubik_medium"
-            android:textSize="37dp"
+            android:textSize="35dp"
             android:gravity="center"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="30dp"
             android:textColor="@color/black"
             />
         <View
-            android:layout_width="350dp"
+            android:layout_width="330dp"
             android:layout_height="2dp"
             android:background="#C8C8C8"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="30dp"
-            />
+            android:layout_marginTop="10dp" android:layout_gravity="center"/>
 
         <Button
             android:id="@+id/create_post_button"
