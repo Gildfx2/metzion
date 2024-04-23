@@ -5,6 +5,7 @@ import static com.example.pre_alpha.models.FBref.refChat;
 import static com.example.pre_alpha.models.FBref.refChatList;
 import static com.example.pre_alpha.models.FBref.refTokens;
 import static com.example.pre_alpha.models.FBref.refUsers;
+import static com.google.firebase.appcheck.internal.util.Logger.TAG;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -85,7 +86,7 @@ public class ChatFragment extends Fragment {
     Uri image_uri, download_uri;
     ImageView postImage, returnBack;
     TextView nameTV, usernameTV, userStatusTV;
-    ImageView image;
+    ImageView image, resetImage;
     EditText textMessage;
     ImageButton sendMessage;
     FirebaseUser fbUser;
@@ -121,6 +122,7 @@ public class ChatFragment extends Fragment {
         getData = view.findViewById(R.id.get_data);
         returnBack = view.findViewById(R.id.return_back_chat);
         image=view.findViewById(R.id.image_message);
+        resetImage=view.findViewById(R.id.btn_reset_image);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         layoutManager.setReverseLayout(false);
         recyclerView.setLayoutManager(layoutManager);
@@ -170,6 +172,18 @@ public class ChatFragment extends Fragment {
             }
         });
 
+        resetImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendMessage.setBackgroundResource(R.drawable.baseline_add_circle_24);
+                resetImage.setImageDrawable(null);
+                image.setImageDrawable(null);
+                textMessage.setEnabled(true);
+                textMessage.setHint("הקלידו הודעה...");
+                image_uri=null;
+            }
+        });
+
         sendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -213,6 +227,7 @@ public class ChatFragment extends Fragment {
                                     refChatList.child(otherUserUid).child(postId).child(fbUser.getUid()).setValue(chatList2);
                                     sendMessage.setBackgroundResource(R.drawable.baseline_add_circle_24);
                                     image.setImageDrawable(null);
+                                    resetImage.setImageDrawable(null);
                                     textMessage.setEnabled(true);
                                     textMessage.setHint("הקלידו הודעה...");
                                     image_uri=null;
@@ -315,6 +330,7 @@ public class ChatFragment extends Fragment {
                             Message message = new Message(messageTmp);
                             messages.add(message);
                             adapter.notifyItemInserted(messages.size() - 1);
+                            Log.d(TAG, "create new message");
                         }
                     }
                     startIndex++;
@@ -461,6 +477,9 @@ public class ChatFragment extends Fragment {
             textMessage.setEnabled(false);
             textMessage.setHint("");
             sendMessage.setBackgroundResource(R.drawable.baseline_send_24);
+            Glide.with(getContext())
+                    .load(R.drawable.trash)
+                    .into(resetImage);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

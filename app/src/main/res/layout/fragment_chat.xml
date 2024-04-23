@@ -144,12 +144,15 @@
                     android:background="@android:color/transparent"
                     android:layout_centerVertical="true"/>
                 <ImageView
-                    android:layout_width="wrap_content"
+                    android:layout_width="250dp"
+                    android:maxHeight="400dp"
                     android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentEnd="true"
                     android:layout_marginEnd="20dp"
                     android:padding="10dp"
+                    android:scaleType="fitXY"
                     android:id="@+id/image_message"/>
                 <ImageButton
                     android:layout_width="40dp"
@@ -160,6 +163,20 @@
                     android:layout_alignParentLeft="true"
                     android:scaleX="-1"
                     android:layout_marginEnd="10dp"
+                    />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxHeight="40dp"
+                    android:maxWidth="40dp"
+                    android:adjustViewBounds="true"
+                    android:id="@+id/btn_reset_image"
+                    android:scaleType="fitCenter"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:scaleX="-1"
+                    android:layout_marginEnd="10dp"
+                    android:layout_below="@id/btn_send"
                     />
             </RelativeLayout>
         </RelativeLayout>

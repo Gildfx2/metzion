@@ -120,7 +120,7 @@ public class Register extends AppCompatActivity {
             });
             dialog.show();
         }
-        else{
+        else if(validateUsername(username) && validateEmail(email)){
             auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {

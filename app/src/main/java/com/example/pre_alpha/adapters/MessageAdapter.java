@@ -72,7 +72,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     public class MessageViewHolder extends RecyclerView.ViewHolder {
-        TextView messageTextView, messageTimeStamp, messageStatus;
+        TextView messageTextView, messageTimeStamp;
         ImageView messageImageView;
 
         public MessageViewHolder(@NonNull View itemView, int viewType) {
