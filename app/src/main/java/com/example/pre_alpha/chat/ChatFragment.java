@@ -321,25 +321,17 @@ public class ChatFragment extends Fragment {
         chatListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                int startIndex = 0;
+                messages.clear();
                 for (DataSnapshot data : snapshot.getChildren()) {
-                    if (startIndex >= messages.size()) {
-                        messageTmp = data.getValue(Message.class);
-                        if (isMessageRelevant(messageTmp)) {
-                            Message message = new Message(messageTmp);
-                            messages.add(message);
-                            adapter.notifyItemInserted(messages.size() - 1);
-                            Log.d(TAG, "create new message");
-                        }
+                    Message messageTmp = data.getValue(Message.class);
+                    if (isMessageRelevant(messageTmp)) {
+                        messages.add(messageTmp);
+                        Log.d(TAG, "Added new message: " + messageTmp.getMessage());
                     }
-                    startIndex++;
                 }
-                if (adapter.getItemCount() > 0) {
-                    recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
-                }
+                adapter.notifyDataSetChanged();
+                recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("FirebaseError", error.getMessage());
