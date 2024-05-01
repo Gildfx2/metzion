@@ -47,6 +47,7 @@ public class Register extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        //initializing
         etEmail=findViewById(R.id.email);
         etUsername=findViewById(R.id.username);
         etPassword=findViewById(R.id.pass);
@@ -56,6 +57,8 @@ public class Register extends AppCompatActivity {
         layoutPassword=findViewById(R.id.layoutPassword2);
         layoutConfirmPassword=findViewById(R.id.layoutConfirmPassword);
         auth=FirebaseAuth.getInstance();
+
+        //getting the users from database
         userListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dS) {
@@ -102,6 +105,8 @@ public class Register extends AppCompatActivity {
         username=etUsername.getText().toString();
         password=etPassword.getText().toString();
         confirmPassword=etConPassword.getText().toString();
+
+        //set limitations
         if(!validateEmail(email)) layoutEmail.setHelperText("אימייל לא תקין");
         if(!validateUsername(username)) layoutUsername.setHelperText("השם משתמש צריך לכלול לפחות 3 תווים, להתחיל באות מסוימת, ללא רווחים");
         if(!validatePassword(password)) layoutPassword.setHelperText("הסיסמה צריכה לכלול לפחות 6 תווים, אות קטנה אחת, מספר אחד");
@@ -121,6 +126,7 @@ public class Register extends AppCompatActivity {
             dialog.show();
         }
         else if(validateUsername(username) && validateEmail(email)){
+            //creating account with firebase authentication
             auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
@@ -164,11 +170,13 @@ public class Register extends AppCompatActivity {
 
     }
     public void loginAccount(View view){
+        //move to sign in screen
         Intent intent = new Intent(this, Login.class);
         startActivity(intent);
     }
 
     public boolean validateEmail(String email){
+        //checking if the email is valid
         if(email==null || email.isEmpty()) return false;
         String emailRegax="^[a-zA-Z0-9_+&*-]+(?:\\."+
                 "[a-zA-Z0-9_+&*-]+)*@"+
@@ -178,6 +186,7 @@ public class Register extends AppCompatActivity {
         return m.matches();
     }
     public static boolean validatePassword(String password) {
+        //checking if the password if valid
         if (password == null && password.isEmpty()) return false;
         String passwordRegex = "^(?=.*[0-9])(?=.*[a-z]).{6,20}$";
         // הסיסמה חייבת להכיל בין 6-20 תווים שחייבת להכיל לפחות אות קטנה אחת ומספר אחד
@@ -186,6 +195,7 @@ public class Register extends AppCompatActivity {
         return m.matches();
     }
     public static boolean validateUsername(String username) {
+        //checking if the username is valid
         if (username == null && username.isEmpty()) return false;
         String usernameRegex = "^[A-Za-zא-ת]\\w{2,24}$";
         //השם משתמש חייב להכיל בין 3-25 תווים שחייבים להתחיל באות קטנה או אות גדולה
@@ -195,6 +205,7 @@ public class Register extends AppCompatActivity {
         return m.matches();
     }
     private boolean userExist(String email){
+        //checking if the account already exist
         for(User user : userValues){
             if(user.getEmail().equals(email)) return true;
         }

@@ -37,9 +37,12 @@ public class ForgotPassword extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
+        //initializing
         etEmail=findViewById(R.id.emailField);
         layoutEmail=findViewById(R.id.layoutEmail3);
         auth= FirebaseAuth.getInstance();
+
+        //getting users
         userListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dS) {
@@ -70,16 +73,19 @@ public class ForgotPassword extends AppCompatActivity {
         }
     }
     public void loginScreen(View view){
+        //move to sign in screen
         Intent intent = new Intent(this, Login.class);
         startActivity(intent);
     }
     private boolean userExist(String email){
+        //check if the account already exist
         for(User user : userValues){
             if(user.getEmail().equals(email)) return true;
         }
         return false;
     }
     private boolean validateEmail(String email){
+        //checking if the email's structure is valid
         if(email==null || email.isEmpty()) return false;
         String emailRegax="^[a-zA-Z0-9_+&*-]+(?:\\."+
                 "[a-zA-Z0-9_+&*-]+)*@"+
@@ -95,6 +101,7 @@ public class ForgotPassword extends AppCompatActivity {
             layoutEmail.setHelperText("הזן את אימייל ההרשמה שלך");
         }
         else{
+            //resetting the password
             auth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {

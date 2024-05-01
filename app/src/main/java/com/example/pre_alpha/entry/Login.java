@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Login extends AppCompatActivity {
+
     EditText etEmail, etPassword;
     String email, password, str;
     TextInputLayout layoutEmail, layoutPassword;
@@ -40,12 +41,14 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        //initializing
         etEmail = findViewById(R.id.email);
         etPassword = findViewById(R.id.pass);
         layoutEmail = findViewById(R.id.layoutEmail1);
         layoutPassword = findViewById(R.id.layoutPassword1);
         auth = FirebaseAuth.getInstance();
 
+        //checking remembering the account
         SharedPreferences remember = getSharedPreferences("check", MODE_PRIVATE);
         String checkRemember = remember.getString("remember", "");
         if(checkRemember.equals("true")){
@@ -54,6 +57,7 @@ public class Login extends AppCompatActivity {
             startActivity(intent);
         }
 
+        //getting users
         userListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dS) {
@@ -85,11 +89,13 @@ public class Login extends AppCompatActivity {
         }
     }
     public void forgotPassword(View view) {
+        //move to forgot password screen
         Intent intent = new Intent(this, ForgotPassword.class);
         startActivity(intent);
     }
 
     public void createAccount(View view) {
+        //move to create account screen
         Intent intent = new Intent(this, Register.class);
         startActivity(intent);
     }
@@ -109,8 +115,9 @@ public class Login extends AppCompatActivity {
         layoutPassword.setHelperText("");
         email = etEmail.getText().toString();
         password = etPassword.getText().toString();
-        if (validateEmail(email)) {
+        if (validateEmail(email)) { //checking if the email's structure is valid
             if (!password.isEmpty()) {
+                //sign in with email and password with firebase authentication
                 auth.signInWithEmailAndPassword(email, password)
                         .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                             @Override
