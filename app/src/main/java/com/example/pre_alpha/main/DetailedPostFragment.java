@@ -54,6 +54,7 @@ public class DetailedPostFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_detailed_post, container, false);
+        //initializing
         tvName=view.findViewById(R.id.post_name);
         tvItem=view.findViewById(R.id.post_item);
         tvAbout=view.findViewById(R.id.post_about);
@@ -65,10 +66,11 @@ public class DetailedPostFragment extends Fragment {
         fbUser= FirebaseAuth.getInstance().getCurrentUser();
         Bundle bundle = this.getArguments();
         calendar = Calendar.getInstance();
-        postId = bundle.getString("post_id");
+
+        postId = bundle.getString("post_id"); //getting the requested post
         FBref.refPosts.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) { //getting all of the posts
                 for (DataSnapshot data : snapshot.getChildren()) {
                     Post postTmp = data.getValue(Post.class);
                     postValues.add(postTmp);
@@ -82,7 +84,7 @@ public class DetailedPostFragment extends Fragment {
         });
         FBref.refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) { //getting all of the users
                 for (DataSnapshot data : snapshot.getChildren()) {
                     User userTmp = data.getValue(User.class);
                     userValues.add(userTmp);
@@ -95,7 +97,7 @@ public class DetailedPostFragment extends Fragment {
             }
         });
 
-        returnBack.setOnClickListener(new View.OnClickListener() {
+        returnBack.setOnClickListener(new View.OnClickListener() { //returning back to the previous screen
             @Override
             public void onClick(View v) {
                 if(getArguments().getString("from_home_or_search").equals("search")){
@@ -120,11 +122,11 @@ public class DetailedPostFragment extends Fragment {
 
             }
         });
-        sendMessage.setOnClickListener(new View.OnClickListener() {
+        sendMessage.setOnClickListener(new View.OnClickListener() { //moving to the chat with the user creator
             @Override
             public void onClick(View v) {
                 if(creatorUid!=null) {
-                    if (creatorUid.equals(fbUser.getUid())) {
+                    if (creatorUid.equals(fbUser.getUid())) { //checking if the current user isn't the creator of the post
                         dialog = new Dialog(getActivity());
                         dialog.setContentView(R.layout.same_user_dialog);
                         btnOkay = dialog.findViewById(R.id.same_user);
@@ -143,7 +145,7 @@ public class DetailedPostFragment extends Fragment {
         return view;
     }
 
-    private void moveToChatScreen(){
+    private void moveToChatScreen(){ //moving to the chat with the creator and not to the home chat
         Intent intent = new Intent(getActivity(), ChatActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("post_id", postId);
@@ -157,7 +159,7 @@ public class DetailedPostFragment extends Fragment {
         editor.commit();
         startActivity(intent);
     }
-    private void initialization() {
+    private void initialization() { //getting the post's detailed attributes
         for(Post post : postValues){
             if(post.getPostId().equals(postId)){
                 name=post.getName();
@@ -168,6 +170,7 @@ public class DetailedPostFragment extends Fragment {
                 if(post.getImage()!=null)
                     image=post.getImage();
                 timeStamp=post.getTimeStamp();
+                break;
             }
         }
         tvName.setText(name);
@@ -181,14 +184,14 @@ public class DetailedPostFragment extends Fragment {
                     .load(Uri.parse(image))
                     .into(ivImage);
     }
-    private String formatDate(Calendar calendar) {
+    private String formatDate(Calendar calendar) { //getting the date from time stamp
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String dateString = dateFormat.format(calendar.getTime());
         return dateString;
     }
 
 
-    private String getUsernameFromUid(String uid){
+    private String getUsernameFromUid(String uid){ //getting the username
         for(User user : userValues){
             if(user.getUid().equals(uid)) return user.getUsername();
         }

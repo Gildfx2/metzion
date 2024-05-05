@@ -3,6 +3,8 @@ package com.example.pre_alpha.main;
 import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.example.pre_alpha.models.FBref.refPosts;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -61,6 +63,7 @@ import java.util.Calendar;
 public class CreatePostFragment extends Fragment {
 
 
+    //request codes
     static final int ERROR_DIALOG_REQUEST= 9001;
     private static final String TAG = "CreatePostFragment";
     private static final int CAMERA_REQUEST_CODE = 100;
@@ -68,14 +71,16 @@ public class CreatePostFragment extends Fragment {
     private static final int IMAGE_PICK_GALLERY_CODE = 300;
     private static final int IMAGE_PICK_CAMERA_CODE = 400;
 
-
+    //type of items
     String[] items={"ארנק", "תיק", "סמארטפון", "משקפי ראייה / שמש","שעון חכם", "מצלמה" ,"תעודת זהות / דרכון", "רישיון נהיגה", "חוגר / חוגרון", "כרטיס רב קו", "כרטיסים כללי", "מפתחות בית / רכב", "שקית / שקית קניות", "אוזניות / קייס אוזניות", "שרשרת / תיליון", "צמיד", "טבעת", "תפילין", "מחשב נייד", "מטען", "כרטיס זיכרון / דיסק און קיי", "מעיל / סווטשירט", "קיטבג / מזוודה", "מכשיר שמיעה", "אחר"};
     String[] cameraPermissions;
     String[] storagePermissions;
+    // private static because I want them to be saved when I leave the fragment
     private static String name="", item="", postId, checkState, about="", date=getTodaysDate(), address="";
     private static double latitude=0, longitude=0;
     private static int radius=3;
     public static boolean editMyPost=true;
+    private static Uri image_uri;
     TextView tvState, tvRadius, addressTv;
     TextInputEditText etName, etAbout;
     ImageView mapIv, checkPickLocation, image;
@@ -85,7 +90,6 @@ public class CreatePostFragment extends Fragment {
     TextInputLayout layoutItem;
     AutoCompleteTextView pickItem;
     ArrayAdapter<String> adapterItems;
-    private static Uri image_uri;
     FirebaseAuth auth;
     Dialog dialog;
     Post post;
@@ -94,7 +98,6 @@ public class CreatePostFragment extends Fragment {
     MyPostsFragment myPostsFragment = new MyPostsFragment();
     String storagePath = "Users_Posts_Images/";
     StorageReference storageReference;
-    DatabaseReference postsRef;
     boolean result, result1, result2;
     FragmentActivity activity;
 
@@ -102,6 +105,7 @@ public class CreatePostFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_post, container, false);
+        //init
         tvState=view.findViewById(R.id.message_state);
         etName = view.findViewById(R.id.name);
         mapIv=view.findViewById(R.id.select_location);
@@ -116,10 +120,12 @@ public class CreatePostFragment extends Fragment {
         tvRadius=view.findViewById(R.id.radius_value);
         upload=view.findViewById(R.id.upload);
         image=view.findViewById(R.id.selectImage);
+
         dateButton.setText(getTodaysDate());
         pickItem.setAdapter(adapterItems);
         SharedPreferences state = getActivity().getSharedPreferences("state", MODE_PRIVATE);
         checkState = state.getString("state", "");
+        //check if the user want to create a lost or found post
         if(checkState.equals("lost"))
             tvState.setText("מה איבדת?");
         else if(checkState.equals("found"))
@@ -133,6 +139,8 @@ public class CreatePostFragment extends Fragment {
         fbUser = auth.getCurrentUser();
         bottomNavigationView = getActivity().findViewById(R.id.bottomNavigationBar);
         etAbout=view.findViewById(R.id.about);
+
+        //check which permissions is needed according to the version of the phone
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
             storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -142,7 +150,6 @@ public class CreatePostFragment extends Fragment {
             storagePermissions = new String[]{Manifest.permission.READ_MEDIA_IMAGES};
         }
 
-        postsRef = FirebaseDatabase.getInstance().getReference("Users/" + fbUser.getUid() + "/Posts");
         return view;
     }
 
@@ -150,6 +157,7 @@ public class CreatePostFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if(getArguments()!=null){
+            //applying the necessary attributes of the post the user wants to edit
             if(editMyPost){
                 postId=getArguments().getString("state_post_id", "");
                 name=getArguments().getString("state_name", "");
@@ -173,16 +181,20 @@ public class CreatePostFragment extends Fragment {
             radiusSlider.setValue(radius);
             tvRadius.setText(Integer.toString(radius));
         }
+
+        //checking if the services that run the map are working fine
         if(isServicesOk()){
             initMap();
         }
-        init();
-        initDatePicker();
+        initListeners(); //initializing the listeners
+        initDatePicker(); //initializing the date picker options along with the details it comprising
     }
 
     @Override
     public void onPause() {
         super.onPause();
+
+        //get the values in order to the applications to remember them
         name = etName.getText().toString();
         item = pickItem.getText().toString();
         radius = (int) radiusSlider.getValue();
@@ -197,7 +209,7 @@ public class CreatePostFragment extends Fragment {
             longitude = this.getArguments().getDouble("longitude", 0);
             address = this.getArguments().getString("address", "");
             addressTv.setText("כתובת: " + address);
-            if(latitude!=0 && longitude!=0)  checkPickLocation.setImageResource(R.drawable.baseline_library_add_check_24);
+            if(latitude!=0 && longitude!=0)  checkPickLocation.setImageResource(R.drawable.baseline_library_add_check_24); //if the landmark isn't (0,0), then it applies the "location was added" icon
         }
 
         mapIv.setOnClickListener(new View.OnClickListener() {
@@ -205,14 +217,16 @@ public class CreatePostFragment extends Fragment {
             public void onClick(View v) {
                 MapFragment mapFragment = new MapFragment();
                 Bundle bundle = new Bundle();
-                bundle.putString("from_where", "create_post");
+                //sending the attributes so that the application will get them and doesn't forgets
+                bundle.putString("from_where", "create_post"); //state from where the user is moving to the map fragment from (and operates in accordance)
                 bundle.putString("state_name", etName.getText().toString());
                 bundle.putString("state_item", pickItem.getText().toString());
                 bundle.putString("state_date", dateButton.getText().toString());
                 bundle.putString("state_about", etAbout.getText().toString());
                 bundle.putInt("state_radius", (int) radiusSlider.getValue());
+
                 mapFragment.setArguments(bundle);
-                getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, mapFragment).commit();
+                getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, mapFragment).commit(); //move to map fragment
             }
         });
 
@@ -221,25 +235,25 @@ public class CreatePostFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Activity activity) {
         super.onAttach(activity);
-        this.activity = (FragmentActivity) activity;
+        this.activity = (FragmentActivity) activity; //applying the current activity to the attribute "activity"
     }
 
-    private void init(){
+    private void initListeners(){
         dateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                datePickerDialog.show();
+                datePickerDialog.show(); //open up the date picker dialog that enables the user to pick a date
             }
         });
 
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showImageDialog();
+                showImageDialog(); //gallery or camera dialog
             }
         });
 
-        resetImage.setOnClickListener(new View.OnClickListener() {
+        resetImage.setOnClickListener(new View.OnClickListener() { // reseting the image the user picked (if he picked something)
             @Override
             public void onClick(View v) {
                 image_uri=null;
@@ -247,22 +261,21 @@ public class CreatePostFragment extends Fragment {
             }
         });
 
-        radiusSlider.addOnChangeListener(new Slider.OnChangeListener() {
+        radiusSlider.addOnChangeListener(new Slider.OnChangeListener() { //applying the radius value to the textview above it
             @Override
             public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
                 tvRadius.setText(Integer.toString((int) value));
             }
         });
 
-        upload.setOnClickListener(new View.OnClickListener() {
+        upload.setOnClickListener(new View.OnClickListener() { //preparations before uploading the post
             @Override
             public void onClick(View v) {
                 if(postId==null || postId.isEmpty())
-                    postId = postsRef.push().getKey();
+                    postId = refPosts.push().getKey(); //getting the postId
                 String filePathAndName = storagePath + "image" + "_" + postId;
-                StorageReference storageReference2 = storageReference.child(filePathAndName);
                 if(image_uri!=null && !image_uri.toString().isEmpty()) {
-                    storageReference2.putFile(image_uri);
+                    storageReference.child(filePathAndName).putFile(image_uri); //uploading the image to the storage
                 }
                 updateDatabase();
             }
@@ -282,8 +295,9 @@ public class CreatePostFragment extends Fragment {
         calender.set(Calendar.YEAR, year);
         calender.set(Calendar.MONTH, month);
         calender.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
         String about = etAbout.getText().toString();
+
+        //checking limitations
         if(item.isEmpty())
             layoutItem.setHelperText("יש לבחור את סוג החפץ");
 
@@ -291,14 +305,14 @@ public class CreatePostFragment extends Fragment {
             Toast.makeText(getActivity(),"יש לבחור את מיקום המציאה/אבידה", Toast.LENGTH_SHORT).show();
 
         if((latitude!=0 && longitude!=0) && !item.isEmpty() && (!name.isEmpty() && name.length()<=30) && about.length()<=150) {
-            if (image_uri != null) {
+            if (image_uri != null) { //creating the object post accordance to if the image is null or not
                 post = new Post(name, item, latitude, longitude, address, radius, about, image_uri.toString(), checkState, fbUser.getUid(), postId, calender.getTimeInMillis());
             } else {
                 post = new Post(name, item, latitude, longitude, address, radius, about, "", checkState, fbUser.getUid(), postId, calender.getTimeInMillis());
             }
-            FBref.refPosts.child(postId).setValue(post).addOnCompleteListener(new OnCompleteListener<Void>() {
+            refPosts.child(postId).setValue(post).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
-                public void onComplete(@NonNull Task<Void> task) {
+                public void onComplete(@NonNull Task<Void> task) { //showing dialog that saying that the post has been uploaded successfully
                     if (activity != null) {
                         dialog = new Dialog(activity);
                         dialog.setContentView(R.layout.upload_post_dialog_layout);
@@ -331,9 +345,9 @@ public class CreatePostFragment extends Fragment {
         DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                month=month+1;
+                month=month+1; //months Integer are indexes
                 String date = makeDateString(dayOfMonth, month, year);
-                dateButton.setText(date);
+                dateButton.setText(date); //applying the date to the button
             }
         };
 
@@ -349,7 +363,7 @@ public class CreatePostFragment extends Fragment {
 
     }
 
-    private static String getTodaysDate() {
+    private static String getTodaysDate() { //getting today's date
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
@@ -362,7 +376,7 @@ public class CreatePostFragment extends Fragment {
         return getMonthFormatFromString(month) + " " + day + " " + year;
     }
 
-    private static String getMonthFormatFromString(int month){
+    private static String getMonthFormatFromString(int month){ //converting the month's number into abbreviation
         if(month==1) return "JAN";
         if(month==2) return "FEB";
         if(month==3) return "MAR";
@@ -379,7 +393,7 @@ public class CreatePostFragment extends Fragment {
         return "JAN";
     }
 
-    private int getMonthFormatFromInt(String month){
+    private int getMonthFormatFromInt(String month){ //converting the month's abbreviation into number
         if(month.equals("JAN")) return 1;
         if(month.equals("FEB")) return 2;
         if(month.equals("MAR")) return 3;
@@ -396,7 +410,7 @@ public class CreatePostFragment extends Fragment {
         return 1;
     }
 
-    public boolean isServicesOk(){
+    public boolean isServicesOk(){ //checking if the services that running the map are working
         Log.d(TAG, "isServicesOk: checking google services version");
 
         int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getActivity());
@@ -422,14 +436,14 @@ public class CreatePostFragment extends Fragment {
         builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if(which==0){
-                    if(!checkCameraPermission()){
+                if(which==0){ //picked camera
+                    if(!checkCameraPermission()){ //if the camera permissions aren't granted already the system request to the user to apply them, but if they do the system move to the camera screen
                         requestCameraPermission();
                     }
                     else pickFromCamera();
                 }
-                if(which==1){
-                    if(!checkStoragePermission()){
+                if(which==1){ //picked gallery
+                    if(!checkStoragePermission()){ //if the gallery permissions aren't granted already the system requests to the user to apply them, but if they do the system move to the gallery screen
                         requestStoragePermission();
                     }
                     else pickFromGallery();
@@ -439,7 +453,7 @@ public class CreatePostFragment extends Fragment {
         builder.show();
     }
 
-    private boolean checkStoragePermission() {
+    private boolean checkStoragePermission() { //checking if the gallery permissions are granted
         boolean result1 = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_MEDIA_IMAGES)
                 == (PackageManager.PERMISSION_GRANTED);
         boolean result2 = ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -447,11 +461,11 @@ public class CreatePostFragment extends Fragment {
         return result1||result2;
 
     }
-    private void requestStoragePermission(){
+    private void requestStoragePermission(){ //requesting gallery permissions
         ActivityCompat.requestPermissions(getActivity(),storagePermissions, STORAGE_REQUEST_CODE);
     }
 
-    private boolean checkCameraPermission() {
+    private boolean checkCameraPermission() { //checking if the camera permissions are granted
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             result1 = ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.CAMERA)
                     == PackageManager.PERMISSION_GRANTED;
@@ -467,27 +481,27 @@ public class CreatePostFragment extends Fragment {
         return false;
 
     }
-    private void requestCameraPermission(){
+    private void requestCameraPermission(){ //requesting camera permissions
         ActivityCompat.requestPermissions(getActivity(),cameraPermissions, CAMERA_REQUEST_CODE);
     }
 
-    private void pickFromCamera() {
+    private void pickFromCamera() { //moving to camera's screen
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.TITLE, "Temp Pic");
         values.put(MediaStore.Images.Media.DESCRIPTION, "Temp Description");
-        image_uri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        image_uri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values); //applying the image's uri to the attribute image_uri
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-        startActivityForResult(cameraIntent, IMAGE_PICK_CAMERA_CODE);
+        startActivityForResult(cameraIntent, IMAGE_PICK_CAMERA_CODE); //calling the onActivityResult function with the code that indicates if all is working fine and with the image uri that inside the cameraIntent among another thing
     }
-    private void pickFromGallery() {
+    private void pickFromGallery() { //moving to gallery's screen
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         galleryIntent.setType("image/*");
         startActivityForResult(galleryIntent, IMAGE_PICK_GALLERY_CODE);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {//applying the picked image to the imageview
         if(resultCode == RESULT_OK){
             if(requestCode == IMAGE_PICK_GALLERY_CODE){
                 image_uri = data.getData();

@@ -45,14 +45,17 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         bottomNavigationView = getActivity().findViewById(R.id.bottomNavigationBar);
+        //initializing
         createPost=view.findViewById(R.id.create_post_button);
         searchPosts=view.findViewById(R.id.search_button);
         showChats=view.findViewById(R.id.show_chats);
         newMessagesTv=view.findViewById(R.id.new_messages);
+        newMessagesTv.setBackground(null);
+        newMessagesTv.setText("");
         FirebaseAuth auth = FirebaseAuth.getInstance();
         fbUser=auth.getCurrentUser();
 
-        showChats.setOnClickListener(new View.OnClickListener() {
+        showChats.setOnClickListener(new View.OnClickListener() { //moving to the home chat screen
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ChatActivity.class);
@@ -64,14 +67,14 @@ public class HomeFragment extends Fragment {
                 startActivity(intent);
             }
         });
-        createPost.setOnClickListener(new View.OnClickListener() {
+        createPost.setOnClickListener(new View.OnClickListener() { //moving to the create post screen
             @Override
             public void onClick(View v) {
                 bottomNavigationView.setSelectedItemId(R.id.post);
                 bottomNavigationView.setItemIconTintList(null);
             }
         });
-        searchPosts.setOnClickListener(new View.OnClickListener() {
+        searchPosts.setOnClickListener(new View.OnClickListener() { //moving to the search posts screen
             @Override
             public void onClick(View v) {
                 bottomNavigationView.setSelectedItemId(R.id.search);
@@ -86,7 +89,7 @@ public class HomeFragment extends Fragment {
         super.onResume();
         chatsListener = new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) { //checking how many ne messages the user has
                 newMessagesCount=0;
                 if (snapshot.exists()) {
                     for (DataSnapshot postIdSnapshot : snapshot.getChildren()) {
@@ -98,7 +101,7 @@ public class HomeFragment extends Fragment {
                 } else {
                     Log.e("FirebaseError", "Snapshot does not exist");
                 }
-                if(newMessagesCount!=0) {
+                if(newMessagesCount!=0) { //applying the user new messages into the text view
                     newMessagesTv.setBackgroundResource(R.drawable.custom_button);
                     newMessagesTv.setText(String.valueOf(newMessagesCount));
                 }

@@ -46,6 +46,7 @@ public class FilterFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_filter, container, false);
+        //initializing
         fromDatePickerButton=view.findViewById(R.id.from_date_picker_button);
         toDatePickerButton=view.findViewById(R.id.to_date_picker_button);
         mapIv=view.findViewById(R.id.select_location);
@@ -59,8 +60,6 @@ public class FilterFragment extends Fragment {
         pickItem.setAdapter(adapterItems);
         fromDatePickerButton.setText(getTodaysDate());
         toDatePickerButton.setText(getTodaysDate());
-
-
         return view;
     }
 
@@ -74,32 +73,32 @@ public class FilterFragment extends Fragment {
             fromDatePickerButton.setText(getArguments().getString("state_date_from", getTodaysDate()));
             toDatePickerButton.setText(getArguments().getString("state_date_to", getTodaysDate()));
         }
-        if(isServicesOk()){
+        if(isServicesOk()){ //checking ig the services that runs the map are working fine
             init();
         }
-        initDatePicker1();
-        initDatePicker2();
+        initDatePicker1(); //init the "from" date picker
+        initDatePicker2(); //init the "to" date picker
     }
 
     private void init(){
-        if(this.getArguments()!=null) {
+        if(this.getArguments()!=null) { //getting the landmark
             latitude = this.getArguments().getDouble("latitude");
             longitude = this.getArguments().getDouble("longitude");
             if(latitude!=0 && longitude!=0)  checkPickLocation.setImageResource(R.drawable.baseline_library_add_check_24);
         }
-        fromDatePickerButton.setOnClickListener(new View.OnClickListener() {
+        fromDatePickerButton.setOnClickListener(new View.OnClickListener() { //showing the "from" date picker dialog
             @Override
             public void onClick(View v) {
                 fromDatePickerDialog.show();
             }
         });
-        toDatePickerButton.setOnClickListener(new View.OnClickListener() {
+        toDatePickerButton.setOnClickListener(new View.OnClickListener() { //showing the "to" date picker dialog
             @Override
             public void onClick(View v) {
                 toDatePickerDialog.show();
             }
         });
-        mapIv.setOnClickListener(new View.OnClickListener() {
+        mapIv.setOnClickListener(new View.OnClickListener() { //moving to the map fragment
             @Override
             public void onClick(View v) {
                 MapFragment mapFragment = new MapFragment();
@@ -115,7 +114,7 @@ public class FilterFragment extends Fragment {
             }
         });
 
-        showResults.setOnClickListener(new View.OnClickListener() {
+        showResults.setOnClickListener(new View.OnClickListener() { //moving to the screen that shows the results after the filtering
             @Override
             public void onClick(View v) {
                 if(lostOrFound.isEmpty()) Toast.makeText(getActivity() ,"יש לבחור אם החפץ המבוקש הוא מציאה או אבידה", Toast.LENGTH_SHORT).show();
@@ -135,7 +134,7 @@ public class FilterFragment extends Fragment {
             }
         });
 
-        filterGroup.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() {
+        filterGroup.setOnCheckedChangeListener(new ChipGroup.OnCheckedChangeListener() { //make sure that the user can pick only lost or found filter
             @Override
             public void onCheckedChanged(@NonNull ChipGroup group, int checkedId) {
                 if (checkedId == foundFilter.getId()) {
@@ -151,7 +150,7 @@ public class FilterFragment extends Fragment {
 
     }
 
-    private void initDatePicker1(){
+    private void initDatePicker1(){ //init the "from" date picker
         DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -174,7 +173,7 @@ public class FilterFragment extends Fragment {
 
     }
 
-    private void initDatePicker2(){
+    private void initDatePicker2(){ //init the "to" date picker
         DatePickerDialog.OnDateSetListener dateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
@@ -210,7 +209,7 @@ public class FilterFragment extends Fragment {
 
     }
 
-    private String getTodaysDate() {
+    private String getTodaysDate() { //getting today's date
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
@@ -219,11 +218,11 @@ public class FilterFragment extends Fragment {
         return makeDateString(day, month, year);
     }
 
-    private String makeDateString(int day, int month, int year){
+    private String makeDateString(int day, int month, int year){ //transferring the date into string
         return getMonthFormatFromNumber(month) + " " + day + " " + year;
     }
 
-    private String getMonthFormatFromNumber(int month){
+    private String getMonthFormatFromNumber(int month){ //converting the month's number into abbreviation
         if(month==1) return "JAN";
         if(month==2) return "FEB";
         if(month==3) return "MAR";
@@ -240,7 +239,7 @@ public class FilterFragment extends Fragment {
         return "JAN";
     }
 
-    private int getMonthFormatFromWord(String month){
+    private int getMonthFormatFromWord(String month){ //converting the month's abbreviation into number
         if(month.equals("JAN")) return 1;
         if(month.equals("FEB")) return 2;
         if(month.equals("MAR")) return 3;
@@ -257,7 +256,7 @@ public class FilterFragment extends Fragment {
         return 1;
     }
 
-    public boolean isServicesOk(){
+    public boolean isServicesOk(){ //checking ig the services that running the map are working
         Log.d(TAG, "isServicesOk: checking google services version");
 
         int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getActivity());

@@ -4,6 +4,7 @@ import android.net.Uri;
 
 public class Message {
 
+    //attributes
     private String message;
     private String senderUid;
     private String receiverUid;
@@ -17,7 +18,7 @@ public class Message {
     public Message() {
     }
 
-    public Message(String message, String senderUid, String receiverUid, String postId, String messageId, long timeStamp) {
+    public Message(String message, String senderUid, String receiverUid, String postId, String messageId, long timeStamp) { //constructor for text message
         this.message = message;
         this.senderUid = senderUid;
         this.receiverUid = receiverUid;
@@ -29,19 +30,7 @@ public class Message {
 
     }
 
-    public Message(Message message) {
-        this.message = message.message;
-        this.senderUid = message.senderUid;
-        this.receiverUid = message.receiverUid;
-        this.postId = message.postId;
-        this.messageId = message.messageId;
-        this.timeStamp = message.timeStamp;
-        this.isImage = message.isImage;
-        this.imageUrl = message.imageUrl;
-
-    }
-
-    public Message(Uri imageUrl, String senderUid, String receiverUid, String postId, String messageId, long timeStamp) {
+    public Message(Uri imageUrl, String senderUid, String receiverUid, String postId, String messageId, long timeStamp) { //constructor for image message
         this.message = "";
         this.senderUid = senderUid;
         this.receiverUid = receiverUid;
@@ -52,6 +41,7 @@ public class Message {
         this.imageUrl = String.valueOf(imageUrl);
     }
 
+    //getters and setters
     public String getMessage() {
         return message;
     }

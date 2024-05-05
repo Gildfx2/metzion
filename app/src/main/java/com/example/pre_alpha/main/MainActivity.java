@@ -39,10 +39,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         auth=FirebaseAuth.getInstance();
         fbUser=auth.getCurrentUser();
+        //initializing the bottom navigation view
         bottomNavigationView=findViewById(R.id.bottomNavigationBar);
         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, homeFragment).commit();
         bottomNavigationView.setSelectedItemId(R.id.home);
         bottomNavigationView.setItemIconTintList(null);
+
+        //checking if the user wants to see the post details from the chat activity, and if so, it moves to the detailed post screen
         String check=getIntent().getStringExtra("get_data");
         if(check!=null && check.equals("true")){
             Bundle bundle1=new Bundle();
@@ -55,10 +58,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.home:
+                    case R.id.home: //moving to the home screen
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, homeFragment).commit();
                         return true;
-                    case R.id.search:
+                    case R.id.search: //ask which search option the user wants to pick and operates accordingly to his choice
                         dialog=new Dialog(MainActivity.this);
                         dialog.setContentView(R.layout.search_dialog_layout);
                         searchMap=dialog.findViewById(R.id.search_with_map);
@@ -79,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                         });
                         dialog.show();
                         return true;
-                    case R.id.post:
+                    case R.id.post: //moving to the create post screen (firstly it asks the user to pick between lost or found)
                         dialog=new Dialog(MainActivity.this);
                         dialog.setContentView(R.layout.post_dialog_layout);
                         lost=dialog.findViewById(R.id.lost);
@@ -107,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
                         });
                         dialog.show();
                         return true;
-                    case R.id.profile:
+                    case R.id.profile: //moving to the profile screen
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, userFragment).commit();
                         return true;
                 }
@@ -116,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void updateToken(String token) {
+    private void updateToken(String token) { //update the current token of the phone-necessary to the system so that it would know to which device the other user should receive to notification
         Token mToken = new Token(token);
         if(fbUser!=null)
             FBref.refTokens.child(fbUser.getUid()).setValue(mToken);

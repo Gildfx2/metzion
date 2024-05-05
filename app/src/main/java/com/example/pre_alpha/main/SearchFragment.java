@@ -53,7 +53,7 @@ public class SearchFragment extends Fragment {
         init();
 
         filter=binding.getRoot().findViewById(R.id.filter);
-        postListener = new ValueEventListener() {
+        postListener = new ValueEventListener() { //getting the current user's posts and sorting them in order of the item that has been lost/found
             @Override
             public void onDataChange(DataSnapshot dS) {
                 postValues.clear();
@@ -74,7 +74,7 @@ public class SearchFragment extends Fragment {
         };
         FBref.refPosts.addValueEventListener(postListener);
 
-        filter.setOnClickListener(new View.OnClickListener() {
+        filter.setOnClickListener(new View.OnClickListener() { //moving to the filter fragment
             @Override
             public void onClick(View v) {
                 filterFragment.setArguments(getArguments());
@@ -85,7 +85,7 @@ public class SearchFragment extends Fragment {
         return binding.getRoot();
     }
 
-    private void init(){
+    private void init(){ //getting the filters the user applied
         bundle = new Bundle(getArguments());
         lostOrFound = getArguments().getString("lost_or_found", "");
         item = getArguments().getString("state_item", "");
@@ -93,6 +93,7 @@ public class SearchFragment extends Fragment {
         toDate = getArguments().getString("state_date_to");
         latitude = getArguments().getDouble("latitude", 0);
         longitude = getArguments().getDouble("longitude", 0);
+
         String[] fromDateComponents = fromDate.split(" ");
         month = getMonthFormat(fromDateComponents[0]) - 1; // Calendar months are 0-based
         dayOfMonth = Integer.parseInt(fromDateComponents[1]);
@@ -111,22 +112,21 @@ public class SearchFragment extends Fragment {
         toDateCalendar.set(Calendar.YEAR, year);
         toDateCalendar.set(Calendar.MONTH, month);
         toDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        // setting the to calander to the end of the day
         toDateCalendar.set(Calendar.HOUR_OF_DAY, 23);
         toDateCalendar.set(Calendar.MINUTE, 59);
         toDateCalendar.set(Calendar.SECOND, 59);
         toDateCalendar.set(Calendar.MILLISECOND, 999);
         postDateCalendar = Calendar.getInstance();
-        filterLocation = new Location("filter_location");
-        postLocation = new Location("post_location");
-        filterLocation.setLatitude(latitude);
-        filterLocation.setLongitude(longitude);
+
+        // setting the location the user picked
         filterLocation = new Location("filter_location");
         postLocation = new Location("post_location");
         filterLocation.setLatitude(latitude);
         filterLocation.setLongitude(longitude);
     }
 
-    private boolean isValidPost(Post postTmp) {
+    private boolean isValidPost(Post postTmp) { //checking if the post is valid or not for every post
         postDateCalendar.setTimeInMillis(postTmp.getTimeStamp());
         postLocation.setLatitude(postTmp.getLatitude());
         postLocation.setLongitude(postTmp.getLongitude());
@@ -155,9 +155,8 @@ public class SearchFragment extends Fragment {
 
         return true;
     }
-    private boolean distanceIsAccepted(Location location1, Location location2, int radius){
-        if((location1.distanceTo(location2)/1000)<=radius) return true;
-        return false;
+    private boolean distanceIsAccepted(Location location1, Location location2, int radius){ //returning true if the distance between the locations is lower or equal to the radius
+        return (location1.distanceTo(location2) / 1000) <= radius;
     }
 
     @Override
@@ -174,9 +173,11 @@ public class SearchFragment extends Fragment {
             if (postValue.getImage() != null) {
                 image_uri = Uri.parse(postValue.getImage());
             }
+            //applying the post's attributes into postData
             postData = new PostData(postValue.getName(), postValue.getItem(), image_uri, postValue.getAbout(), postValue.getCreatorUid(), postValue.getPostId(), postValue.getTimeStamp());
             arrayList.add(postData);
         }
+        //init the adapter and connect it with the array
         postAdapter = new PostAdapter(getActivity(), arrayList);
         binding.listOfPosts.setAdapter(postAdapter);
         binding.listOfPosts.setClickable(true);

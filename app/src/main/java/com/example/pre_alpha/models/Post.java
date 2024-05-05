@@ -1,6 +1,8 @@
 package com.example.pre_alpha.models;
 
 public class Post {
+
+    //attributes
     private String name;
     private String item;
     private double latitude;
@@ -15,12 +17,12 @@ public class Post {
     private long timeStamp;
 
     public Post(){}
-    public Post(String name, String item, double latitude, double longitude, String addrsss, int radius, String about, String image, String lostOrFound, String creatorUid, String postId, long  timeStamp){
+    public Post(String name, String item, double latitude, double longitude, String address, int radius, String about, String image, String lostOrFound, String creatorUid, String postId, long  timeStamp){
         this.name=name;
         this.item=item;
         this.latitude=latitude;
         this.longitude=longitude;
-        this.address=addrsss;
+        this.address=address;
         this.radius=radius;
         this.about=about;
         this.image=image;
@@ -30,6 +32,8 @@ public class Post {
         this.timeStamp=timeStamp;
     }
 
+
+    //getters and setters
     public String getName() {
         return name;
     }

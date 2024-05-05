@@ -49,6 +49,7 @@ public class MyPostsFragment extends Fragment {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         fbUser = auth.getCurrentUser();
 
+        //getting the current user's posts and sorting them in order of the item that has been lost/found
         postListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -79,9 +80,11 @@ public class MyPostsFragment extends Fragment {
             if (postValue.getImage() != null) {
                 image_uri = Uri.parse(postValue.getImage());
             }
+            //init the posts attributes into postData object
             postData = new PostData(postValue.getName(), postValue.getItem(), image_uri, postValue.getAbout(), postValue.getCreatorUid(), postValue.getPostId(), postValue.getTimeStamp());
             arrayList.add(postData);
         }
+        //creating the adapter that shows the posts
         myPostsAdapter = new MyPostsAdapter(getActivity(), arrayList, getActivity().getSupportFragmentManager());
         binding.listOfCreatedPosts.setAdapter(myPostsAdapter);
         binding.listOfCreatedPosts.setClickable(true);

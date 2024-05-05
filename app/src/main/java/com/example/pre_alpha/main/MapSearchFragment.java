@@ -82,6 +82,7 @@ public class MapSearchFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_map_search, container, false);
 
+        //initializing
         getDetails=view.findViewById(R.id.get_details_map);
         getCurrentPosition=view.findViewById(R.id.get_current_position);
         lostFilter=view.findViewById(R.id.map_filter_lost_items);
@@ -105,7 +106,7 @@ public class MapSearchFragment extends Fragment {
             }
         });
 
-        getDetails.setOnClickListener(new View.OnClickListener() {
+        getDetails.setOnClickListener(new View.OnClickListener() { //getting the details about the functions in the screen
             @Override
             public void onClick(View v) {
                 dialog = new Dialog(getActivity());
@@ -120,7 +121,7 @@ public class MapSearchFragment extends Fragment {
             }
         });
 
-        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() { //when hold the marker, it moves to the details of the post
             @Override
             public void onMarkerDragStart(Marker marker) {
                 DetailedPostFragment detailedPostFragment = new DetailedPostFragment();
@@ -139,7 +140,7 @@ public class MapSearchFragment extends Fragment {
             public void onMarkerDragEnd(Marker marker) {
             }
         });
-        refPosts.addListenerForSingleValueEvent(new ValueEventListener() {
+        refPosts.addListenerForSingleValueEvent(new ValueEventListener() { //getting the posts and show them with markers
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot data : snapshot.getChildren()) {
@@ -168,12 +169,12 @@ public class MapSearchFragment extends Fragment {
 
     private void initMap() {
         SupportMapFragment map = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        map.getMapAsync(new OnMapReadyCallback() {
+        map.getMapAsync(new OnMapReadyCallback() { //setting the map ready tp use
             @Override
             public void onMapReady(@NonNull GoogleMap googleMap) {
                 mMap = googleMap;
 
-                if (mLocationPermissionsGranted) {
+                if (mLocationPermissionsGranted) { //getting the current device location if the permissions are granted already
                     getDeviceLocation();
 
                     if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -181,7 +182,7 @@ public class MapSearchFragment extends Fragment {
                         return;
                     }
                     mMap.setMyLocationEnabled(true);
-                    mMap.getUiSettings().setMyLocationButtonEnabled(false);
+                    mMap.getUiSettings().setMyLocationButtonEnabled(false); //setting the "move camera to the current location" button disable (I have created one on my own)
 
                     init();
                 }
@@ -194,9 +195,9 @@ public class MapSearchFragment extends Fragment {
     private void getDeviceLocation(){
         Log.d(TAG, "getDeviceLocation: getting the device's current location");
 
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity()); //getting access to the location of the user
         try {
-            Task location = mFusedLocationProviderClient.getLastLocation();
+            Task location = mFusedLocationProviderClient.getLastLocation(); //getting last location
             location.addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
@@ -223,12 +224,12 @@ public class MapSearchFragment extends Fragment {
         }
     }
 
-    private void moveCamera(LatLng latLng, float zoom, String title){
+    private void moveCamera(LatLng latLng, float zoom, String title){ //moving the camera and creating marker
         Log.d(TAG, "moveCamera: moving camera to lat: " + latLng.latitude + ", lng: " + latLng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
 
-    private void createLostMarker(LatLng latLng, String title, String postId) {
+    private void createLostMarker(LatLng latLng, String title, String postId) { //creating red marker that indicates the lost posts
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(latLng)
                 .title(title)
@@ -237,7 +238,7 @@ public class MapSearchFragment extends Fragment {
         marker.setTag(postId);
     }
 
-    private void createFoundMarker(LatLng latLng, String title, String postId) {
+    private void createFoundMarker(LatLng latLng, String title, String postId) { //creating blue marker that indicates the found posts
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(latLng)
                 .title(title)
@@ -248,25 +249,25 @@ public class MapSearchFragment extends Fragment {
         marker.setTag(postId);
     }
 
-    private void getLocationPermission(){
+    private void getLocationPermission(){ //checking and requesting permissions
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-        if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){ //checking FINE_LOCATION
+            if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){ //checking COARSE_LOCATION
                 mLocationPermissionsGranted=true;
                 if(isServicesOk())
                     initMap();
             }
-            else{
+            else{ //requesting COARSE_LOCATION
                 requestPermissions(permissions, LOCATION_PERMISSION_REQUEST_CODE);
             }
         }
-        else{
+        else{ //requesting FINE_LOCATION
             requestPermissions(permissions, LOCATION_PERMISSION_REQUEST_CODE);
         }
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) { //checking the result of the permissions and operates accordingly
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         Log.d("MapActivity", "getLocationPermissions: getting location permissions");
         mLocationPermissionsGranted = false;
@@ -287,7 +288,7 @@ public class MapSearchFragment extends Fragment {
         }
     }
 
-    public boolean isServicesOk(){
+    public boolean isServicesOk(){ //checking if the services are working
         Log.d(TAG, "isServicesOk: checking google services version");
 
         int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getActivity());
@@ -306,7 +307,7 @@ public class MapSearchFragment extends Fragment {
         return false;
     }
 
-    private void showPosts(){
+    private void showPosts(){ //showing posts according to the filter option (lost or/and found)
         mMap.clear();
         for(Post postTmp : postValues) {
             if (postTmp != null) {

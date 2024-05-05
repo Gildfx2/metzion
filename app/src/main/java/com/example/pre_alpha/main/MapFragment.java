@@ -1,6 +1,7 @@
 package com.example.pre_alpha.main;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -22,6 +23,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.pre_alpha.R;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -43,6 +46,7 @@ public class MapFragment extends Fragment {
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final float DEFAULT_ZOOM = 15f;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
+    static final int ERROR_DIALOG_REQUEST= 9001;
     private static final String TAG = "MapActivity";
 
     boolean mLocationPermissionsGranted = false;
@@ -72,7 +76,7 @@ public class MapFragment extends Fragment {
     private void init(){
         Log.d(TAG, "init: initializing");
 
-        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() { //setting a marker to the pointed location and getting its address
             @Override
             public void onMapClick(@NonNull LatLng latLng) {
                 if(!myPosition.isChecked()) {
@@ -85,7 +89,7 @@ public class MapFragment extends Fragment {
             }
         });
 
-        myPosition.setOnClickListener(new View.OnClickListener() {
+        myPosition.setOnClickListener(new View.OnClickListener() { //setting marker to the user's location and getting its address
             @Override
             public void onClick(View v) {
                 if(myPosition.isChecked()) {
@@ -115,7 +119,7 @@ public class MapFragment extends Fragment {
                     bundle.putDouble("longitude", chosenLongitude);
                     bundle.putString("address", addressTv.getText().toString());
                 }
-                if(returnTo.equals("create_post")){
+                if(returnTo.equals("create_post")){ //returning the necessary information to the create post screen
                     String name = getArguments().getString("state_name", "");
                     String item = getArguments().getString("state_item", "");
                     String date = getArguments().getString("state_date", "");
@@ -129,7 +133,7 @@ public class MapFragment extends Fragment {
                     createPostFragment.setArguments(bundle);
                     getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, createPostFragment).commit();
                 }
-                if(returnTo.equals("filter_posts")){
+                if(returnTo.equals("filter_posts")){//returning the necessary information to the filter posts screen
                     String lostOrFound = getArguments().getString("lost_or_found", "");
                     String item = getArguments().getString("state_item", "");
                     String dateFrom = getArguments().getString("state_date_from", "");
@@ -147,7 +151,7 @@ public class MapFragment extends Fragment {
     }
 
 
-    private void getAddressAsync(double latitude, double longitude){
+    private void getAddressAsync(double latitude, double longitude){ //getting address with lat&lng using geocoder
         new AsyncTask<Double, Void, String>() {
             @Override
             protected String doInBackground(Double... params) {
@@ -165,7 +169,7 @@ public class MapFragment extends Fragment {
             }
 
             @Override
-            protected void onPostExecute(String address) {
+            protected void onPostExecute(String address) { //doing this along with the main function above
                 super.onPostExecute(address);
                 if (!address.isEmpty()) {
                     moveCamera(new LatLng(latitude, longitude), DEFAULT_ZOOM, "Chosen Location");
@@ -182,13 +186,13 @@ public class MapFragment extends Fragment {
     private void initMap() {
         SupportMapFragment map = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
 
-        map.getMapAsync(new OnMapReadyCallback() {
+        map.getMapAsync(new OnMapReadyCallback() { //setting the map ready tp use
             @Override
             public void onMapReady(@NonNull GoogleMap googleMap) {
                 Toast.makeText(getActivity(), "המפה מוכנה", Toast.LENGTH_SHORT).show();
                 mMap = googleMap;
 
-                if (mLocationPermissionsGranted) {
+                if (mLocationPermissionsGranted) { //getting the current device location if the permissions are granted already
                     getDeviceLocation();
 
                     if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -209,9 +213,9 @@ public class MapFragment extends Fragment {
     private void getDeviceLocation(){
         Log.d(TAG, "getDeviceLocation: getting the device's current location");
 
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity()); //getting access to the location of the user
         try {
-            Task location = mFusedLocationProviderClient.getLastLocation();
+            Task location = mFusedLocationProviderClient.getLastLocation(); //getting last location
             location.addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
@@ -235,7 +239,7 @@ public class MapFragment extends Fragment {
         }
     }
 
-    private void moveCamera(LatLng latLng, float zoom, String title){
+    private void moveCamera(LatLng latLng, float zoom, String title){ //moving the camera and creating marker
         Log.d(TAG, "moveCamera: moving camera to lat: " + latLng.latitude + ", lng: " + latLng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
 
@@ -248,24 +252,44 @@ public class MapFragment extends Fragment {
 
     }
 
-    private void getLocationPermission(){
+    private void getLocationPermission(){ //checking and requesting permissions
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-        if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){ //checking FINE_LOCATION
+            if(ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){ //checking COARSE_LOCATION
                 mLocationPermissionsGranted=true;
-                initMap();
+                if(isServicesOk())
+                    initMap();
             }
-            else{
-                ActivityCompat.requestPermissions(getActivity(), permissions, LOCATION_PERMISSION_REQUEST_CODE);
+            else{ //requesting COARSE_LOCATION
+                requestPermissions(permissions, LOCATION_PERMISSION_REQUEST_CODE);
             }
         }
-        else{
-            ActivityCompat.requestPermissions(getActivity(), permissions, LOCATION_PERMISSION_REQUEST_CODE);
+        else{ //requesting FINE_LOCATION
+            requestPermissions(permissions, LOCATION_PERMISSION_REQUEST_CODE);
         }
     }
 
+    public boolean isServicesOk(){ //checking if the services are working
+        Log.d(TAG, "isServicesOk: checking google services version");
+
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getActivity());
+        if(available == ConnectionResult.SUCCESS){
+            Log.d(TAG, "isServicesOk: google play services is working");
+            return true;
+        }
+        else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)){
+            Log.d(TAG, "an error occured but we can fix it");
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), available, ERROR_DIALOG_REQUEST);
+            dialog.show();
+        }
+        else{
+            Toast.makeText(getActivity(), "you can't make map requests", Toast.LENGTH_SHORT).show();
+        }
+        return false;
+    }
+
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) { //checking the result of the permissions and operates accordingly
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         Log.d("MapActivity", "getLocationPermissions: getting location permissions");
         mLocationPermissionsGranted = false;

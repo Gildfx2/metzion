@@ -61,7 +61,7 @@ public class UserFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user, container, false);
-
+        //initializing
         lvOperations=view.findViewById(R.id.list_of_operations);
         logout=view.findViewById(R.id.logout);
         createPost=view.findViewById(R.id.create_post);
@@ -70,7 +70,7 @@ public class UserFragment extends Fragment {
         bottomNavigationView=getActivity().findViewById(R.id.bottomNavigationBar);
         auth=FirebaseAuth.getInstance();
         fbUser = auth.getCurrentUser();
-        FBref.refUsers.child(fbUser.getUid()).child("username").addValueEventListener(new ValueEventListener() {
+        FBref.refUsers.child(fbUser.getUid()).child("username").addValueEventListener(new ValueEventListener() { //getting the username
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 usernameTv.setText(snapshot.getValue().toString());
@@ -82,14 +82,14 @@ public class UserFragment extends Fragment {
             }
         });
 
-        createPost.setOnClickListener(new View.OnClickListener() {
+        createPost.setOnClickListener(new View.OnClickListener() { //move to create post screen
             @Override
             public void onClick(View v) {
                 bottomNavigationView.setSelectedItemId(R.id.post);
             }
         });
 
-        editUsername.setOnClickListener(new View.OnClickListener() {
+        editUsername.setOnClickListener(new View.OnClickListener() { //showing a dialog that the user can change his username
             @Override
             public void onClick(View v) {
                 dialog=new Dialog(getActivity());
@@ -124,12 +124,13 @@ public class UserFragment extends Fragment {
                 logoutCheck.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        //disable the remember me
                         SharedPreferences remember = getActivity().getSharedPreferences("check", MODE_PRIVATE);
                         SharedPreferences.Editor editor = remember.edit();
                         editor.putString("remember", "false");
                         editor.commit();
-                        auth.signOut();
-                        Intent intent = new Intent(getActivity(), Login.class);
+                        auth.signOut(); //sign out in firebase authentication
+                        Intent intent = new Intent(getActivity(), Login.class); //moving to login screen
                         startActivity(intent);
                     }
                 });
@@ -149,9 +150,9 @@ public class UserFragment extends Fragment {
         lvOperations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(position==0){
+                if(position==0){ //pressed on "my posts" button
                     getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, myPostsFragment).commit();
-                } else if (position==1) {
+                } else if (position==1) { //pressed on "chat" button
                     Intent intent = new Intent(getActivity(), ChatActivity.class);
                     SharedPreferences chat = getActivity().getSharedPreferences("chat_pick", MODE_PRIVATE);
                     SharedPreferences.Editor editor = chat.edit();
@@ -165,7 +166,7 @@ public class UserFragment extends Fragment {
         return view;
     }
 
-    private boolean validateUsername(String username) {
+    private boolean validateUsername(String username) { //checking if the username is valid with the limitations
         if (username == null && username.isEmpty()) return false;
         String usernameRegex = "^[A-Za-zא-ת]\\w{2,24}$";
         //השם משתמש חייב להכיל בין 3-25 תווים שחייבים להתחיל באות קטנה או אות גדולה
