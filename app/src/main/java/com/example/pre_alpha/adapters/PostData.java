@@ -3,10 +3,13 @@ package com.example.pre_alpha.adapters;
 import android.net.Uri;
 
 public class PostData {
+
+    //attributes
     String name, item, about, creatorUid, postId;
     long timeStamp;
     Uri image;
 
+    //constructor
     public PostData(String name, String item, Uri image, String about, String creatorUid, String postId, long timeStamp){
         this.name = name;
         this.item = item;
@@ -17,6 +20,7 @@ public class PostData {
         this.timeStamp = timeStamp;
     }
 
+    //getters and setters
     public String getName() {
         return name;
     }

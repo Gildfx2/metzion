@@ -1,5 +1,7 @@
 package com.example.pre_alpha.chat;
 
+import static com.example.pre_alpha.models.FBref.refUsers;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -60,7 +62,7 @@ public class HomeChatFragment extends Fragment {
         auth=FirebaseAuth.getInstance();
         fbUser= auth.getCurrentUser();
         returnHome=binding.getRoot().findViewById(R.id.return_home);
-        returnHome.setOnClickListener(new View.OnClickListener() {
+        returnHome.setOnClickListener(new View.OnClickListener() { //returning to main activity
             @Override
             public void onClick(View v) {
                 Intent intent= new Intent(getActivity(), MainActivity.class);
@@ -74,7 +76,7 @@ public class HomeChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        FBref.refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
+        refUsers.addListenerForSingleValueEvent(new ValueEventListener() { //getting users
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot data : snapshot.getChildren()) {
@@ -91,47 +93,10 @@ public class HomeChatFragment extends Fragment {
         });
     }
 
-    private void showChats(){
-        arrayList.clear();
-        for(ChatList chatList : chats){
-            for(Post post : postValues) {
-                if(chatList.getPostId().equals(post.getPostId())){
-                    if(post.getImage() != null) {
-                        image_uri = Uri.parse(post.getImage());
-                    }
-                    chatData = new ChatData(post.getName(), getUsernameFromUid(chatList.getUserUid()), image_uri, post.getCreatorUid(),
-                            post.getPostId(), chatList.getUserUid(), chatList.getLastMessage(), formatDate(chatList.getTimeStamp()), chatList.getUnseenMessages());
-                    arrayList.add(chatData);
-                    break;
-                }
-            }
-        }
-        if(getActivity()!=null) {
-            chatAdapter = new ChatAdapter(getActivity(), arrayList);
-            binding.listOfChats.setAdapter(chatAdapter);
-            binding.listOfChats.setClickable(true);
-            binding.listOfChats.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("post_name", arrayList.get(position).getName());
-                    bundle.putString("creator_uid", arrayList.get(position).getCreatorUid());
-                    bundle.putString("post_id", arrayList.get(position).getPostId());
-                    bundle.putString("username", arrayList.get(position).getUsername());
-                    bundle.putString("other_user_uid", arrayList.get(position).getOtherUserUid());
-                    if (arrayList.get(position) != null && arrayList.get(position).getImage() != null)
-                        bundle.putString("post_image", arrayList.get(position).getImage().toString());
-                    else bundle.putString("post_image", "");
-                    chatFragment.setArguments(bundle);
-                    getParentFragmentManager().beginTransaction().replace(R.id.chatFrameLayout, chatFragment).commit();
-                }
-            });
-        }
-    }
     private void readChats(){
         chatsListener = new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) { //getting chats
                 chats.clear();
                 if (snapshot.exists()) {
                     for (DataSnapshot postIdSnapshot : snapshot.getChildren()) {
@@ -163,7 +128,7 @@ public class HomeChatFragment extends Fragment {
         };
         FBref.refChatList.child(fbUser.getUid()).addValueEventListener(chatsListener);
     }
-    private void readPosts(){
+    private void readPosts(){ //getting posts
         FBref.refPosts.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -192,6 +157,45 @@ public class HomeChatFragment extends Fragment {
         return dateFormat.format(date);
     }
 
+    private void showChats(){
+        arrayList.clear();
+        for(ChatList chatList : chats){ //getting all of the chats that the current user include in
+            for(Post post : postValues) {
+                if(chatList.getPostId().equals(post.getPostId())){
+                    if(post.getImage() != null) {
+                        image_uri = Uri.parse(post.getImage());
+                    }
+                    chatData = new ChatData(post.getName(), getUsernameFromUid(chatList.getUserUid()), image_uri, post.getCreatorUid(),
+                            post.getPostId(), chatList.getUserUid(), chatList.getLastMessage(), formatDate(chatList.getTimeStamp()), chatList.getUnseenMessages());
+                    arrayList.add(chatData);
+                    break;
+                }
+            }
+        }
+        if(getActivity()!=null) {
+            //showing the chats
+            chatAdapter = new ChatAdapter(getActivity(), arrayList);
+            binding.listOfChats.setAdapter(chatAdapter);
+            binding.listOfChats.setClickable(true);
+            binding.listOfChats.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("post_name", arrayList.get(position).getName());
+                    bundle.putString("creator_uid", arrayList.get(position).getCreatorUid());
+                    bundle.putString("post_id", arrayList.get(position).getPostId());
+                    bundle.putString("username", arrayList.get(position).getUsername());
+                    bundle.putString("other_user_uid", arrayList.get(position).getOtherUserUid());
+                    if (arrayList.get(position) != null && arrayList.get(position).getImage() != null)
+                        bundle.putString("post_image", arrayList.get(position).getImage().toString());
+                    else bundle.putString("post_image", "");
+                    chatFragment.setArguments(bundle);
+                    getParentFragmentManager().beginTransaction().replace(R.id.chatFrameLayout, chatFragment).commit();
+                }
+            });
+        }
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -200,7 +204,7 @@ public class HomeChatFragment extends Fragment {
             FBref.refChatList.child(fbUser.getUid()).removeEventListener(chatsListener);
         }
         if (otherUserListener != null) {
-            FBref.refUsers.removeEventListener(otherUserListener);
+            refUsers.removeEventListener(otherUserListener);
         }
     }
 }

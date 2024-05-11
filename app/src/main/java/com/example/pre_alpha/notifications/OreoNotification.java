@@ -1,3 +1,4 @@
+// This class is responsible for handling notifications on Android Oreo (API level 26) and above.
 package com.example.pre_alpha.notifications;
 
 import android.annotation.TargetApi;
@@ -15,13 +16,16 @@ public class OreoNotification extends ContextWrapper {
     private static final String CHANNEL_NAME = "FirebaseAPP";
     private NotificationManager notificationManager;
 
-    public OreoNotification(Context base){
+    // Constructor for the OreoNotification class.
+    public OreoNotification(Context base) {
         super(base);
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
+        // Create the notification channel if the Android version is Oreo or higher.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createChannel();
         }
     }
 
+    // Creates a notification channel for Oreo and above.
     @TargetApi(Build.VERSION_CODES.O)
     private void createChannel() {
         NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_DEFAULT);
@@ -31,18 +35,21 @@ public class OreoNotification extends ContextWrapper {
         getManager().createNotificationChannel(notificationChannel);
     }
 
-    public NotificationManager getManager(){
-        if(notificationManager == null){
+    // Retrieves the NotificationManager system service.
+    public NotificationManager getManager() {
+        if (notificationManager == null) {
             notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         }
         return notificationManager;
     }
+
+    // Builds and returns a Notification.Builder for Oreo and above.
     @TargetApi(Build.VERSION_CODES.O)
     public Notification.Builder getOreoNotification(String title,
-                                                 String body,
-                                                 PendingIntent pIntent,
-                                                 Uri soundUri,
-                                                 String icon){
+                                                    String body,
+                                                    PendingIntent pIntent,
+                                                    Uri soundUri,
+                                                    String icon) {
         return new Notification.Builder(getApplicationContext(), CHANNEL_ID)
                 .setContentIntent(pIntent)
                 .setContentTitle(title)
@@ -51,5 +58,4 @@ public class OreoNotification extends ContextWrapper {
                 .setAutoCancel(true)
                 .setSmallIcon(Integer.parseInt(icon));
     }
-
 }

@@ -27,12 +27,12 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-
 import java.util.Map;
 
 public class MyFirebaseMessaging extends FirebaseMessagingService {
     String newToken;
 
+    // Called when a new FCM token is generated
     @Override
     public void onNewToken(@NonNull String s) {
         super.onNewToken(s);
@@ -55,6 +55,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         }
     }
 
+    // Update the FCM token in the Firebase Realtime Database
     private void updateToken(String newToken) {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -63,6 +64,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         reference.child(firebaseUser.getUid()).setValue(token);
     }
 
+    // Called when a new message is received from FCM
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
@@ -76,6 +78,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        // Check if the message is intended for the current user
         if (firebaseUser != null && data_notify.size() > 0) {
             if (!currentuser.equals(user)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -87,9 +90,10 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         }
     }
 
+    // Send a notification using Oreo notification system
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void sendOreoNotification(RemoteMessage remoteMessage) {
-
+        // Retrieve notification data from the message
         String user = remoteMessage.getData().get("user");
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
@@ -97,22 +101,17 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         String post = remoteMessage.getData().get("post");
         String username = remoteMessage.getData().get("username");
 
+        // Extract notification information
         RemoteMessage.Notification notification  = remoteMessage.getNotification();
+        int j = Integer.parseInt(user.replaceAll("[\\D]", "")); // removing any non-numeric characters.
 
-        int j = Integer.parseInt(user.replaceAll("[\\D]", ""));
-
+        // Prepare intent for notification click
         Intent intent = new Intent(this, ChatActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("other_user_uid", user);
         bundle.putString("post_id", post);
         bundle.putString("username", username);
         intent.putExtras(bundle);
-
-        SharedPreferences chat = getSharedPreferences("chat_pick", MODE_PRIVATE);
-        SharedPreferences.Editor editor = chat.edit();
-        editor.putString("chat_pick", "send message");
-        editor.apply();
-        editor.commit();
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
@@ -122,6 +121,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         OreoNotification oreoNotification = new OreoNotification(this);
         Notification.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent, defaultSound, icon);
 
+        // Ensure notification ID is always positive by setting it to the integer value of 'j' if 'j' is greater than 0.
         int i = 0;
         if ( j > 0) {
             i=j;
@@ -130,7 +130,9 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         oreoNotification.getManager().notify(i, builder.build());
     }
 
+    // Send a notification for devices below Android Oreo
     private void sendNotification(RemoteMessage remoteMessage) {
+        // Retrieve notification data from the message
         String user = remoteMessage.getData().get("user");
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
@@ -138,10 +140,11 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         String post = remoteMessage.getData().get("post");
         String username = remoteMessage.getData().get("username");
 
+        // Extract notification information
         RemoteMessage.Notification notification  = remoteMessage.getNotification();
+        int j = Integer.parseInt(user.replaceAll("[\\D]", "")); // removing any non-numeric characters.
 
-        int j = Integer.parseInt(user.replaceAll("[\\D]", ""));
-
+        // Prepare intent for notification click
         Intent intent = new Intent(this, ChatActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("other_user_uid", user);
@@ -164,6 +167,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 
         NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 
+        // Ensure notification ID is always positive by setting it to the integer value of 'j' if 'j' is greater than 0.
         int i=0;
         if (j>0) {
             i=j;
@@ -171,5 +175,4 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 
         notificationManager.notify(i, builder.build());
     }
-
 }

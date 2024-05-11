@@ -1,9 +1,13 @@
 package com.example.pre_alpha.notifications;
 
 public class Data {
+
+
+    //attributes
     private String user, body, title, sent, post, username;
     private int icon;
 
+    //constructors
     public Data(){}
 
     public Data(String user, String body, String title, String sent, String post, String username, int icon) {
@@ -14,6 +18,22 @@ public class Data {
         this.post = post;
         this.username = username;
         this.icon = icon;
+    }
+
+
+    //getters and setters
+    public String getPost() {
+        return post;
+    }
+    public void setPost(String post) {
+        this.post = post;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getUser() {

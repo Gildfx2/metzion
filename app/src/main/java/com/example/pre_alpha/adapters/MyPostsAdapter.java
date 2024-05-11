@@ -2,6 +2,8 @@ package com.example.pre_alpha.adapters;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.example.pre_alpha.models.FBref.refPosts;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -54,11 +56,14 @@ public class MyPostsAdapter extends ArrayAdapter<PostData> {
         if (view == null) {
             view = LayoutInflater.from(getContext()).inflate(R.layout.list_ot_my_items, parent, false);
         }
-
+        //initializing
         ImageView image = view.findViewById(R.id.my_post_image);
         TextView item = view.findViewById(R.id.my_post_item);
         TextView name = view.findViewById(R.id.my_post_name);
+        ImageView editButton = view.findViewById(R.id.edit_post);
+        ImageView deleteButton = view.findViewById(R.id.delete_post);
 
+        //setting the correct parameters to the views
         if (postData != null && !postData.image.toString().isEmpty()) {
             Glide.with(getContext())
                     .load(postData.image)
@@ -69,17 +74,16 @@ public class MyPostsAdapter extends ArrayAdapter<PostData> {
         item.setText(postData.item);
         name.setText(postData.name);
 
-        ImageView editButton = view.findViewById(R.id.edit_post);
-        ImageView deleteButton = view.findViewById(R.id.delete_post);
 
-        editButton.setOnClickListener(new View.OnClickListener() {
+
+        editButton.setOnClickListener(new View.OnClickListener() { //the user wants to edit the post
             @Override
             public void onClick(View v) {
-                FBref.refPosts.child(postData.getPostId()).addValueEventListener(new ValueEventListener() {
+                refPosts.child(postData.getPostId()).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         postTmp = snapshot.getValue(Post.class);
-                        moveToEditScreen();
+                        moveToEditScreen(); //moving to create post fragment
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
@@ -90,18 +94,19 @@ public class MyPostsAdapter extends ArrayAdapter<PostData> {
             }
         });
 
-        deleteButton.setOnClickListener(new View.OnClickListener() {
+        deleteButton.setOnClickListener(new View.OnClickListener() { //the user wants to delete the post
             @Override
             public void onClick(View v) {
+                //creating the verification dialog
                 Dialog dialog = new Dialog(getContext());
                 dialog.setContentView(R.layout.delete_post_confirmation_dialog);
                 Button delete, undelete;
                 delete=dialog.findViewById(R.id.confirm_delete_post);
                 undelete=dialog.findViewById(R.id.cancel_delete_post);
-                delete.setOnClickListener(new View.OnClickListener() {
+                delete.setOnClickListener(new View.OnClickListener() { //deleting the post
                     @Override
                     public void onClick(View v) {
-                        FBref.refPosts.child(postData.getPostId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        refPosts.child(postData.getPostId()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 dialog.cancel();
@@ -124,7 +129,7 @@ public class MyPostsAdapter extends ArrayAdapter<PostData> {
                         });
                     }
                 });
-                undelete.setOnClickListener(new View.OnClickListener() {
+                undelete.setOnClickListener(new View.OnClickListener() { //the user regrets the deletion
                     @Override
                     public void onClick(View v) {
                         dialog.cancel();
@@ -137,11 +142,11 @@ public class MyPostsAdapter extends ArrayAdapter<PostData> {
         return view;
     }
 
-    private String makeDateString(int day, int month, int year){
+    private String makeDateString(int day, int month, int year){ //changing the date into string
         return getMonthFormatFromString(month) + " " + day + " " + year;
     }
 
-    private String getMonthFormatFromString(int month){
+    private String getMonthFormatFromString(int month){ //format the date into abbreviation
         if(month==1) return "JAN";
         if(month==2) return "FEB";
         if(month==3) return "MAR";
@@ -158,7 +163,7 @@ public class MyPostsAdapter extends ArrayAdapter<PostData> {
         return "JAN";
     }
 
-    private void moveToEditScreen(){
+    private void moveToEditScreen(){ //moving to the create post fragment with the necessary attributes the post has
         CreatePostFragment createPostFragment = new CreatePostFragment();
         CreatePostFragment.editMyPost=true;
         Bundle bundle = new Bundle();

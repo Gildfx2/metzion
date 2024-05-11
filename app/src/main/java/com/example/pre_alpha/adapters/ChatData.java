@@ -4,10 +4,12 @@ import android.net.Uri;
 
 public class ChatData {
 
+    //attributes
     String name, username, creatorUid, postId, otherUserUid, lastMessage, date;
     int unseenMessages;
     Uri image;
 
+    //constructor
     public ChatData(String name, String username, Uri image, String creatorUid, String postId, String otherUserUid, String lastMessage, String date, int unseenMessages) {
         this.name = name;
         this.username = username;
@@ -20,6 +22,8 @@ public class ChatData {
         this.unseenMessages = unseenMessages;
     }
 
+
+    //getters and setters
     public String getName() {
         return name;
     }

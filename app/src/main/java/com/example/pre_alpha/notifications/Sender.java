@@ -2,16 +2,18 @@ package com.example.pre_alpha.notifications;
 
 
 public class Sender {
+    //attributes
     private Data data;
     private String to;
 
+    //constructors
     public Sender(){}
-
     public Sender(Data data, String to) {
         this.data = data;
         this.to = to;
     }
 
+    //getters and setters
     public Data getData() {
         return data;
     }

@@ -31,7 +31,7 @@ public class ChatActivity extends AppCompatActivity {
         chat = getSharedPreferences("chat_pick", MODE_PRIVATE);
         pick = chat.getString("chat_pick", "");
         FBref.refUsers.child(fbUser.getUid()).child("status").setValue("online");
-        if(pick.equals("send message")) {
+        if(pick.equals("send message")) { //moving to chat from detailed post fragment (wants a specific chat)
             Bundle bundleExt = getIntent().getExtras();
             postId = bundleExt.getString("post_id");
             otherUserUid = bundleExt.getString("other_user_uid");
@@ -52,14 +52,14 @@ public class ChatActivity extends AppCompatActivity {
                 }
             });
         }
-        else if(pick.equals("see chats")){
+        else if(pick.equals("see chats")){ //moving to chat from profile or home fragment
             HomeChatFragment homeChatFragment = new HomeChatFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.chatFrameLayout, homeChatFragment).commit();
         }
 
     }
 
-    private void goToChat(){
+    private void goToChat(){ //moving to the specific chat
         ChatFragment chatFragment = new ChatFragment();
         Bundle bundle = new Bundle();
         bundle.putString("post_name", post.getName());
@@ -76,7 +76,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        FBref.refUsers.child(fbUser.getUid()).child("status").setValue(String.valueOf(System.currentTimeMillis()));
+        FBref.refUsers.child(fbUser.getUid()).child("status").setValue(String.valueOf(System.currentTimeMillis())); //setting the status to the last seen time stamp
     }
 
     @Override
@@ -85,7 +85,7 @@ public class ChatActivity extends AppCompatActivity {
         currentUser();
     }
 
-    private void currentUser() {
+    private void currentUser() { //remembering the user to help the notification
         SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
         editor.putString("currentuser", otherUserUid);
         editor.apply();

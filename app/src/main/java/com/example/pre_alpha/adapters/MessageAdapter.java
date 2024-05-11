@@ -36,6 +36,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        //getting the view according to the type or message and the sender
         View view;
         if (viewType == VIEW_TYPE_LEFT) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_left, parent, false);
@@ -56,7 +57,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public int getItemViewType(int position) { //returning the type of view needed
         if (messages.get(position).getSenderUid().equals(fbUser.getUid())) {
             if(messages.get(position).isImage()) return IMAGE_VIEW_TYPE_RIGHT;
             return VIEW_TYPE_RIGHT;
@@ -84,7 +85,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
         }
 
-        public void bind(Message message) {
+        public void bind(Message message) { //setting the context into the views of the message
             if (message.isImage() && (messageImageView != null)) {
                 Glide.with(itemView.getContext()).load(message.getImageUrl()).into(messageImageView);
             } else {
@@ -94,7 +95,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
     }
-    public static String formatTimestamp(long timestamp) {
+    public static String formatTimestamp(long timestamp) { //formating time stamp
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
         Date date = new Date(timestamp);
         return dateFormat.format(date);

@@ -28,10 +28,12 @@ public class PostAdapter extends ArrayAdapter<PostData>{
         if(view==null){
             view = LayoutInflater.from(getContext()).inflate(R.layout.list_of_items, parent, false);
         }
+        //initializing
         ImageView image = view.findViewById(R.id.image);
         TextView item = view.findViewById(R.id.item);
         TextView name = view.findViewById(R.id.name);
 
+        //setting the parameters into the views
         if(postData!=null && !postData.image.toString().isEmpty()) {
             Glide.with(this.getContext())
                     .load(postData.image)

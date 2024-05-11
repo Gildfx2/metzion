@@ -1,14 +1,16 @@
 package com.example.pre_alpha.notifications;
 
 public class Token {
+    // Attribute of token
     private String token;
 
     public Token(){}
 
     public Token(String token){
         this.token=token;
-    }
+    } // Constructor
 
+    // Getter and Setter
     public String getToken() {
         return token;
     }

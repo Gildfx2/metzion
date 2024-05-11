@@ -28,8 +28,10 @@ public class ChatAdapter extends ArrayAdapter<ChatData> {
     public View getView(int position, @Nullable View view, @NonNull ViewGroup parent) {
         ChatData chatData = getItem(position);
         if(view==null){
+            //getting the layout
             view = LayoutInflater.from(getContext()).inflate(R.layout.list_of_chats, parent, false);
         }
+        //initializing
         ImageView image = view.findViewById(R.id.chat_image);
         TextView name = view.findViewById(R.id.name);
         TextView username = view.findViewById(R.id.username);
@@ -37,16 +39,17 @@ public class ChatAdapter extends ArrayAdapter<ChatData> {
         TextView date = view.findViewById(R.id.date);
         TextView unseenMessages = view.findViewById(R.id.unseen_messages);
 
+        //setting the correct parameters to the views
         if(chatData!=null && !chatData.image.toString().isEmpty()) {
             Glide.with(getContext())
                     .load(chatData.image)
                     .into(image);
         }
-
         username.setText(chatData.username);
         name.setText(chatData.name);
         lastMessage.setText(chatData.lastMessage);
         date.setText(chatData.date);
+        //handling the unseen messages background
         if (chatData.unseenMessages == 0) {
             unseenMessages.setBackground(null);
             unseenMessages.setText("");
