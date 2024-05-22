@@ -289,6 +289,7 @@ public class CreatePostFragment extends Fragment {
                         }
                     });
                 }
+                else updateDatabase();
 
             }
         });
