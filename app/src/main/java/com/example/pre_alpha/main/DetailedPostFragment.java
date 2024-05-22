@@ -67,7 +67,8 @@ public class DetailedPostFragment extends Fragment {
         Bundle bundle = this.getArguments();
         calendar = Calendar.getInstance();
 
-        postId = bundle.getString("post_id"); //getting the requested post
+        postId = bundle.getString("post_id", ""); //getting the requested post id
+
         FBref.refPosts.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) { //getting all of the posts
@@ -119,7 +120,19 @@ public class DetailedPostFragment extends Fragment {
                     transaction.commit();
                 }
                 else if (getArguments().getString("from_map_search_myPosts_chat").equals("chat")) {
-                    moveToChatScreen();
+                    if(creatorUid!=null && !creatorUid.equals(fbUser.getUid()))
+                        moveToChatScreen();
+                    else {
+                        Intent intent = new Intent(getActivity(), ChatActivity.class);
+                        SharedPreferences chat = getActivity().getSharedPreferences("chat_pick", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = chat.edit();
+                        editor.putString("chat_pick", "see chats");
+                        editor.apply();
+                        editor.commit();
+                        startActivity(intent);
+                    }
+
+
                 }
 
             }
@@ -153,6 +166,7 @@ public class DetailedPostFragment extends Fragment {
         bundle.putString("post_id", postId);
         bundle.putString("username", getUsernameFromUid(creatorUid));
         bundle.putString("other_user_uid", creatorUid);
+        bundle.putString("from_post_or_chatlist", "post");
         intent.putExtras(bundle);
         SharedPreferences chat = getActivity().getSharedPreferences("chat_pick", MODE_PRIVATE);
         SharedPreferences.Editor editor = chat.edit();

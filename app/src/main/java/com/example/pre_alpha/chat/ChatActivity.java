@@ -18,7 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 public class ChatActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
-    String postId, username, otherUserUid, pick;
+    String postId, username, otherUserUid, pick, fromWhere;
     FirebaseUser fbUser;
     SharedPreferences chat;
     Post post;
@@ -37,6 +37,7 @@ public class ChatActivity extends AppCompatActivity {
                 postId = bundleExt.getString("post_id");
                 otherUserUid = bundleExt.getString("other_user_uid");
                 username = bundleExt.getString("username");
+                fromWhere = bundleExt.getString("from_post_or_chatlist");
             }
             FBref.refPosts.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -70,6 +71,7 @@ public class ChatActivity extends AppCompatActivity {
         bundle.putString("post_id", postId);
         bundle.putString("other_user_uid", otherUserUid);
         bundle.putString("username", username);
+        bundle.putString("from_post_or_chatlist", fromWhere);
         chatFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.chatFrameLayout, chatFragment).commit();
 

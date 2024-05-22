@@ -186,6 +186,7 @@ public class HomeChatFragment extends Fragment {
                     bundle.putString("post_id", arrayList.get(position).getPostId());
                     bundle.putString("username", arrayList.get(position).getUsername());
                     bundle.putString("other_user_uid", arrayList.get(position).getOtherUserUid());
+                    bundle.putString("from_post_or_chatlist", "chatlist");
                     if (arrayList.get(position) != null && arrayList.get(position).getImage() != null)
                         bundle.putString("post_image", arrayList.get(position).getImage().toString());
                     else bundle.putString("post_image", "");

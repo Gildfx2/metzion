@@ -81,7 +81,7 @@ public class ChatFragment extends Fragment {
     private static final int IMAGE_PICK_CAMERA_CODE = 400;
     String[] cameraPermissions;
     String[] storagePermissions;
-    String postName, userImage, username, postId, otherUserUid, messageId, msg, otherUserStatus, currentUserUsername;
+    String postName, userImage, username, postId, otherUserUid, messageId, msg, otherUserStatus, currentUserUsername, fromWhere;
     boolean result, result1, result2;
     Uri image_uri, download_uri;
     ImageView postImage, returnBack;
@@ -135,6 +135,7 @@ public class ChatFragment extends Fragment {
         postId = bundle.getString("post_id");
         username = bundle.getString("username");
         otherUserUid = bundle.getString("other_user_uid");
+        fromWhere = bundle.getString("from_post_or_chatlist");
         refUsers.child(fbUser.getUid()).child("username").addListenerForSingleValueEvent(new ValueEventListener() { //getting the current user username
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -260,20 +261,21 @@ public class ChatFragment extends Fragment {
         getData.setOnClickListener(new View.OnClickListener() { //move to detailed post fragment
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                intent.putExtra("post_id", postId);
-                intent.putExtra("get_data", "true");
-                startActivity(intent);
+                getPostData();
             }
         });
 
-        returnBack.setOnClickListener(new View.OnClickListener() { //move to home chat fragment
+        returnBack.setOnClickListener(new View.OnClickListener() { //move to home chat fragment or detailed post fragment
             @Override
             public void onClick(View v) {
-                HomeChatFragment homeChatFragment = new HomeChatFragment();
-                FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-                transaction.replace(R.id.chatFrameLayout, homeChatFragment);
-                transaction.commit();
+                if(fromWhere.equals("post"))
+                    getPostData();
+                else {
+                    HomeChatFragment homeChatFragment = new HomeChatFragment();
+                    FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                    transaction.replace(R.id.chatFrameLayout, homeChatFragment);
+                    transaction.commit();
+                }
             }
         });
 
@@ -495,6 +497,13 @@ public class ChatFragment extends Fragment {
             backFromPickImage=false;
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void getPostData(){
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        intent.putExtra("post_id", postId);
+        intent.putExtra("get_data", "true");
+        startActivity(intent);
     }
 
 
