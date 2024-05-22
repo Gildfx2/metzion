@@ -112,12 +112,12 @@ public class MapFragment extends Fragment {
                 if(myPosition.isChecked()){
                     bundle.putDouble("latitude", myLatitude);
                     bundle.putDouble("longitude", myLongitude);
-                    bundle.putString("address", addressTv.getText().toString());
+                    bundle.putString("state_address", addressTv.getText().toString());
                 }
                 else{
                     bundle.putDouble("latitude", chosenLatitude);
                     bundle.putDouble("longitude", chosenLongitude);
-                    bundle.putString("address", addressTv.getText().toString());
+                    bundle.putString("state_address", addressTv.getText().toString());
                 }
                 if(returnTo.equals("create_post")){ //returning the necessary information to the create post screen
                     String name = getArguments().getString("state_name", "");

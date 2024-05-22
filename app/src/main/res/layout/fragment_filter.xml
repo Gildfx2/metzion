@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="חיפוש"
+            android:text="חיפוש לפי נתונים"
             android:textSize="25sp"
             android:padding="8dp"
             android:textColor="#969696"

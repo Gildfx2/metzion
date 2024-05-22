@@ -34,7 +34,7 @@
                 android:id="@+id/addressTv"
                 android:layout_width="match_parent"
                 android:layout_marginEnd="10dp"
-                android:layout_height="25dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="right"
                 android:text=""

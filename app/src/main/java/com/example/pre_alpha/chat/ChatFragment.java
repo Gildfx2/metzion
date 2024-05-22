@@ -101,7 +101,8 @@ public class ChatFragment extends Fragment {
     ChatList chatList1, chatList2;
     String storagePath = "Users_messages_Images/";
     APIService apiService;
-    int unseenMessages=0;
+    boolean backFromPickImage=false;
+    private static int unseenMessages=0;
     boolean notify = false;
 
     @Override
@@ -197,7 +198,7 @@ public class ChatFragment extends Fragment {
                 messageId = refChat.push().getKey();
                 String filePathAndName = storagePath + "image" + "_" + messageId;
                 StorageReference messagesStorageReference = storageReference.child(filePathAndName);
-                if (image_uri==null){ //handling if the message isn't a photo
+                if (image.getDrawable()==null){ //handling if the message isn't a photo
                     if(!msg.isEmpty()) {
                         //sending the message
                         messageOrImageToSend = new Message(msg, fbUser.getUid(), otherUserUid, postId, messageId, System.currentTimeMillis());
@@ -288,7 +289,7 @@ public class ChatFragment extends Fragment {
                     Token token = ds.getValue(Token.class);
                     Data data = new Data(fbUser.getUid(), username+":"+textMessage, "New Message", otherUserUid, postId, username, R.drawable.baseline_person_24);
                     Sender sender = new Sender(data, token.getToken());
-                    if(!otherUserStatus.equals("online")) {
+                    if(!otherUserStatus.contains("online")) {
                         apiService.sendNotification(sender) //sending the notification with the service
                                 .enqueue(new Callback<Response>() {
                                     @Override
@@ -321,7 +322,19 @@ public class ChatFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).child("unseenMessages").setValue(0); //setting the unseen messages to 0
+        refChatList.child(otherUserUid).child(postId).child(fbUser.getUid()).child("unseenMessages").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists())
+                    unseenMessages = snapshot.getValue(Integer.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         adapter = new MessageAdapter(messages);
         recyclerView.setAdapter(adapter);
         chatListener = new ValueEventListener() { //showing the messages of the chat
@@ -336,7 +349,8 @@ public class ChatFragment extends Fragment {
                     }
                 }
                 adapter.notifyDataSetChanged();
-                recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
+                if(adapter.getItemCount()>0)
+                    recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -344,15 +358,13 @@ public class ChatFragment extends Fragment {
             }
         };
         refChat.addValueEventListener(chatListener);
+        if(!messages.isEmpty())
+            refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).child("unseenMessages").setValue(0); //setting the unseen messages to 0
 
         userListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) { //setting the unseen messages to 0 when the other user get in the chat
                 otherUserStatus = snapshot.getValue(String.class);
-                if (otherUserStatus.equals("online_" + fbUser.getUid())){
-                    refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).child("unseenMessages").setValue(0);
-                    unseenMessages = 0;
-                }
                 updateChatUI();
 
             }
@@ -454,11 +466,13 @@ public class ChatFragment extends Fragment {
         values.put(MediaStore.Images.Media.DESCRIPTION, "Temp Description");
         image_uri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
+        backFromPickImage=true;
         startActivityForResult(cameraIntent, IMAGE_PICK_CAMERA_CODE);
     }
     private void pickFromGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         galleryIntent.setType("image/*");
+        backFromPickImage=true;
         startActivityForResult(galleryIntent, IMAGE_PICK_GALLERY_CODE);
     }
 
@@ -478,6 +492,7 @@ public class ChatFragment extends Fragment {
             Glide.with(getContext())
                     .load(R.drawable.trash)
                     .into(resetImage);
+            backFromPickImage=false;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -490,9 +505,10 @@ public class ChatFragment extends Fragment {
         textMessage.setText("");
         messages.clear();
         refUsers.child(fbUser.getUid()).child("status").setValue("online");
-        unseenMessages=0;
-        if (userListener != null) {
-            refUsers.removeEventListener(userListener);
+        if(!backFromPickImage){
+            unseenMessages=0;
+            if(userListener!=null)
+                refUsers.child(otherUserUid).child("status").removeEventListener(userListener);
         }
         if (chatListener != null) {
             refChat.removeEventListener(chatListener);

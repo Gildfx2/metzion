@@ -72,15 +72,6 @@
                 android:text="שם משתמש"
                 android:textSize="15sp"
                 android:fontFamily="@font/rubik_medium"/>
-            <TextView
-                android:id="@+id/area"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_marginEnd="20dp"
-                android:text="ישוב"
-                android:textSize="15sp"
-                android:fontFamily="@font/rubik_medium"/>
         </LinearLayout>
         <TextView
             android:id="@+id/last_message"

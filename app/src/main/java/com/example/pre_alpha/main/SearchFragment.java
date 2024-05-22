@@ -112,7 +112,7 @@ public class SearchFragment extends Fragment {
         toDateCalendar.set(Calendar.YEAR, year);
         toDateCalendar.set(Calendar.MONTH, month);
         toDateCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        // setting the to calander to the end of the day
+        // setting the to calendar to the end of the day
         toDateCalendar.set(Calendar.HOUR_OF_DAY, 23);
         toDateCalendar.set(Calendar.MINUTE, 59);
         toDateCalendar.set(Calendar.SECOND, 59);
@@ -155,7 +155,8 @@ public class SearchFragment extends Fragment {
 
         return true;
     }
-    private boolean distanceIsAccepted(Location location1, Location location2, int radius){ //returning true if the distance between the locations is lower or equal to the radius
+    private boolean distanceIsAccepted(Location location1, Location location2, int radius){
+        //returning true if the distance between the locations is lower or equal to the radius
         return (location1.distanceTo(location2) / 1000) <= radius;
     }
 
@@ -185,7 +186,7 @@ public class SearchFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 bundle.putString("post_id", arrayList.get(position).getPostId());
-                bundle.putString("from_home_or_search", "search");
+                bundle.putString("from_map_search_myPosts_chat", "search");
                 detailedPostFragment.setArguments(bundle);
                 getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, detailedPostFragment).commit();
             }

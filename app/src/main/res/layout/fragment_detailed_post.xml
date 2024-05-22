@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/rubik_medium"
             android:layout_gravity="right"
-            android:textSize="40sp"
+            android:textSize="30sp"
             android:layout_marginTop="40dp"
             android:layout_marginEnd="20dp"
             android:text="שם הפוסט" />
@@ -59,7 +59,7 @@
             android:id="@+id/post_address"
             android:layout_width="match_parent"
             android:layout_marginEnd="10dp"
-            android:layout_height="25dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:textSize="17sp"
             android:layout_gravity="center"
@@ -74,8 +74,8 @@
             android:layout_gravity="center">
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/post_image"
-                android:layout_width="260dp"
-                android:layout_height="240dp"
+                android:layout_width="240dp"
+                android:layout_height="200dp"
                 android:scaleType="centerCrop"
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/default_image" />

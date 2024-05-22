@@ -127,7 +127,7 @@ public class MapSearchFragment extends Fragment {
                 DetailedPostFragment detailedPostFragment = new DetailedPostFragment();
                 Bundle bundle = new Bundle();
                 bundle.putString("post_id", marker.getTag().toString());
-                bundle.putString("from_home_or_search", "home");
+                bundle.putString("from_map_search_myPosts_chat", "map");
                 detailedPostFragment.setArguments(bundle);
                 getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, detailedPostFragment).commit();
             }

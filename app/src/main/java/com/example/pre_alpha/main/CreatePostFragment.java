@@ -45,6 +45,7 @@ import com.example.pre_alpha.models.FBref;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.slider.Slider;
@@ -56,6 +57,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.Calendar;
 
@@ -168,11 +170,12 @@ public class CreatePostFragment extends Fragment {
                 about=getArguments().getString("state_about", "");
                 editMyPost=false;
             }
+            address=getArguments().getString("state_address", "");
             etName.setText(name);
             pickItem.setText(item);
             dateButton.setText(date);
             etAbout.setText(about);
-            addressTv.setText(address);
+            addressTv.setText("כתובת: " + address);
             if(image_uri!=null && !image_uri.toString().isEmpty()){
                 Glide.with(getActivity())
                         .load(image_uri)  // Pass the URI to load the image from
@@ -207,8 +210,6 @@ public class CreatePostFragment extends Fragment {
         if(this.getArguments()!=null) {
             latitude = this.getArguments().getDouble("latitude", 0);
             longitude = this.getArguments().getDouble("longitude", 0);
-            address = this.getArguments().getString("address", "");
-            addressTv.setText("כתובת: " + address);
             if(latitude!=0 && longitude!=0)  checkPickLocation.setImageResource(R.drawable.baseline_library_add_check_24); //if the landmark isn't (0,0), then it applies the "location was added" icon
         }
 
@@ -253,7 +254,7 @@ public class CreatePostFragment extends Fragment {
             }
         });
 
-        resetImage.setOnClickListener(new View.OnClickListener() { // reseting the image the user picked (if he picked something)
+        resetImage.setOnClickListener(new View.OnClickListener() { // resetting the image the user picked (if he picked something)
             @Override
             public void onClick(View v) {
                 image_uri=null;
@@ -275,9 +276,20 @@ public class CreatePostFragment extends Fragment {
                     postId = refPosts.push().getKey(); //getting the postId
                 String filePathAndName = storagePath + "image" + "_" + postId;
                 if(image_uri!=null && !image_uri.toString().isEmpty()) {
-                    storageReference.child(filePathAndName).putFile(image_uri); //uploading the image to the storage
+                    storageReference.child(filePathAndName).putFile(image_uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            storageReference.child(filePathAndName).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    image_uri=uri;
+                                    updateDatabase();
+                                }
+                            });
+                        }
+                    });
                 }
-                updateDatabase();
+
             }
         });
     }

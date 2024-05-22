@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
             Bundle bundle1=new Bundle();
             String postId=getIntent().getStringExtra("post_id");
             bundle1.putString("post_id",postId);
+            bundle1.putString("from_map_search_myPosts_chat", "chat");
             detailedPostFragment.setArguments(bundle1);
             getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, detailedPostFragment).commit();
         }

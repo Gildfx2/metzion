@@ -59,5 +59,4 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:15.0.1")
     implementation("com.google.android.gms:play-services-places:17.0.0")
     implementation("com.google.android.libraries.places:places:3.3.0")
-
 }

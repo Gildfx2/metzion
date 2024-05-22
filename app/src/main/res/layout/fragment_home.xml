@@ -96,7 +96,7 @@
             android:id="@+id/search_button"
             android:layout_width="300dp"
             android:layout_height="100dp"
-            android:text="חיפוש מודעה"
+            android:text="חיפוש מודעות"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="40dp"
             android:textSize="30sp"

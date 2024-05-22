@@ -181,6 +181,7 @@ public class MyPostsAdapter extends ArrayAdapter<PostData> {
         bundle.putString("state_about", postTmp.getAbout());
         bundle.putInt("state_radius", postTmp.getRadius());
         bundle.putString("state_post_id", postTmp.getPostId());
+        bundle.putString("state_address", postTmp.getAddress());
         createPostFragment.setArguments(bundle);
         SharedPreferences state = getContext().getSharedPreferences("state", MODE_PRIVATE);
         SharedPreferences.Editor editor = state.edit();

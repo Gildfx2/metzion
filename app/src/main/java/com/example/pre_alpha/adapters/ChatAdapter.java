@@ -42,7 +42,7 @@ public class ChatAdapter extends ArrayAdapter<ChatData> {
         //setting the correct parameters to the views
         if(chatData!=null && !chatData.image.toString().isEmpty()) {
             Glide.with(getContext())
-                    .load(chatData.image)
+                    .load(chatData.getImage())
                     .into(image);
         }
         username.setText(chatData.username);

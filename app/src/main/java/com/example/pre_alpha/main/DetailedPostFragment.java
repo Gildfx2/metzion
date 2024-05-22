@@ -100,25 +100,27 @@ public class DetailedPostFragment extends Fragment {
         returnBack.setOnClickListener(new View.OnClickListener() { //returning back to the previous screen
             @Override
             public void onClick(View v) {
-                if(getArguments().getString("from_home_or_search").equals("search")){
+                if(getArguments().getString("from_map_search_myPosts_chat").equals("search")){
                     Bundle bundle = new Bundle(getArguments());
                     SearchFragment searchFragment = new SearchFragment();
                     searchFragment.setArguments(bundle);
                     FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                     transaction.replace(R.id.frameLayout, searchFragment);
                     transaction.commit();
-                } else if (getArguments().getString("from_home_or_search").equals("home")) {
+                } else if (getArguments().getString("from_map_search_myPosts_chat").equals("map")) {
                     MapSearchFragment mapSearchFragment = new MapSearchFragment();
                     FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                     transaction.replace(R.id.frameLayout, mapSearchFragment);
                     transaction.commit();
-                } else if (getArguments().getString("from_home_or_search").equals("my_posts")) {
+                } else if (getArguments().getString("from_map_search_myPosts_chat").equals("my_posts")) {
                     MyPostsFragment  myPostsFragment= new MyPostsFragment();
                     FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
                     transaction.replace(R.id.frameLayout, myPostsFragment);
                     transaction.commit();
                 }
-
+                else if (getArguments().getString("from_map_search_myPosts_chat").equals("chat")) {
+                    moveToChatScreen();
+                }
 
             }
         });

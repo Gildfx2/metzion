@@ -33,9 +33,11 @@ public class ChatActivity extends AppCompatActivity {
         FBref.refUsers.child(fbUser.getUid()).child("status").setValue("online");
         if(pick.equals("send message")) { //moving to chat from detailed post fragment (wants a specific chat)
             Bundle bundleExt = getIntent().getExtras();
-            postId = bundleExt.getString("post_id");
-            otherUserUid = bundleExt.getString("other_user_uid");
-            username = bundleExt.getString("username");
+            if(bundleExt!=null) {
+                postId = bundleExt.getString("post_id");
+                otherUserUid = bundleExt.getString("other_user_uid");
+                username = bundleExt.getString("username");
+            }
             FBref.refPosts.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {

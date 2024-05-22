@@ -93,7 +93,7 @@ public class MyPostsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Bundle bundle = new Bundle();
                 bundle.putString("post_id", arrayList.get(position).getPostId());
-                bundle.putString("from_home_or_search", "my_posts");
+                bundle.putString("from_map_search_myPosts_chat", "my_posts");
                 detailedPostFragment.setArguments(bundle);
                 getParentFragmentManager().beginTransaction().replace(R.id.frameLayout, detailedPostFragment).commit();
             }
