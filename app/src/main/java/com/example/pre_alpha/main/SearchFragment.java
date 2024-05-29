@@ -175,7 +175,7 @@ public class SearchFragment extends Fragment {
                 image_uri = Uri.parse(postValue.getImage());
             }
             //applying the post's attributes into postData
-            postData = new PostData(postValue.getName(), postValue.getItem(), image_uri, postValue.getAbout(), postValue.getCreatorUid(), postValue.getPostId(), postValue.getTimeStamp());
+            postData = new PostData(postValue.getName(), postValue.getItem(), image_uri, postValue.getPostId());
             arrayList.add(postData);
         }
         //init the adapter and connect it with the array

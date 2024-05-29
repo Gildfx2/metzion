@@ -198,7 +198,7 @@ public class Register extends AppCompatActivity {
         //checking if the username is valid
         if (username == null && username.isEmpty()) return false;
         String usernameRegex = "^[A-Za-zא-ת]\\w{2,24}$";
-        //השם משתמש חייב להכיל בין 3-25 תווים שחייבים להתחיל באות קטנה או אות גדולה
+        //שם המשתמש חייב להכיל בין 3-25 תווים שחייבים להתחיל באות קטנה או אות גדולה, או בעברית
         //נ.ב אסור שיהיו רווחים
         Pattern pattern = Pattern.compile(usernameRegex);
         Matcher m = pattern.matcher(username);

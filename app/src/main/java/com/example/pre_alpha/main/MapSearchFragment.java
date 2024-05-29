@@ -68,17 +68,13 @@ public class MapSearchFragment extends Fragment {
     private FusedLocationProviderClient mFusedLocationProviderClient;
     ArrayList<Post> postValues = new ArrayList<Post>();
     double myLatitude, myLongitude;
-    FirebaseUser fbUser;
-    ValueEventListener chatsListener;
-    int newMessagesCount=0;
     Chip lostFilter, foundFilter;
     ChipGroup filterGroup;
     Dialog dialog;
     Button btnOkay;
     ImageView getDetails, getCurrentPosition;
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_map_search, container, false);
 
@@ -208,7 +204,7 @@ public class MapSearchFragment extends Fragment {
                             myLatitude = currentLocation.getLatitude();
                             myLongitude = currentLocation.getLongitude();
 
-                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, "My Location");
+                            moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM);
                         }
                     }
                     else{
@@ -224,7 +220,7 @@ public class MapSearchFragment extends Fragment {
         }
     }
 
-    private void moveCamera(LatLng latLng, float zoom, String title){ //moving the camera and creating marker
+    private void moveCamera(LatLng latLng, float zoom){ //moving the camera and creating marker
         Log.d(TAG, "moveCamera: moving camera to lat: " + latLng.latitude + ", lng: " + latLng.longitude);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
@@ -256,6 +252,9 @@ public class MapSearchFragment extends Fragment {
                 mLocationPermissionsGranted=true;
                 if(isServicesOk())
                     initMap();
+                else {
+                    Toast.makeText(getActivity(), "ישנה בעיה בשרתים, נסה שוב מאוחר יותר", Toast.LENGTH_SHORT).show();
+                }
             }
             else{ //requesting COARSE_LOCATION
                 requestPermissions(permissions, LOCATION_PERMISSION_REQUEST_CODE);
@@ -282,7 +281,11 @@ public class MapSearchFragment extends Fragment {
                         }
                     }
                     mLocationPermissionsGranted = true;
-                    initMap();
+                    if(isServicesOk())
+                        initMap();
+                    else {
+                        Toast.makeText(getActivity(), "ישנה בעיה בשרתים, נסה שוב מאוחר יותר", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         }
@@ -330,10 +333,6 @@ public class MapSearchFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        newMessagesCount=0;
-        if (chatsListener != null) {
-            refChatList.child(fbUser.getUid()).removeEventListener(chatsListener);
-        }
         postValues.clear();
     }
 }

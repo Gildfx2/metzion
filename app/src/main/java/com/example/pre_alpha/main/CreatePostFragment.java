@@ -83,6 +83,7 @@ public class CreatePostFragment extends Fragment {
     private static int radius=3;
     public static boolean editMyPost=true;
     private static Uri image_uri;
+
     TextView tvState, tvRadius, addressTv;
     TextInputEditText etName, etAbout;
     ImageView mapIv, checkPickLocation, image;
@@ -104,8 +105,7 @@ public class CreatePostFragment extends Fragment {
     FragmentActivity activity;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_post, container, false);
         //init
         tvState=view.findViewById(R.id.message_state);
@@ -188,6 +188,9 @@ public class CreatePostFragment extends Fragment {
         //checking if the services that run the map are working fine
         if(isServicesOk()){
             initMap();
+        }
+        else {
+            Toast.makeText(getActivity(), "ישנה בעיה בשרתים, נסה שוב מאוחר יותר", Toast.LENGTH_SHORT).show();
         }
         initListeners(); //initializing the listeners
         initDatePicker(); //initializing the date picker options along with the details it comprising
@@ -385,7 +388,7 @@ public class CreatePostFragment extends Fragment {
         return makeDateString(day, month, year);
     }
 
-    private static String makeDateString(int day, int month, int year){
+    private static String makeDateString(int day, int month, int year){ //converting the date into string
         return getMonthFormatFromString(month) + " " + day + " " + year;
     }
 

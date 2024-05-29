@@ -5,19 +5,15 @@ import android.net.Uri;
 public class PostData {
 
     //attributes
-    String name, item, about, creatorUid, postId;
-    long timeStamp;
-    Uri image;
+    private String name, item, postId;
+    private Uri image;
 
     //constructor
-    public PostData(String name, String item, Uri image, String about, String creatorUid, String postId, long timeStamp){
+    public PostData(String name, String item, Uri image, String postId){
         this.name = name;
         this.item = item;
         this.image = image;
-        this.about = about;
-        this.creatorUid = creatorUid;
         this.postId = postId;
-        this.timeStamp = timeStamp;
     }
 
     //getters and setters
@@ -28,13 +24,6 @@ public class PostData {
         this.name = name;
     }
 
-    public long getTimeStamp() {
-        return timeStamp;
-    }
-
-    public void setTimeStamp(long timeStamp) {
-        this.timeStamp = timeStamp;
-    }
 
     public String getItem() {
         return item;
@@ -43,25 +32,11 @@ public class PostData {
         this.item = item;
     }
 
-    public String getAbout() {
-        return about;
-    }
-    public void setAbout(String about) {
-        this.about = about;
-    }
-
     public Uri getImage() {
         return image;
     }
     public void setImage(Uri image) {
         this.image = image;
-    }
-
-    public String getCreatorUid() {
-        return creatorUid;
-    }
-    public void setCreatorUid(String creatorUid) {
-        this.creatorUid = creatorUid;
     }
 
     public String getPostId() {

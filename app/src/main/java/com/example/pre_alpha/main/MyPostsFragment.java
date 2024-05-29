@@ -42,8 +42,7 @@ public class MyPostsFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentMyPostsBinding.inflate(inflater, container, false);
         FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -81,7 +80,7 @@ public class MyPostsFragment extends Fragment {
                 image_uri = Uri.parse(postValue.getImage());
             }
             //init the posts attributes into postData object
-            postData = new PostData(postValue.getName(), postValue.getItem(), image_uri, postValue.getAbout(), postValue.getCreatorUid(), postValue.getPostId(), postValue.getTimeStamp());
+            postData = new PostData(postValue.getName(), postValue.getItem(), image_uri, postValue.getPostId());
             arrayList.add(postData);
         }
         //creating the adapter that shows the posts

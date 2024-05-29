@@ -64,15 +64,15 @@ public class MyPostsAdapter extends ArrayAdapter<PostData> {
         ImageView deleteButton = view.findViewById(R.id.delete_post);
 
         //setting the correct parameters to the views
-        if (postData != null && !postData.image.toString().isEmpty()) {
+        if (postData != null && !postData.getImage().toString().isEmpty()) {
             Glide.with(getContext())
-                    .load(postData.image)
+                    .load(postData.getImage())
                     .into(image);
         }
         else
             image.setImageResource(R.drawable.default_image);
-        item.setText(postData.item);
-        name.setText(postData.name);
+        item.setText(postData.getItem());
+        name.setText(postData.getName());
 
 
 

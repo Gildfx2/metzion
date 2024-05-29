@@ -40,22 +40,22 @@ public class ChatAdapter extends ArrayAdapter<ChatData> {
         TextView unseenMessages = view.findViewById(R.id.unseen_messages);
 
         //setting the correct parameters to the views
-        if(chatData!=null && !chatData.image.toString().isEmpty()) {
+        if(chatData!=null && !chatData.getImage().toString().isEmpty()) {
             Glide.with(getContext())
                     .load(chatData.getImage())
                     .into(image);
         }
-        username.setText(chatData.username);
-        name.setText(chatData.name);
-        lastMessage.setText(chatData.lastMessage);
-        date.setText(chatData.date);
+        username.setText(chatData.getUsername());
+        name.setText(chatData.getName());
+        lastMessage.setText(chatData.getLastMessage());
+        date.setText(chatData.getDate());
         //handling the unseen messages background
-        if (chatData.unseenMessages == 0) {
+        if (chatData.getUnseenMessages() == 0) {
             unseenMessages.setBackground(null);
             unseenMessages.setText("");
         }
         else{
-            unseenMessages.setText(Integer.toString(chatData.unseenMessages));
+            unseenMessages.setText(Integer.toString(chatData.getUnseenMessages()));
         }
 
         return view;

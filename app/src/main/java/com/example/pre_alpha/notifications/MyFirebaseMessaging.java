@@ -73,14 +73,11 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 
         String user = remoteMessage.getData().get("user");
 
-        SharedPreferences preferences  = getSharedPreferences("PREFS", MODE_PRIVATE);
-        String currentuser = preferences.getString("currentuser", "none");
-
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         // Check if the message is intended for the current user
         if (firebaseUser != null && data_notify.size() > 0) {
-            if (!currentuser.equals(user)) {
+            if (!firebaseUser.getUid().equals(user)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     sendOreoNotification(remoteMessage);
                 } else {
@@ -111,7 +108,13 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         bundle.putString("other_user_uid", user);
         bundle.putString("post_id", post);
         bundle.putString("username", username);
+        bundle.putString("from_post_or_chatlist", "post");
         intent.putExtras(bundle);
+        SharedPreferences chat = getSharedPreferences("chat_pick", MODE_PRIVATE);
+        SharedPreferences.Editor editor = chat.edit();
+        editor.putString("chat_pick", "send message");
+        editor.apply();
+        editor.commit();
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
@@ -121,7 +124,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         OreoNotification oreoNotification = new OreoNotification(this);
         Notification.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent, defaultSound, icon);
 
-        // Ensure notification ID is always positive by setting it to the integer value of 'j' if 'j' is greater than 0.
+        // Ensure notification ID will not be negative by setting it to the integer value of 'j' if 'j' is greater than 0.
         int i = 0;
         if ( j > 0) {
             i=j;
@@ -150,7 +153,13 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         bundle.putString("other_user_uid", user);
         bundle.putString("post_id", post);
         bundle.putString("username", username);
+        bundle.putString("from_post_or_chatlist", "post");
         intent.putExtras(bundle);
+        SharedPreferences chat = getSharedPreferences("chat_pick", MODE_PRIVATE);
+        SharedPreferences.Editor editor = chat.edit();
+        editor.putString("chat_pick", "send message");
+        editor.apply();
+        editor.commit();
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
@@ -167,7 +176,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 
         NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // Ensure notification ID is always positive by setting it to the integer value of 'j' if 'j' is greater than 0.
+        // Ensure notification ID will not be negative by setting it to the integer value of 'j' if 'j' is greater than 0.
         int i=0;
         if (j>0) {
             i=j;

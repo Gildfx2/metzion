@@ -20,7 +20,7 @@ import com.example.pre_alpha.adapters.ChatAdapter;
 import com.example.pre_alpha.adapters.ChatData;
 import com.example.pre_alpha.databinding.FragmentHomeChatBinding;
 import com.example.pre_alpha.main.MainActivity;
-import com.example.pre_alpha.models.ChatList;
+import com.example.pre_alpha.models.Chat;
 import com.example.pre_alpha.models.Post;
 import com.example.pre_alpha.models.User;
 import com.example.pre_alpha.models.FBref;
@@ -40,7 +40,7 @@ import java.util.Locale;
 
 public class HomeChatFragment extends Fragment {
 
-    List<ChatList> chats = new ArrayList<>();
+    List<Chat> chats = new ArrayList<>();
     List<User> userValues = new ArrayList<>();
     List<Post> postValues = new ArrayList<>();
     ArrayList<ChatData> arrayList = new ArrayList<>();
@@ -50,7 +50,7 @@ public class HomeChatFragment extends Fragment {
     ChatAdapter chatAdapter;
     FragmentHomeChatBinding binding;
     ChatFragment chatFragment = new ChatFragment();
-    ValueEventListener chatsListener, otherUserListener;
+    ValueEventListener chatsListener;
     FirebaseAuth auth;
     Button returnHome;
 
@@ -106,13 +106,13 @@ public class HomeChatFragment extends Fragment {
                             String lastMessage = userId2Snapshot.child("lastMessage").getValue(String.class);
                             long timestamp = userId2Snapshot.child("timeStamp").getValue(Long.class);
                             int unseenMessages = userId2Snapshot.child("unseenMessages").getValue(Integer.class);
-                            ChatList chatList = new ChatList(userUid, postId, timestamp, lastMessage, unseenMessages);
-                            chats.add(chatList);
+                            Chat chat = new Chat(userUid, postId, timestamp, lastMessage, unseenMessages);
+                            chats.add(chat);
                         }
                     }
-                    Collections.sort(chats, new Comparator<ChatList>() {
+                    Collections.sort(chats, new Comparator<Chat>() {
                         @Override
-                        public int compare(ChatList chat1, ChatList chat2) {
+                        public int compare(Chat chat1, Chat chat2) {
                             return Long.compare(chat2.getTimeStamp(), chat1.getTimeStamp());
                         }
                     });
@@ -159,14 +159,14 @@ public class HomeChatFragment extends Fragment {
 
     private void showChats(){
         arrayList.clear();
-        for(ChatList chatList : chats){ //getting all of the chats that the current user include in
+        for(Chat chat : chats){ //getting all of the chats that the current user include in
             for(Post post : postValues) {
-                if(chatList.getPostId().equals(post.getPostId())){
+                if(chat.getPostId().equals(post.getPostId())){
                     if(post.getImage() != null) {
                         image_uri = Uri.parse(post.getImage());
                     }
-                    chatData = new ChatData(post.getName(), getUsernameFromUid(chatList.getUserUid()), image_uri, post.getCreatorUid(),
-                            post.getPostId(), chatList.getUserUid(), chatList.getLastMessage(), formatDate(chatList.getTimeStamp()), chatList.getUnseenMessages());
+                    chatData = new ChatData(post.getName(), getUsernameFromUid(chat.getUserUid()), image_uri, post.getCreatorUid(),
+                            post.getPostId(), chat.getUserUid(), chat.getLastMessage(), formatDate(chat.getTimeStamp()), chat.getUnseenMessages());
                     arrayList.add(chatData);
                     break;
                 }
@@ -203,9 +203,6 @@ public class HomeChatFragment extends Fragment {
         arrayList.clear();
         if (chatsListener != null) {
             FBref.refChatList.child(fbUser.getUid()).removeEventListener(chatsListener);
-        }
-        if (otherUserListener != null) {
-            refUsers.removeEventListener(otherUserListener);
         }
     }
 }

@@ -32,8 +32,6 @@ public class Login extends AppCompatActivity {
     EditText etEmail, etPassword;
     String email, password, str;
     TextInputLayout layoutEmail, layoutPassword;
-    ArrayList<User> userValues = new ArrayList<User>();
-    ValueEventListener userListener;
     FirebaseAuth auth;
 
 
@@ -57,36 +55,12 @@ public class Login extends AppCompatActivity {
             startActivity(intent);
         }
 
-        //getting users
-        userListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dS) {
-                userValues.clear();
-                for (DataSnapshot data : dS.getChildren()) {
-                    User userTmp = data.getValue(User.class);
-                    userValues.add(userTmp);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.e("FirebaseError", error.getMessage());
-            }
-        };
-        FBref.refUsers.addValueEventListener(userListener);
     }
     @Override
     protected void onDestroy() {
         etEmail.setText("");
         etPassword.setText("");
         super.onDestroy();
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (userListener != null) {
-            FBref.refUsers.removeEventListener(userListener);
-        }
     }
     public void forgotPassword(View view) {
         //move to forgot password screen

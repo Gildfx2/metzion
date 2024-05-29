@@ -34,15 +34,15 @@ public class PostAdapter extends ArrayAdapter<PostData>{
         TextView name = view.findViewById(R.id.name);
 
         //setting the parameters into the views
-        if(postData!=null && !postData.image.toString().isEmpty()) {
+        if(postData!=null && !postData.getImage().toString().isEmpty()) {
             Glide.with(this.getContext())
-                    .load(postData.image)
+                    .load(postData.getImage())
                     .into(image);
         }
         else
             image.setImageResource(R.drawable.default_image);
-        item.setText(postData.item);
-        name.setText(postData.name);
+        item.setText(postData.getItem());
+        name.setText(postData.getName());
         return view;
     }
 }

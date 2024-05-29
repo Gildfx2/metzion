@@ -5,9 +5,9 @@ import android.net.Uri;
 public class ChatData {
 
     //attributes
-    String name, username, creatorUid, postId, otherUserUid, lastMessage, date;
-    int unseenMessages;
-    Uri image;
+    private String name, username, creatorUid, postId, otherUserUid, lastMessage, date;
+    private int unseenMessages;
+    private Uri image;
 
     //constructor
     public ChatData(String name, String username, Uri image, String creatorUid, String postId, String otherUserUid, String lastMessage, String date, int unseenMessages) {

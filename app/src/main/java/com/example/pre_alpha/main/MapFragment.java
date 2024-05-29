@@ -1,6 +1,7 @@
 package com.example.pre_alpha.main;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -62,8 +63,7 @@ public class MapFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         addressTv=view.findViewById(R.id.addressTv);
         applyBtn=view.findViewById(R.id.applyBtn);
@@ -151,6 +151,7 @@ public class MapFragment extends Fragment {
     }
 
 
+    @SuppressLint("StaticFieldLeak")
     private void getAddressAsync(double latitude, double longitude){ //getting address with lat&lng using geocoder
         new AsyncTask<Double, Void, String>() {
             @Override
@@ -304,7 +305,10 @@ public class MapFragment extends Fragment {
                         }
                     }
                     mLocationPermissionsGranted = true;
-                    initMap();
+                    if(isServicesOk())
+                        initMap();
+                    else
+                        Toast.makeText(getActivity(), "ישנה בעיה בשרתים, נסה שוב מאוחר יותר", Toast.LENGTH_SHORT).show();
                 }
             }
         }

@@ -43,11 +43,11 @@ import com.bumptech.glide.Glide;
 import com.example.pre_alpha.R;
 import com.example.pre_alpha.adapters.MessageAdapter;
 import com.example.pre_alpha.main.MainActivity;
-import com.example.pre_alpha.models.ChatList;
+import com.example.pre_alpha.models.Chat;
 import com.example.pre_alpha.models.Message;
 import com.example.pre_alpha.notifications.APIService;
 import com.example.pre_alpha.notifications.Client;
-import com.example.pre_alpha.notifications.Data;
+import com.example.pre_alpha.notifications.NotificationData;
 import com.example.pre_alpha.notifications.Response;
 import com.example.pre_alpha.notifications.Sender;
 import com.example.pre_alpha.notifications.Token;
@@ -98,7 +98,7 @@ public class ChatFragment extends Fragment {
     Button getData;
     Message messageOrImageToSend;
     ValueEventListener userListener, chatListener;
-    ChatList chatList1, chatList2;
+    Chat chat1, chat2;
     String storagePath = "Users_messages_Images/";
     APIService apiService;
     boolean backFromPickImage=false;
@@ -106,8 +106,7 @@ public class ChatFragment extends Fragment {
     boolean notify = false;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
 
         //initializing
@@ -205,11 +204,11 @@ public class ChatFragment extends Fragment {
                         messageOrImageToSend = new Message(msg, fbUser.getUid(), otherUserUid, postId, messageId, System.currentTimeMillis());
                         textMessage.setText("");
                         if(!otherUserStatus.equals("online_" + fbUser.getUid())) unseenMessages++;
-                        chatList1 = new ChatList(otherUserUid, postId, System.currentTimeMillis(), messageOrImageToSend.getMessage());
-                        chatList2 = new ChatList(fbUser.getUid(), postId, System.currentTimeMillis(), messageOrImageToSend.getMessage(), unseenMessages);
+                        chat1 = new Chat(otherUserUid, postId, System.currentTimeMillis(), messageOrImageToSend.getMessage());
+                        chat2 = new Chat(fbUser.getUid(), postId, System.currentTimeMillis(), messageOrImageToSend.getMessage(), unseenMessages);
                         refChat.child(messageId).setValue(messageOrImageToSend);
-                        refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).setValue(chatList1);
-                        refChatList.child(otherUserUid).child(postId).child(fbUser.getUid()).setValue(chatList2);
+                        refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).setValue(chat1);
+                        refChatList.child(otherUserUid).child(postId).child(fbUser.getUid()).setValue(chat2);
                         if(notify){
                             sendNotification(otherUserUid, currentUserUsername, msg); //sending notification
                         }
@@ -228,11 +227,11 @@ public class ChatFragment extends Fragment {
                                     download_uri = uriTask.getResult();
                                     messageOrImageToSend = new Message(download_uri, fbUser.getUid(), otherUserUid, postId, messageId, System.currentTimeMillis());
                                     if(!otherUserStatus.equals("online_" + fbUser.getUid())) unseenMessages++;
-                                    chatList1 = new ChatList(otherUserUid, postId, System.currentTimeMillis(), "תמונה");
-                                    chatList2 = new ChatList(fbUser.getUid(), postId, System.currentTimeMillis(), "תמונה", unseenMessages);
+                                    chat1 = new Chat(otherUserUid, postId, System.currentTimeMillis(), "תמונה");
+                                    chat2 = new Chat(fbUser.getUid(), postId, System.currentTimeMillis(), "תמונה", unseenMessages);
                                     refChat.child(messageId).setValue(messageOrImageToSend);
-                                    refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).setValue(chatList1);
-                                    refChatList.child(otherUserUid).child(postId).child(fbUser.getUid()).setValue(chatList2);
+                                    refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).setValue(chat1);
+                                    refChatList.child(otherUserUid).child(postId).child(fbUser.getUid()).setValue(chat2);
                                     sendMessage.setBackgroundResource(R.drawable.baseline_add_circle_24);
                                     image.setImageDrawable(null);
                                     resetImage.setImageDrawable(null);
@@ -289,27 +288,25 @@ public class ChatFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot ds : snapshot.getChildren()){
                     Token token = ds.getValue(Token.class);
-                    Data data = new Data(fbUser.getUid(), username+":"+textMessage, "New Message", otherUserUid, postId, username, R.drawable.baseline_person_24);
+                    NotificationData data = new NotificationData(fbUser.getUid(), username+":"+textMessage, otherUserUid, postId, username);
                     Sender sender = new Sender(data, token.getToken());
-                    if(!otherUserStatus.contains("online")) {
-                        apiService.sendNotification(sender) //sending the notification with the service
-                                .enqueue(new Callback<Response>() {
-                                    @Override
-                                    public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
-                                        if (response.code() == 200) {
-                                            if (response.body().success == 1) {}
-                                            else
-                                                Toast.makeText(getActivity(), "Failed!", Toast.LENGTH_SHORT).show();
-                                        }
-
+                    apiService.sendNotification(sender) //sending the notification with the service
+                            .enqueue(new Callback<Response>() {
+                                @Override
+                                public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                                    if (response.code() == 200) {
+                                        if (response.body().success == 1) { Log.d("Notification", "Notification sent successfully");}
+                                        else
+                                            Toast.makeText(getActivity(), "Failed to send notification!", Toast.LENGTH_SHORT).show();
                                     }
 
-                                    @Override
-                                    public void onFailure(Call<Response> call, Throwable t) {
+                                }
 
-                                    }
-                                });
-                    }
+                                @Override
+                                public void onFailure(Call<Response> call, Throwable t) {
+                                    Log.e("Notification", "Error: " + t.getMessage());
+                                }
+                            });
                 }
             }
 
@@ -393,7 +390,7 @@ public class ChatFragment extends Fragment {
             userStatusTV.setText(formatDate(Long.parseLong(otherUserStatus)));
     }
 
-    private String formatDate(long timestamp) {
+    private String formatDate(long timestamp) { //getting date from time stamp
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
         Date date = new Date(timestamp);
         return dateFormat.format(date);

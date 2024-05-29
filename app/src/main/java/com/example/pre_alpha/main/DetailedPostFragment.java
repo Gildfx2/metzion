@@ -42,14 +42,13 @@ public class DetailedPostFragment extends Fragment {
     ImageView ivImage;
     ImageView returnBack;
     Button sendMessage;
-    List<User> userValues = new ArrayList<>();
-    List<Post> postValues = new ArrayList<>();
     FirebaseUser fbUser;
     Dialog dialog;
     Button btnOkay;
     long timeStamp;
     Calendar calendar;
-    String name, item, about, image="", creatorUid, postId, address;
+    String name, item, about, image="", creatorUid, postId, address, username;
+    Post post;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -69,34 +68,28 @@ public class DetailedPostFragment extends Fragment {
 
         postId = bundle.getString("post_id", ""); //getting the requested post id
 
-        FBref.refPosts.addListenerForSingleValueEvent(new ValueEventListener() {
+        FBref.refPosts.child(postId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) { //getting all of the posts
-                for (DataSnapshot data : snapshot.getChildren()) {
-                    Post postTmp = data.getValue(Post.class);
-                    postValues.add(postTmp);
-                }
-                initialization();
+                post = snapshot.getValue(Post.class);
+                FBref.refUsers.child(post.getCreatorUid()).child("username").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) { //getting all of the users
+                        username=snapshot.getValue(String.class);
+                        initialization();
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("FirebaseError", error.getMessage());
+                    }
+                });
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("FirebaseError", error.getMessage());
             }
         });
-        FBref.refUsers.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) { //getting all of the users
-                for (DataSnapshot data : snapshot.getChildren()) {
-                    User userTmp = data.getValue(User.class);
-                    userValues.add(userTmp);
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("FirebaseError", error.getMessage());
-            }
-        });
 
         returnBack.setOnClickListener(new View.OnClickListener() { //returning back to the previous screen
             @Override
@@ -164,7 +157,7 @@ public class DetailedPostFragment extends Fragment {
         Intent intent = new Intent(getActivity(), ChatActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("post_id", postId);
-        bundle.putString("username", getUsernameFromUid(creatorUid));
+        bundle.putString("username", username);
         bundle.putString("other_user_uid", creatorUid);
         bundle.putString("from_post_or_chatlist", "post");
         intent.putExtras(bundle);
@@ -176,19 +169,14 @@ public class DetailedPostFragment extends Fragment {
         startActivity(intent);
     }
     private void initialization() { //getting the post's detailed attributes
-        for(Post post : postValues){
-            if(post.getPostId().equals(postId)){
-                name=post.getName();
-                item=post.getItem();
-                about=post.getAbout();
-                creatorUid=post.getCreatorUid();
-                address=post.getAddress();
-                if(post.getImage()!=null)
-                    image=post.getImage();
-                timeStamp=post.getTimeStamp();
-                break;
-            }
-        }
+        name=post.getName();
+        item=post.getItem();
+        about=post.getAbout();
+        creatorUid=post.getCreatorUid();
+        address=post.getAddress();
+        if(post.getImage()!=null)
+            image=post.getImage();
+        timeStamp=post.getTimeStamp();
         tvName.setText(name);
         tvItem.setText("סוג החפץ: "+item);
         tvAbout.setText("פרטים:\n"+about);
@@ -206,11 +194,4 @@ public class DetailedPostFragment extends Fragment {
         return dateString;
     }
 
-
-    private String getUsernameFromUid(String uid){ //getting the username
-        for(User user : userValues){
-            if(user.getUid().equals(uid)) return user.getUsername();
-        }
-        return "אין שם";
-    }
 }

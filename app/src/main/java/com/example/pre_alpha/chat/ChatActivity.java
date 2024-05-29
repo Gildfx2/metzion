@@ -39,13 +39,10 @@ public class ChatActivity extends AppCompatActivity {
                 username = bundleExt.getString("username");
                 fromWhere = bundleExt.getString("from_post_or_chatlist");
             }
-            FBref.refPosts.addListenerForSingleValueEvent(new ValueEventListener() {
+            FBref.refPosts.child(postId).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    for(DataSnapshot ds : snapshot.getChildren()){
-                        post = ds.getValue(Post.class);
-                        if(post.getPostId().equals(postId)) break;
-                    }
+                    post = snapshot.getValue(Post.class);
                     goToChat();
                 }
 
@@ -83,16 +80,4 @@ public class ChatActivity extends AppCompatActivity {
         FBref.refUsers.child(fbUser.getUid()).child("status").setValue(String.valueOf(System.currentTimeMillis())); //setting the status to the last seen time stamp
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        currentUser();
-    }
-
-    private void currentUser() { //remembering the user to help the notification
-        SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
-        editor.putString("currentuser", otherUserUid);
-        editor.apply();
-        editor.commit();
-    }
 }

@@ -21,22 +21,21 @@ import java.util.List;
 import java.util.Locale;
 
 public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser();
+    FirebaseUser fbUser = FirebaseAuth.getInstance().getCurrentUser(); // Current authenticated Firebase user
 
-    private List<Message> messages;
-    private static final int VIEW_TYPE_LEFT = 1;
-    private static final int VIEW_TYPE_RIGHT = 2;
-    private static final int IMAGE_VIEW_TYPE_LEFT = 3;
-    private static final int IMAGE_VIEW_TYPE_RIGHT = 4;
+    private List<Message> messages; // List to hold messages
+    private static final int VIEW_TYPE_LEFT = 1; // Left text message view type
+    private static final int VIEW_TYPE_RIGHT = 2; // Right text message view type
+    private static final int IMAGE_VIEW_TYPE_LEFT = 3; // Left image message view type
+    private static final int IMAGE_VIEW_TYPE_RIGHT = 4; // Right image message view type
 
-    public MessageAdapter(List<Message> messages) {
+    public MessageAdapter(List<Message> messages) { // Constructor to initialize messages list
         this.messages = messages;
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        //getting the view according to the type or message and the sender
         View view;
         if (viewType == VIEW_TYPE_LEFT) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_left, parent, false);
@@ -53,22 +52,22 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Message message = messages.get(position);
-        ((MessageViewHolder) holder).bind(message);
+        ((MessageViewHolder) holder).bind(message); // Bind the message to the view holder
     }
 
     @Override
-    public int getItemViewType(int position) { //returning the type of view needed
+    public int getItemViewType(int position) { // Determine the view type based on message sender and content type
         if (messages.get(position).getSenderUid().equals(fbUser.getUid())) {
-            if(messages.get(position).isImage()) return IMAGE_VIEW_TYPE_RIGHT;
+            if (messages.get(position).isImage()) return IMAGE_VIEW_TYPE_RIGHT;
             return VIEW_TYPE_RIGHT;
         } else {
-            if(messages.get(position).isImage()) return IMAGE_VIEW_TYPE_LEFT;
+            if (messages.get(position).isImage()) return IMAGE_VIEW_TYPE_LEFT;
             return VIEW_TYPE_LEFT;
         }
     }
 
     @Override
-    public int getItemCount() {
+    public int getItemCount() { // Return the total number of messages
         return messages.size();
     }
 
@@ -81,11 +80,11 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             messageTextView = itemView.findViewById(R.id.messages);
             messageTimeStamp = itemView.findViewById(R.id.message_time_stamp);
             if (viewType == IMAGE_VIEW_TYPE_LEFT || viewType == IMAGE_VIEW_TYPE_RIGHT) {
-                messageImageView = itemView.findViewById(R.id.chat_images);
+                messageImageView = itemView.findViewById(R.id.chat_images); // ImageView for image messages
             }
         }
 
-        public void bind(Message message) { //setting the context into the views of the message
+        public void bind(Message message) { // Bind message data to the views
             if (message.isImage() && (messageImageView != null)) {
                 Glide.with(itemView.getContext()).load(message.getImageUrl()).into(messageImageView);
             } else {
@@ -93,12 +92,11 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
             messageTimeStamp.setText(formatTimestamp(message.getTimeStamp()));
         }
-
     }
-    public static String formatTimestamp(long timestamp) { //formating time stamp
+
+    public static String formatTimestamp(long timestamp) { // Format timestamp into readable date and time string
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
         Date date = new Date(timestamp);
         return dateFormat.format(date);
     }
 }
-

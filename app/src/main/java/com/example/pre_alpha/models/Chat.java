@@ -1,6 +1,6 @@
 package com.example.pre_alpha.models;
 
-public class ChatList {
+public class Chat {
 
     //attributes
     private String userUid;
@@ -8,16 +8,16 @@ public class ChatList {
     private String lastMessage;
     private long timeStamp;
     private int unseenMessages;
-    public ChatList(){}
+    public Chat(){}
 
-    public ChatList(String userUid, String postId, long timeStamp, String lastMessage, int unseenMessages) { //constructor for the other user
+    public Chat(String userUid, String postId, long timeStamp, String lastMessage, int unseenMessages) { //constructor for the other user
         this.userUid = userUid;
         this.postId = postId;
         this.lastMessage = lastMessage;
         this.timeStamp = timeStamp;
         this.unseenMessages = unseenMessages;
     }
-    public ChatList(String userUid, String postId, long timeStamp, String lastMessage) { //constructor for the current user
+    public Chat(String userUid, String postId, long timeStamp, String lastMessage) { //constructor for the current user
         this.userUid = userUid;
         this.postId = postId;
         this.lastMessage = lastMessage;

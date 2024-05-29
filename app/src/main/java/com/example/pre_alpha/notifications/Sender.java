@@ -3,22 +3,22 @@ package com.example.pre_alpha.notifications;
 
 public class Sender {
     //attributes
-    private Data data;
+    private NotificationData notificationData;
     private String to;
 
     //constructors
     public Sender(){}
-    public Sender(Data data, String to) {
-        this.data = data;
+    public Sender(NotificationData notificationData, String to) {
+        this.notificationData = notificationData;
         this.to = to;
     }
 
     //getters and setters
-    public Data getData() {
-        return data;
+    public NotificationData getData() {
+        return notificationData;
     }
-    public void setData(Data data) {
-        this.data = data;
+    public void setData(NotificationData notificationData) {
+        this.notificationData = notificationData;
     }
 
     public String getTo() {

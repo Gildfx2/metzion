@@ -3,6 +3,8 @@ package com.example.pre_alpha.main;
 import static android.content.Context.MODE_PRIVATE;
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
+import static com.example.pre_alpha.entry.Register.validateUsername;
+
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -73,7 +75,7 @@ public class UserFragment extends Fragment {
         FBref.refUsers.child(fbUser.getUid()).child("username").addValueEventListener(new ValueEventListener() { //getting the username
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                usernameTv.setText(snapshot.getValue().toString());
+                usernameTv.setText(snapshot.getValue(String.class).toString());
             }
 
             @Override
@@ -144,6 +146,12 @@ public class UserFragment extends Fragment {
             }
         });
 
+        createAdapterForButtons();
+
+        return view;
+    }
+
+    private void createAdapterForButtons(){
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, operations);
 
         lvOperations.setAdapter(arrayAdapter);
@@ -163,17 +171,7 @@ public class UserFragment extends Fragment {
                 }
             }
         });
-        return view;
     }
 
-    private boolean validateUsername(String username) { //checking if the username is valid with the limitations
-        if (username == null && username.isEmpty()) return false;
-        String usernameRegex = "^[A-Za-zא-ת]\\w{2,24}$";
-        //השם משתמש חייב להכיל בין 3-25 תווים שחייבים להתחיל באות קטנה או אות גדולה
-        //נ.ב אסור שיהיו רווחים
-        Pattern pattern = Pattern.compile(usernameRegex);
-        Matcher m = pattern.matcher(username);
-        return m.matches();
-    }
 
 }
