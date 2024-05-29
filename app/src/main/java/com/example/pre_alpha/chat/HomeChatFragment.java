@@ -1,8 +1,10 @@
 package com.example.pre_alpha.chat;
 
+import static android.content.Context.MODE_PRIVATE;
 import static com.example.pre_alpha.models.FBref.refUsers;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -187,6 +189,10 @@ public class HomeChatFragment extends Fragment {
                     bundle.putString("username", arrayList.get(position).getUsername());
                     bundle.putString("other_user_uid", arrayList.get(position).getOtherUserUid());
                     bundle.putString("from_post_or_chatlist", "chatlist");
+                    SharedPreferences.Editor editor = getActivity().getSharedPreferences("PREFS", MODE_PRIVATE).edit();
+                    editor.putString("currentuser", arrayList.get(position).getOtherUserUid());
+                    editor.apply();
+                    editor.commit();
                     if (arrayList.get(position) != null && arrayList.get(position).getImage() != null)
                         bundle.putString("post_image", arrayList.get(position).getImage().toString());
                     else bundle.putString("post_image", "");

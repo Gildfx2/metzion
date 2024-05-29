@@ -47,7 +47,7 @@ import com.example.pre_alpha.models.Chat;
 import com.example.pre_alpha.models.Message;
 import com.example.pre_alpha.notifications.APIService;
 import com.example.pre_alpha.notifications.Client;
-import com.example.pre_alpha.notifications.NotificationData;
+import com.example.pre_alpha.notifications.Data;
 import com.example.pre_alpha.notifications.Response;
 import com.example.pre_alpha.notifications.Sender;
 import com.example.pre_alpha.notifications.Token;
@@ -288,7 +288,7 @@ public class ChatFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot ds : snapshot.getChildren()){
                     Token token = ds.getValue(Token.class);
-                    NotificationData data = new NotificationData(fbUser.getUid(), username+":"+textMessage, otherUserUid, postId, username);
+                    Data data = new Data(fbUser.getUid(), username+":"+textMessage, "New Message", otherUserUid, postId, username, R.drawable.baseline_person_24);
                     Sender sender = new Sender(data, token.getToken());
                     apiService.sendNotification(sender) //sending the notification with the service
                             .enqueue(new Callback<Response>() {
@@ -347,6 +347,8 @@ public class ChatFragment extends Fragment {
                         Log.d(TAG, "Added new message: " + messageTmp.getMessage());
                     }
                 }
+                if(!messages.isEmpty())
+                    refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).child("unseenMessages").setValue(0); //setting the unseen messages to 0
                 adapter.notifyDataSetChanged();
                 if(adapter.getItemCount()>0)
                     recyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);
@@ -357,8 +359,7 @@ public class ChatFragment extends Fragment {
             }
         };
         refChat.addValueEventListener(chatListener);
-        if(!messages.isEmpty())
-            refChatList.child(fbUser.getUid()).child(postId).child(otherUserUid).child("unseenMessages").setValue(0); //setting the unseen messages to 0
+
 
         userListener = new ValueEventListener() {
             @Override

@@ -28,11 +28,11 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.util.Map;
+import java.util.Random;
 
 public class MyFirebaseMessaging extends FirebaseMessagingService {
     String newToken;
 
-    // Called when a new FCM token is generated
     @Override
     public void onNewToken(@NonNull String s) {
         super.onNewToken(s);
@@ -55,35 +55,33 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         }
     }
 
-    // Update the FCM token in the Firebase Realtime Database
     private void updateToken(String newToken) {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
-        Token token = new Token(newToken);
-        reference.child(firebaseUser.getUid()).setValue(token);
+        if (firebaseUser != null) {
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
+            Token token = new Token(newToken);
+            reference.child(firebaseUser.getUid()).setValue(token);
+        }
     }
 
-    // Called when a new message is received from FCM
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
         Map<String, String> data_notify = remoteMessage.getData();
+        Log.d("FCM", "Message data payload: " + data_notify);
 
-        String user = remoteMessage.getData().get("user");
-
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        // Check if the message is intended for the current user
-        if (firebaseUser != null && data_notify.size() > 0) {
-            if (!firebaseUser.getUid().equals(user)) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    sendOreoNotification(remoteMessage);
-                } else {
-                    sendNotification(remoteMessage);
-                }
+        if (data_notify.size() > 0) {
+            Log.d("FCM", "Data payload received: " + data_notify);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                sendOreoNotification(remoteMessage);
+                Log.d("FCM", "Sent Oreo notification");
+            } else {
+                sendNotification(remoteMessage);
+                Log.d("FCM", "Sent regular notification");
             }
+        } else {
+            Log.e("FCM", "No data payload in the message");
         }
     }
 
@@ -100,7 +98,9 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 
         // Extract notification information
         RemoteMessage.Notification notification  = remoteMessage.getNotification();
-        int j = Integer.parseInt(user.replaceAll("[\\D]", "")); // removing any non-numeric characters.
+
+        // Generate a unique integer for notification ID
+        int notificationId = user.hashCode(); // Using hashCode as a unique identifier
 
         // Prepare intent for notification click
         Intent intent = new Intent(this, ChatActivity.class);
@@ -114,23 +114,16 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         SharedPreferences.Editor editor = chat.edit();
         editor.putString("chat_pick", "send message");
         editor.apply();
-        editor.commit();
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, notificationId, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
 
         Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         OreoNotification oreoNotification = new OreoNotification(this);
         Notification.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent, defaultSound, icon);
 
-        // Ensure notification ID will not be negative by setting it to the integer value of 'j' if 'j' is greater than 0.
-        int i = 0;
-        if ( j > 0) {
-            i=j;
-        }
-
-        oreoNotification.getManager().notify(i, builder.build());
+        oreoNotification.getManager().notify(notificationId, builder.build());
     }
 
     // Send a notification for devices below Android Oreo
@@ -145,7 +138,9 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 
         // Extract notification information
         RemoteMessage.Notification notification  = remoteMessage.getNotification();
-        int j = Integer.parseInt(user.replaceAll("[\\D]", "")); // removing any non-numeric characters.
+
+        // Generate a unique integer for notification ID
+        int notificationId = user.hashCode(); // Using hashCode as a unique identifier
 
         // Prepare intent for notification click
         Intent intent = new Intent(this, ChatActivity.class);
@@ -159,10 +154,9 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         SharedPreferences.Editor editor = chat.edit();
         editor.putString("chat_pick", "send message");
         editor.apply();
-        editor.commit();
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, notificationId, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
 
         Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         assert icon != null;
@@ -176,12 +170,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 
         NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // Ensure notification ID will not be negative by setting it to the integer value of 'j' if 'j' is greater than 0.
-        int i=0;
-        if (j>0) {
-            i=j;
-        }
-
-        notificationManager.notify(i, builder.build());
+        notificationManager.notify(notificationId, builder.build());
     }
+
 }

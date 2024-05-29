@@ -1,8 +1,6 @@
 package com.example.pre_alpha.notifications;
 
-import com.example.pre_alpha.R;
-
-public class NotificationData {
+public class Data {
 
 
     //attributes
@@ -10,16 +8,16 @@ public class NotificationData {
     private int icon;
 
     //constructors
-    public NotificationData(){}
+    public Data(){}
 
-    public NotificationData(String user, String body, String sent, String post, String username) {
+    public Data(String user, String body, String title, String sent, String post, String username, int icon) {
         this.user = user;
         this.body = body;
-        this.title = "New Message";
+        this.title = title;
         this.sent = sent;
         this.post = post;
         this.username = username;
-        this.icon = R.drawable.baseline_person_24;
+        this.icon = icon;
     }
 
 
