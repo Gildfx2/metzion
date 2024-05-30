@@ -2,7 +2,7 @@ package com.example.pre_alpha.notifications;
 
 public class Token {
     // Attribute of token
-    String token;
+    private String token;
 
     public Token(){}
 

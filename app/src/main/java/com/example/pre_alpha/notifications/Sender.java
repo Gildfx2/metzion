@@ -3,8 +3,8 @@ package com.example.pre_alpha.notifications;
 
 public class Sender {
     //attributes
-    Data data;
-    String to;
+    private Data data;
+    private String to;
 
     //constructors
     public Sender(){}
