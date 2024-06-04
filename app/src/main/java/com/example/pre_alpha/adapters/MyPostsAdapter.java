@@ -188,6 +188,6 @@ public class MyPostsAdapter extends ArrayAdapter<PostData> {
         editor.putString("state", "edit");
         editor.apply();
         editor.commit();
-        fragmentManager.beginTransaction().replace(R.id.frameLayout, createPostFragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.frameLayout, createPostFragment).commitAllowingStateLoss();
     }
 }
