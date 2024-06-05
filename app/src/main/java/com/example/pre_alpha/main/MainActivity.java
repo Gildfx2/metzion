@@ -91,9 +91,10 @@ public class MainActivity extends AppCompatActivity {
                         createPostFragment =new CreatePostFragment();
                         SharedPreferences state = getSharedPreferences("state", MODE_PRIVATE);
                         SharedPreferences.Editor editor = state.edit();
+                        editor.putString("state", "create");
                         lost.setOnClickListener(new View.OnClickListener(){
                             public void onClick(View view){
-                                editor.putString("state", "lost");
+                                editor.putString("what_state", "lost");
                                 editor.apply();
                                 editor.commit();
                                 dialog.cancel();
@@ -102,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                         });
                         found.setOnClickListener(new View.OnClickListener(){
                             public void onClick(View view){
-                                editor.putString("state", "found");
+                                editor.putString("what_state", "found");
                                 editor.apply();
                                 editor.commit();
                                 dialog.cancel();

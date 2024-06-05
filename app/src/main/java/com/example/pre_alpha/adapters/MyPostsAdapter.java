@@ -186,6 +186,7 @@ public class MyPostsAdapter extends ArrayAdapter<PostData> {
         SharedPreferences state = getContext().getSharedPreferences("state", MODE_PRIVATE);
         SharedPreferences.Editor editor = state.edit();
         editor.putString("state", "edit");
+        editor.putString("what_state", postTmp.getLostOrFound());
         editor.apply();
         editor.commit();
         fragmentManager.beginTransaction().replace(R.id.frameLayout, createPostFragment).commitAllowingStateLoss();

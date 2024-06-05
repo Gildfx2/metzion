@@ -128,11 +128,16 @@ public class CreatePostFragment extends Fragment {
         SharedPreferences state = getActivity().getSharedPreferences("state", MODE_PRIVATE);
         checkState = state.getString("state", "");
         //check if the user want to create a lost or found post
-        if(checkState.equals("lost"))
-            tvState.setText("מה איבדת?");
-        else if(checkState.equals("found"))
-            tvState.setText("מה מצאת?");
+
+        if(checkState.equals("create")) {
+            checkState = state.getString("what_state", "");
+            if (checkState.equals("lost"))
+                tvState.setText("מה איבדת?");
+            else if (checkState.equals("found"))
+                tvState.setText("מה מצאת?");
+        }
         else {
+            checkState = state.getString("what_state", "");
             tvState.setText("עריכת מודעה");
             upload.setText("שמור שינויים");
         }
@@ -320,7 +325,7 @@ public class CreatePostFragment extends Fragment {
         if(latitude==0 && longitude==0)
             Toast.makeText(getActivity(),"יש לבחור את מיקום המציאה/אבידה", Toast.LENGTH_SHORT).show();
 
-        if((latitude!=0 && longitude!=0) && !item.isEmpty() && (!name.isEmpty() && name.length()<=30) && about.length()<=150) {
+        if((latitude!=0 && longitude!=0) && !item.isEmpty() && (!name.isEmpty() && name.length()<=15) && about.length()<=150) {
             if (image_uri != null) { //creating the object post accordance to if the image is null or not
                 post = new Post(name, item, latitude, longitude, address, radius, about, image_uri.toString(), checkState, fbUser.getUid(), postId, calender.getTimeInMillis());
             } else {

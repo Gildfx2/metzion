@@ -52,7 +52,7 @@
                 app:helperText="יופיע בכותרת המודעה שלך - חובה"
                 app:helperTextEnabled="true"
                 app:counterEnabled="true"
-                app:counterMaxLength="30"
+                app:counterMaxLength="15"
                 app:endIconMode="clear_text"
                 app:boxStrokeErrorColor="#6f1d1b"
                 app:boxStrokeColor="@color/brown"
