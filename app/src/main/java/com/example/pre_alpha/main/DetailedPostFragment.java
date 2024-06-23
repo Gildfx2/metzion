@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -25,6 +26,7 @@ import com.example.pre_alpha.models.FBref;
 import com.example.pre_alpha.R;
 import com.example.pre_alpha.models.Post;
 import com.example.pre_alpha.models.User;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -49,6 +51,7 @@ public class DetailedPostFragment extends Fragment {
     Calendar calendar;
     String name, item, about, image="", creatorUid, postId, address, username;
     Post post;
+    BottomNavigationView bottomNavigationView;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -62,6 +65,7 @@ public class DetailedPostFragment extends Fragment {
         returnBack=view.findViewById(R.id.return_back);
         sendMessage=view.findViewById(R.id.send_message);
         tvDate=view.findViewById(R.id.post_date);
+        bottomNavigationView=getActivity().findViewById(R.id.bottomNavigationBar);
         fbUser= FirebaseAuth.getInstance().getCurrentUser();
         Bundle bundle = this.getArguments();
         calendar = Calendar.getInstance();
@@ -70,19 +74,26 @@ public class DetailedPostFragment extends Fragment {
 
         FBref.refPosts.child(postId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) { //getting all of the posts
-                post = snapshot.getValue(Post.class);
-                FBref.refUsers.child(post.getCreatorUid()).child("username").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) { //getting all of the users
-                        username=snapshot.getValue(String.class);
-                        initialization();
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        Log.e("FirebaseError", error.getMessage());
-                    }
-                });
+            public void onDataChange(@NonNull DataSnapshot snapshot) { //getting the requested post
+                if(snapshot.exists()) {
+                    post = snapshot.getValue(Post.class);
+                    FBref.refUsers.child(post.getCreatorUid()).child("username").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) { //getting the requested user
+                            username = snapshot.getValue(String.class);
+                            initialization();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Log.e("FirebaseError", error.getMessage());
+                        }
+                    });
+                }
+                else{
+                    bottomNavigationView.setSelectedItemId(R.id.home);
+                    Toast.makeText(getActivity(), "המודעה כבר לא קיימת במערכת", Toast.LENGTH_SHORT).show();
+                }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

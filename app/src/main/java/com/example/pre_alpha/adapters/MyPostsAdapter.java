@@ -79,7 +79,7 @@ public class MyPostsAdapter extends ArrayAdapter<PostData> {
         editButton.setOnClickListener(new View.OnClickListener() { //the user wants to edit the post
             @Override
             public void onClick(View v) {
-                refPosts.child(postData.getPostId()).addValueEventListener(new ValueEventListener() {
+                refPosts.child(postData.getPostId()).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         postTmp = snapshot.getValue(Post.class);
@@ -191,4 +191,5 @@ public class MyPostsAdapter extends ArrayAdapter<PostData> {
         editor.commit();
         fragmentManager.beginTransaction().replace(R.id.frameLayout, createPostFragment).commitAllowingStateLoss();
     }
+
 }
