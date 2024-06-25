@@ -103,7 +103,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         bundle.putString("other_user_uid", user);
         bundle.putString("post_id", post);
         bundle.putString("username", username);
-        bundle.putString("from_post_or_chatlist", "post");
+        bundle.putString("from_post_or_chatlist", "chatlist");
         intent.putExtras(bundle);
         SharedPreferences chat = getSharedPreferences("chat_pick", MODE_PRIVATE);
         SharedPreferences.Editor editor = chat.edit();
