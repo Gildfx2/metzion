@@ -192,7 +192,7 @@ public class ChatFragment extends Fragment {
         sendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!otherUserStatus.substring(6).equals("online")) //checking if it is necessary to send notification or not
+                if(!otherUserStatus.contains("online")) //checking if it is necessary to send notification or not
                     notify = true;
                 msg=textMessage.getText().toString();
                 messageId = refChat.push().getKey();
@@ -213,6 +213,8 @@ public class ChatFragment extends Fragment {
                             sendNotification(otherUserUid, currentUserUsername, msg); //sending notification
                         }
                         notify = false;
+
+
                     }
                     else showImageDialog(); //show the menu of camera or gallery
                 }
@@ -242,6 +244,7 @@ public class ChatFragment extends Fragment {
                                         sendNotification(otherUserUid, currentUserUsername, "תמונה"); //send notification
                                     }
                                     notify = false;
+
 
                                 }
                             }).addOnFailureListener(new OnFailureListener() {

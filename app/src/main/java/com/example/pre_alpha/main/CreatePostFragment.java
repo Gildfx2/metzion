@@ -291,11 +291,11 @@ public class CreatePostFragment extends Fragment {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     image_uri=uri;
-                                    updateDatabase();
                                 }
                             });
                         }
                     });
+                    updateDatabase();
                 }
                 else updateDatabase();
 

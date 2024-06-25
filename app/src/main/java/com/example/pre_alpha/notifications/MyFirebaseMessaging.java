@@ -73,13 +73,8 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 
         if (data_notify.size() > 0) {
             Log.d("FCM", "Data payload received: " + data_notify);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                sendOreoNotification(remoteMessage);
-                Log.d("FCM", "Sent Oreo notification");
-            } else {
-                sendNotification(remoteMessage);
-                Log.d("FCM", "Sent regular notification");
-            }
+            sendOreoNotification(remoteMessage);
+            Log.d("FCM", "Sent Oreo notification");
         } else {
             Log.e("FCM", "No data payload in the message");
         }
@@ -126,51 +121,5 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         oreoNotification.getManager().notify(notificationId, builder.build());
     }
 
-    // Send a notification for devices below Android Oreo
-    private void sendNotification(RemoteMessage remoteMessage) {
-        // Retrieve notification data from the message
-        String user = remoteMessage.getData().get("user");
-        String icon = remoteMessage.getData().get("icon");
-        String title = remoteMessage.getData().get("title");
-        String body = remoteMessage.getData().get("body");
-        String post = remoteMessage.getData().get("post");
-        String username = remoteMessage.getData().get("username");
-
-        // Extract notification information
-        RemoteMessage.Notification notification  = remoteMessage.getNotification();
-
-        // Generate a unique integer for notification ID
-        int notificationId = user.hashCode(); // Using hashCode as a unique identifier
-
-        // Prepare intent for notification click
-        Intent intent = new Intent(this, ChatActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString("other_user_uid", user);
-        bundle.putString("post_id", post);
-        bundle.putString("username", username);
-        bundle.putString("from_post_or_chatlist", "post");
-        intent.putExtras(bundle);
-        SharedPreferences chat = getSharedPreferences("chat_pick", MODE_PRIVATE);
-        SharedPreferences.Editor editor = chat.edit();
-        editor.putString("chat_pick", "send message");
-        editor.apply();
-
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, notificationId, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
-
-        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        assert icon != null;
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setSmallIcon(Integer.parseInt(icon))
-                .setContentTitle(title)
-                .setContentText(body)
-                .setAutoCancel(true)
-                .setSound(defaultSound)
-                .setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.notify(notificationId, builder.build());
-    }
 
 }

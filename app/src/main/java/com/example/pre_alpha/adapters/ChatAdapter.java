@@ -55,7 +55,7 @@ public class ChatAdapter extends ArrayAdapter<ChatData> {
             unseenMessages.setText("");
         }
         else{
-            unseenMessages.setText(Integer.toString(chatData.getUnseenMessages()));
+            unseenMessages.setText(String.valueOf(chatData.getUnseenMessages()));
         }
 
         return view;
