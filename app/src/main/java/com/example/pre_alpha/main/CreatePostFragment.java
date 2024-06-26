@@ -44,7 +44,9 @@ import com.example.pre_alpha.models.Post;
 import com.example.pre_alpha.models.FBref;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -212,6 +214,9 @@ public class CreatePostFragment extends Fragment {
         about = etAbout.getText().toString();
         date = dateButton.getText().toString();
         address = addressTv.getText().toString();
+        if(!tvState.getText().equals("עריכת מודעה")){
+            postId=null;
+        }
     }
 
     private void initMap(){
@@ -291,11 +296,17 @@ public class CreatePostFragment extends Fragment {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     image_uri=uri;
+                                    updateDatabase();
                                 }
                             });
                         }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            updateDatabase();
+                        }
                     });
-                    updateDatabase();
+
                 }
                 else updateDatabase();
 
